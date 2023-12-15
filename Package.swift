@@ -5,19 +5,30 @@ import PackageDescription
 
 let package = Package(
     name: "SpyBug",
+    platforms: [.iOS(.v15)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "SpyBug",
-            targets: ["SpyBug"]),
+            targets: ["SpyBug"]
+        ),
+    ],
+    dependencies: [
+        //        .package(
+        //            url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
+        //            branch: "main"
+        //        ),
+        .package(
+            url: "https://github.com/Bereyziat-Development/SnapPix",
+            branch: "main"
+        )
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "SpyBug"),
+            name: "SpyBug"
+        ),
         .testTarget(
             name: "SpyBugTests",
-            dependencies: ["SpyBug"]),
+            dependencies: ["SpyBug"]
+        )
     ]
 )
