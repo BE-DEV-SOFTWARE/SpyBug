@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftUIAdaptiveActionSheet 
 import SnapPix
+import UIKit
 
 @available(iOS 15.0, *)
 struct ReportButtonView: View {
@@ -21,7 +22,7 @@ struct ReportButtonView: View {
                 Text("Report a bug")
                     .foregroundStyle(Color.black.opacity(0.8))
             }
-            Image.buugRegular
+            Image(packageResource: "apple", ofType: "png")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(.red)
@@ -41,13 +42,35 @@ struct ReportButtonView: View {
     ReportButtonView()
 }
 
-@available(iOS 15.0, *)
+//@available(iOS 15.0, *)
+//extension Image {
+//    static var buugRegular: Image {
+//        Image("Test", bundle: .main)
+//    }
+//    
+//    static var anotherImage: Image {
+//        Image("anotherImage", bundle: .main)
+//    }
+//}
+
 extension Image {
-    static var buugRegular: Image {
-        Image("Test", bundle: .main)
-    }
-    
-    static var anotherImage: Image {
-        Image("anotherImage", bundle: .main)
+    init(packageResource name: String, ofType type: String) {
+        #if canImport(UIKit)
+        guard let path = Bundle.module.path(forResource: name, ofType: type),
+              let image = UIImage(contentsOfFile: path) else {
+            self.init(name)
+            return
+        }
+        self.init(uiImage: image)
+        #elseif canImport(AppKit)
+        guard let path = Bundle.module.path(forResource: name, ofType: type),
+              let image = NSImage(contentsOfFile: path) else {
+            self.init(name)
+            return
+        }
+        self.init(nsImage: image)
+        #else
+        self.init(name)
+        #endif
     }
 }
