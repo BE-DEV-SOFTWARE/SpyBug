@@ -13,10 +13,10 @@ let package = Package(
         ),
     ],
     dependencies: [
-        //        .package(
-        //            url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
-        //            branch: "main"
-        //        ),
+                .package(
+                    url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
+                    branch: "main"
+                ),
         .package(
             url: "https://github.com/Bereyziat-Development/SnapPix",
             branch: "main"
@@ -24,8 +24,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SpyBug"
-        ),
+            name: "SpyBug",
+            dependencies: ["SnapPix", "SwiftUIAdaptiveActionSheet"]),
         .testTarget(
             name: "SpyBugTests",
             dependencies: ["SpyBug"]

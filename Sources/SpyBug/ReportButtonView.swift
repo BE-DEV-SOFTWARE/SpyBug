@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-//import SwiftUIAdaptiveActionSheet 
-//import SnapPix
+import SwiftUIAdaptiveActionSheet 
+import SnapPix
 
 @available(iOS 15.0, *)
 struct ReportButtonView: View {
@@ -30,9 +30,9 @@ struct ReportButtonView: View {
         .sheet(isPresented: $isShowingReportOptionsView) {
             ReportOptionsView()
         }
-        //        .adaptiveHeightSheet(isPresented: $isShowingReportOptionsView) {
-        //            ReportOptionsView()
-        //        }
+                .adaptiveHeightSheet(isPresented: $isShowingReportOptionsView) {
+                    ReportOptionsView()
+                }
     }
 }
 
