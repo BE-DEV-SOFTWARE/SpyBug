@@ -18,16 +18,16 @@ struct ReportOptionsView: View {
                 .font(.system(size: 24, weight: .bold))
                 .padding(.vertical, 10)
             NavigationLink { RequestView(title: "Report a problem", buttonText: "Send request", isOpenForReportAProblem: true) } label: {
-                ReportOptionRow(icon: Image(systemName: "trash"), text: "Report a problem")
+                ReportOptionRow(icon: "bug-regular", text: "Report a problem")
             }
             NavigationLink { RequestView(title: "Request improvement", buttonText: "Send request") } label: {
-                ReportOptionRow(icon: Image(systemName: "trash"), text: "Request improvement")
+                ReportOptionRow(icon: "rocket-launch-regular", text: "Request improvement")
             }
             NavigationLink { RequestView(title: "Ask question", buttonText: "Send request") } label: {
-                ReportOptionRow(icon: Image(systemName: "trash"), text: "Ask question")
+                ReportOptionRow(icon: "circle-question-regular", text: "Ask question")
             }
             NavigationLink { RequestView(title: "Request a feature", buttonText: "Send request") } label: {
-                ReportOptionRow(icon: Image(systemName: "trash"), text: "Request a feature")
+                ReportOptionRow(icon: "wand-magic-sparkles-regular", text: "Request a feature")
             }
             Spacer()
         }
@@ -45,16 +45,16 @@ struct ReportOptionsView_Previews: PreviewProvider {
 
 @available(iOS 15.0, *)
 private struct ReportOptionRow: View {
-    var icon: Image
+    var icon: String
     var text: LocalizedStringKey
     
     var body: some View {
         HStack(spacing: 16){
-            icon
+            Image(packageResource: icon, ofType: "png")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
-                .foregroundStyle(.black.opacity(0.6))
+                .colorMultiply(Color.gray.opacity(0.8))
             Text(text)
                 .font(.system(size: 18))
                 .foregroundStyle(.black.opacity(0.8))

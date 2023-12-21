@@ -7,12 +7,18 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct SpyBugService {
+    func markConversationAsRead() async throws -> Report {
+        let request = try ServiceHelper().createRequest(endpoint: "reports", method: .post)
+        return try await ServiceHelper().fetchJSON(request: request)
     }
 }
 
-#Preview {
-    SwiftUIView()
+struct Report: Decodable {
+    let id: UUID
+    let description: String
+    let type: String
+    let authorEmail: String
+    let createdAt: Data
+    let pictureUrls: [String]
 }

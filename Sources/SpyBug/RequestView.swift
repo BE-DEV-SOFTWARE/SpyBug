@@ -9,56 +9,68 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 struct RequestView: View {
-    
-    //TODO: What user should be able to pass using this package
-    // 5. We want user to be able provide images
-
-    
-    
-    // camera image gray
-    // button styly optional to pass, default to normal button
-    // api key to pass
-    // author id to pass
-    // 3 last screens should have text, not optional!
-    // show the sheet when shaking the phone
-    
-    
     @Environment(\.dismiss) private var dismiss
     @State private var problemsUIImages = [UIImage]()
+    @State var isShowingXmark = false
     @State private var text = ""
+    @State private var buttonPressed: Bool = false
+    @State private var showTextError: Bool = false
     var title: LocalizedStringKey = ""
     var buttonText: LocalizedStringKey = ""
     var isOpenForReportAProblem = false
-    @State var isShowingXmark = false
     
     var body: some View {
-            VStack {
-                TitleAndBackButton()
-                
-                ImagePicker()
-                
-                Text(isOpenForReportAProblem ? "Add comment" : "Add description")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.black.opacity(0.8))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                AddDescription()
-                
-                Spacer()
-                
-                
-                Button {} label: {
-                    Text(buttonText)
+        VStack {
+            TitleAndBackButton()
+            
+            ImagePicker()
+            
+            Text(isOpenForReportAProblem ? "Add comment" : "Add description")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(.black.opacity(0.8))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            AddDescription()
+            
+            Spacer()
+            
+            Button {
+                if !isOpenForReportAProblem {
+                    buttonPressed.toggle()
                 }
-//                .buttonStyle(Primary(isGradient: true))
+            } label: {
+                HStack {
+                    Text(buttonText)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(.black.opacity(0.8))
+                    
+                    Spacer()
+                    
+                    Image(systemName: "paperplane")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(.black.opacity(0.8))
+                        .padding(.trailing)
+                }
+                .padding(.horizontal)
+                .frame(height: 69)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white)
+                        .shadow(color: .gray.opacity(0.25), radius: 4)
+                )
             }
-            .frame(height: 450)
-            .navigationBarHidden(true)
-            .padding()
-            .background(Color.white.opacity(0.1))
-            .onTapGesture {
-                isShowingXmark.toggle()
-            }
+        }
+        .frame(height: 450)
+        .navigationBarHidden(true)
+        .padding()
+        .background(Color.white.opacity(0.1))
+        .onTapGesture {
+            isShowingXmark.toggle()
+        }
+        .onChange(of: buttonPressed) { newValue in
+            showTextError = true
+        }
     }
     
     @ViewBuilder
@@ -81,8 +93,8 @@ struct RequestView: View {
                 dismiss()
             } label: {
                 Image(systemName: "chevron.left")
-                .font(.system(size: 28, weight: .regular))
-                .foregroundStyle(.black.opacity(0.6))
+                    .font(.system(size: 28, weight: .regular))
+                    .foregroundStyle(.black.opacity(0.6))
                     .padding(.leading)
             }
             Spacer()
@@ -103,8 +115,8 @@ struct RequestView: View {
             if text.isEmpty {
                 VStack {
                     HStack {
-                        Text("Type here...")
-                            .foregroundStyle(.black.opacity(0.7))
+                        Text(showTextError ? "This field should not be empty" : "Type here...")
+                            .foregroundStyle(showTextError ? .red : .black.opacity(0.7))
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
                         Spacer()
