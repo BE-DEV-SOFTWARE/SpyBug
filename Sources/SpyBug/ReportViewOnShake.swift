@@ -34,7 +34,9 @@ struct DeviceShakeViewModifier: ViewModifier {
 }
 
 extension View {
-    func onShake(perform action: @escaping () -> Void) -> some View {
+    public func onShake(perform action: @escaping () -> Void) -> some View {
         self.modifier(DeviceShakeViewModifier(action: action))
     }
 }
+
+//second modifier open spy bug on shake public and we pass the action we want to be executed
