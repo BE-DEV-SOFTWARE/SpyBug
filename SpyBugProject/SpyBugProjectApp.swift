@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SpyBug
 
 @main
 struct SpyBugProjectApp: App {
