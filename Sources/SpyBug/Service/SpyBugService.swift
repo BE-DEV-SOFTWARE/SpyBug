@@ -8,17 +8,44 @@
 import SwiftUI
 
 struct SpyBugService {
-    func markConversationAsRead() async throws -> Report {
-        let request = try ServiceHelper().createRequest(endpoint: "reports", method: .post)
+    func createBugReport(apiKey: String, reportIn: ReportCreate) async throws -> Report {
+        let parameters = [
+            URLQueryItem(name: "key", value: apiKey),
+        ]
+        let request = try ServiceHelper().createRequest(endpoint: "/reports", method: .post, parameters: parameters, payload: reportIn)
         return try await ServiceHelper().fetchJSON(request: request)
+    }
+
+    func addPicturesToCreateBugReport(apiKey: String, reportId: UUID, pictures: [Data]) async throws -> Report {
+        let parameters = [
+            URLQueryItem(name: "key", value: apiKey),
+        ]
+        let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/pictures", parameters: parameters)
+        for picture in pictures {
+            request.addDataField(named: "pictures", filename: "pet.jpeg", data: picture, mimeType: "image/jpeg")
+        }
+        return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }
 }
 
+enum ReportType: String, Codable {
+    case bug
+    case improvement
+    case question
+    case feature
+}
+
 struct Report: Decodable {
-    let id: UUID
-    let description: String
-    let type: String
-    let authorEmail: String
-    let createdAt: Data
-    let pictureUrls: [String]
+    var description: String?
+    var type: ReportType
+    var authorEmail: String?
+    var id: UUID
+    var createdAt: Date?
+    var pictureUrls: [String]?
+}
+
+struct ReportCreate: Encodable {
+    var description: String?
+    var type: ReportType
+    var authorEmail: String?
 }

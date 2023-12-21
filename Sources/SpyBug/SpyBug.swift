@@ -6,21 +6,16 @@ import SwiftUI
 import SwiftUIAdaptiveActionSheet
 import UIKit
 
-// button styly optional to pass, default to normal button
-// api key to pass
-// author id to pass
-// show the sheet when shaking the phone
 
 @available(iOS 15.0, *)
 public struct SpyBug: View {
     @State private var isShowingReportOptionsView = false
     
     var apiKey: String = ""
-    var authorId: String = ""
+    var authorId: String?
     var buttonStyle: any ButtonStyle
     
     public init(
-        isShowingReportOptionsView: Bool = false,
         apiKey: String = "",
         authorId: String = "",
         buttonStyle: any ButtonStyle = ReportBugButtonStyle.defaultStyle
@@ -57,9 +52,12 @@ public struct SpyBug: View {
             }
             .buttonStyle(ReportBugButtonStyle())
         }
+        .onShake(perform: {
+            isShowingReportOptionsView.toggle()
+        })
         .adaptiveHeightSheet(isPresented: $isShowingReportOptionsView) {
             NavigationView {
-                ReportOptionsView()
+                ReportOptionsView(apiKey: apiKey)
             }
             .frame(height: 450)
         }

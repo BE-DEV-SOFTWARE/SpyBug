@@ -9,6 +9,7 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 struct ReportOptionsView: View {
+    var apiKey: String
     @State var isShowing = false
     let imagePath = Bundle.main.path(forResource: "bugRegular", ofType: "png")
     
@@ -17,16 +18,16 @@ struct ReportOptionsView: View {
             Text("Need help?")
                 .font(.system(size: 24, weight: .bold))
                 .padding(.vertical, 10)
-            NavigationLink { RequestView(title: "Report a problem", buttonText: "Send request", isOpenForReportAProblem: true) } label: {
+            NavigationLink { RequestView(title: "Report a problem", buttonText: "Send request", isOpenForReportAProblem: true, apiKey: apiKey, reportType: .bug) } label: {
                 ReportOptionRow(icon: "bug-regular", text: "Report a problem")
             }
-            NavigationLink { RequestView(title: "Request improvement", buttonText: "Send request") } label: {
+            NavigationLink { RequestView(title: "Request improvement", buttonText: "Send request", apiKey: apiKey, reportType: .improvement) } label: {
                 ReportOptionRow(icon: "rocket-launch-regular", text: "Request improvement")
             }
-            NavigationLink { RequestView(title: "Ask question", buttonText: "Send request") } label: {
+            NavigationLink { RequestView(title: "Ask question", buttonText: "Send request", apiKey: apiKey, reportType: .question) } label: {
                 ReportOptionRow(icon: "circle-question-regular", text: "Ask question")
             }
-            NavigationLink { RequestView(title: "Request a feature", buttonText: "Send request") } label: {
+            NavigationLink { RequestView(title: "Request a feature", buttonText: "Send request", apiKey: apiKey, reportType: .feature) } label: {
                 ReportOptionRow(icon: "wand-magic-sparkles-regular", text: "Request a feature")
             }
             Spacer()
@@ -38,7 +39,7 @@ struct ReportOptionsView: View {
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ReportOptionsView()
+            ReportOptionsView(apiKey: "")
         }
     }
 }

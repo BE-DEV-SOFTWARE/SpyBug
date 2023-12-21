@@ -8,8 +8,6 @@
 import Foundation
 import SwiftUI
 
-let applicationToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyN2E0ZTg2MS0zZDc5LTRmMmItYmExZS0xYTZlYzlhYzYxYTAifQ.JI8TA_5kD2CuAZD2fUCnXJ89JICWgIKY5i9wsLmbkGg"
-
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
@@ -38,9 +36,7 @@ struct ServiceHelper {
     private func createURL(endpoint: String, parameters: [URLQueryItem]? = []) -> URL? {
         var component = URLComponents()
         component.scheme = EnvConfig.apiScheme
-        component.port = EnvConfig.port
-        component.host = EnvConfig.baseURL
-        component.path = "/api/v1/" + endpoint
+        component.path = EnvConfig.baseURL + endpoint
         component.queryItems = parameters
         return component.url
     }
@@ -86,8 +82,8 @@ struct ServiceHelper {
         return request
     }
     
-    func createDataRequest(endpoint: String, token: Token? = nil) throws -> MultipartFormDataRequest {
-        guard let url = createURL(endpoint: endpoint) else { throw APIError.errorCreatingURL }
+    func createDataRequest(endpoint: String, token: Token? = nil, parameters: [URLQueryItem]? = []) throws -> MultipartFormDataRequest {
+        guard let url = createURL(endpoint: endpoint, parameters: parameters) else { throw APIError.errorCreatingURL }
         return MultipartFormDataRequest(url: url, token: token)
     }
     

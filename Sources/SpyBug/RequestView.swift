@@ -18,6 +18,9 @@ struct RequestView: View {
     var title: LocalizedStringKey = ""
     var buttonText: LocalizedStringKey = ""
     var isOpenForReportAProblem = false
+    var apiKey: String
+    var authorId: String?
+    var reportType: ReportType?
     
     var body: some View {
         VStack {
@@ -37,6 +40,24 @@ struct RequestView: View {
             Button {
                 if !isOpenForReportAProblem {
                     buttonPressed.toggle()
+                }
+                Task {
+                    do {
+                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: reportType!, authorEmail: authorId))
+                        
+                        if reportType == .bug {
+                            let imageDataArray = problemsUIImages.map { image in
+                                guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
+                                return imageData
+                            }
+                            
+                            try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+                        }
+                        
+                        dismiss()
+                    } catch {
+                        print(error)
+                    }
                 }
             } label: {
                 HStack {
@@ -152,7 +173,7 @@ struct RequestView: View {
 struct RequestView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            RequestView(isOpenForReportAProblem: true)
+            RequestView(isOpenForReportAProblem: true, apiKey: "")
         }
     }
 }

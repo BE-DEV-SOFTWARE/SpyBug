@@ -28,32 +28,14 @@ enum EnvConfig: String {
     }()
     
     static var baseURL: String {
-        switch EnvConfig.current {
-        case .debug:
-            return "http://localhost/docs"
-        case .staging:
-            return "http://localhost/docs"
-        case .production:
-            //TODO: Change for production
-            return "http://localhost/docs"
-        }
+        return "localhost/api/v1"
     }
     
     static var apiScheme: String {
-        switch EnvConfig.current {
-        case .debug:
-            return "http"
-        case .staging, .production:
-            return "https"
-        }
+        return "http"
     }
     
     static var port: Int? {
-        switch EnvConfig.current {
-        case .debug:
-            return 3000
-        case .staging, .production:
-            return nil
-        }
+        return nil
     }
 }

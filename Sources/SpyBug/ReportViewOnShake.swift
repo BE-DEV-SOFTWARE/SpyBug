@@ -8,7 +8,6 @@
 import SwiftUI
 
 //Do smt when the phone is shaking
-
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
@@ -38,5 +37,3 @@ extension View {
         self.modifier(DeviceShakeViewModifier(action: action))
     }
 }
-
-//second modifier open spy bug on shake public and we pass the action we want to be executed

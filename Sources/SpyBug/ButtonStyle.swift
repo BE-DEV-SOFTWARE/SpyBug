@@ -16,12 +16,13 @@ public struct ReportBugButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(height: 69)
-            .padding(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 8))
+            .padding(EdgeInsets(top: 6, leading: 24, bottom: 6, trailing: 8))
             .background(
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.white)
                     .shadow(color: .gray.opacity(0.25), radius: 4)
             )
-            .padding(.horizontal)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
     }
 }
+
