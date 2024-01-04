@@ -16,7 +16,7 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
             
-            SpyBug(apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyN2E0ZTg2MS0zZDc5LTRmMmItYmExZS0xYTZlYzlhYzYxYTAifQ.JI8TA_5kD2CuAZD2fUCnXJ89JICWgIKY5i9wsLmbkGg")
+            SpyBug(apiKey: "", authorId: "", useCustomButtonStyle: false)
         }
         .padding()
     }
@@ -25,3 +25,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+
