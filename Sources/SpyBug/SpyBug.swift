@@ -11,18 +11,18 @@ import UIKit
 public struct SpyBug: View {
     @State private var isShowingReportOptionsView = false
     
-    var apiKey: String = ""
+    var apiKey: String
     var authorId: String?
-    var buttonStyle: any ButtonStyle
-    
+    var useCustomButtonStyle: Bool = false
+        
     public init(
-        apiKey: String = "",
-        authorId: String = "",
-        buttonStyle: any ButtonStyle = ReportBugButtonStyle.defaultStyle
+        apiKey: String,
+        authorId: String?,
+        useCustomButtonStyle: Bool = false
     ) {
         self.apiKey = apiKey
         self.authorId = authorId
-        self.buttonStyle = buttonStyle
+        self.useCustomButtonStyle = useCustomButtonStyle
     }
     
     public var body: some View {
@@ -50,7 +50,9 @@ public struct SpyBug: View {
                         .padding(.trailing)
                 }
             }
-            .buttonStyle(ReportBugButtonStyle())
+        }
+        .if(!useCustomButtonStyle) {
+            $0.buttonStyle(ReportBugButtonStyle.defaultStyle)
         }
         .onShake(perform: {
             isShowingReportOptionsView.toggle()
@@ -66,7 +68,22 @@ public struct SpyBug: View {
 
 @available(iOS 15.0, *)
 #Preview {
-    SpyBug()
+    SpyBug(apiKey: "", authorId: "")
+}
+
+extension View {
+    /// Applies the given transform if the given condition evaluates to `true`.
+    /// - Parameters:
+    ///   - condition: The condition to evaluate.
+    ///   - transform: The transform to apply to the source `View`.
+    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
 }
 
 extension Image {

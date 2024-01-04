@@ -102,7 +102,6 @@ struct ServiceHelper {
             DateFormatter.isoFull,
             DateFormatter.yearMonthDay,
             DateFormatter.iso8601
-            
         ]
         do {
             return try decoder.decode(T.self, from: data)

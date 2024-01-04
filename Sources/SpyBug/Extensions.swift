@@ -32,7 +32,7 @@ extension View {
     }
 }
 
-// just an extension on images for easy access
+// just an extension for images for easy access
 @available(iOS 15.0, *)
 extension Image {
     static let bugRegular = Image("bugRegular")
