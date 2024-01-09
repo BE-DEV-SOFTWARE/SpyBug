@@ -27,25 +27,3 @@ struct SpyBugService {
         return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }
 }
-
-enum ReportType: String, Codable {
-    case bug
-    case improvement
-    case question
-    case feature
-}
-
-struct Report: Decodable {
-    var description: String?
-    var type: ReportType
-    var authorEmail: String?
-    var id: UUID
-    var createdAt: Date?
-    var pictureUrls: [String]?
-}
-
-struct ReportCreate: Encodable {
-    var description: String?
-    var type: ReportType
-    var authorEmail: String?
-}

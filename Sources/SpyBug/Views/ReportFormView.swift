@@ -10,17 +10,18 @@ import SwiftUI
 @available(iOS 15.0, *)
 struct RequestView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var problemsUIImages = [UIImage]()
-    @State var isShowingXmark = false
+    @State private var bugUIImages = [UIImage]()
     @State private var text = ""
     @State private var buttonPressed: Bool = false
     @State private var showTextError: Bool = false
-    var title: LocalizedStringKey = ""
-    var buttonText: LocalizedStringKey = ""
-    var isOpenForReportAProblem = false
+    
     var apiKey: String
     var authorId: String?
-    var reportType: ReportType?
+    var type: ReportType
+    
+    private var isBugReport: Bool {
+        type == ReportType.bug
+    }
     
     var body: some View {
         VStack {
@@ -28,7 +29,7 @@ struct RequestView: View {
             
             ImagePicker()
             
-            Text(isOpenForReportAProblem ? "Add comment" : "Add description")
+            Text(isBugReport ? "Add comment" : "Add description")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(.black.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -38,20 +39,20 @@ struct RequestView: View {
             Spacer()
             
             Button {
-                if !isOpenForReportAProblem {
+                if !isBugReport {
                     buttonPressed.toggle()
                 }
                 Task {
                     do {
-                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: reportType!, authorEmail: authorId))
+                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: authorId))
                         
-                        if reportType == .bug {
-                            let imageDataArray = problemsUIImages.map { image in
+                        if isBugReport {
+                            let imageDataArray = bugUIImages.map { image in
                                 guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
                                 return imageData
                             }
                             
-                            try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+                            _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
                         }
                         
                         dismiss()
@@ -61,7 +62,7 @@ struct RequestView: View {
                 }
             } label: {
                 HStack {
-                    Text(buttonText)
+                    Text("Send request")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(.black.opacity(0.8))
                     
@@ -86,9 +87,6 @@ struct RequestView: View {
         .navigationBarHidden(true)
         .padding()
         .background(Color.white.opacity(0.1))
-        .onTapGesture {
-            isShowingXmark.toggle()
-        }
         .onChange(of: buttonPressed) { newValue in
             showTextError = true
         }
@@ -96,13 +94,13 @@ struct RequestView: View {
     
     @ViewBuilder
     private func ImagePicker() -> some View {
-        if isOpenForReportAProblem {
+        if isBugReport {
             VStack {
                 Text("Add screenshots")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.black.opacity(0.8))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                ReportProblemImagePicker(problemUIImages: $problemsUIImages, isShowingXmark: $isShowingXmark)
+                ReportProblemImagePicker(problemUIImages: $bugUIImages)
             }
         }
     }
@@ -119,10 +117,15 @@ struct RequestView: View {
                     .padding(.leading)
             }
             Spacer()
-            Text(title)
+            Text(type.title)
                 .font(.system(size: 24, weight: .bold))
             
             Spacer()
+            //Cheap way to center the title
+            Image(systemName: "chevron.left")
+                .font(.system(size: 28, weight: .regular))
+                .padding(.leading)
+                .hidden()
         }
         .frame(height: 36)
         .padding(.bottom)
@@ -157,7 +160,7 @@ struct RequestView: View {
                 }
             }
         }
-        .frame(height: isOpenForReportAProblem ? 50 : 200)
+        .frame(height: isBugReport ? 50 : 200)
         .frame(maxWidth: .infinity)
         .padding()
         .background(
@@ -170,10 +173,8 @@ struct RequestView: View {
 }
 
 @available(iOS 15.0, *)
-struct RequestView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            RequestView(isOpenForReportAProblem: true, apiKey: "")
-        }
+#Preview {
+    NavigationView {
+        RequestView(apiKey: "", type: .bug)
     }
 }

@@ -28,14 +28,23 @@ enum EnvConfig: String {
     }()
     
     static var baseURL: String {
-        return "localhost/api/v1"
+        switch current {
+        case .debug:
+            return "localhost/api/v1"
+        case .staging:
+            return "stag.spybug.io/api/v1"
+        case .production:
+            return "app.spybug.io/api/v1"
+        }
+        
     }
     
     static var apiScheme: String {
-        return "http"
-    }
-    
-    static var port: Int? {
-        return nil
+        switch current {
+        case .debug:
+            "http"
+        case .staging, .production:
+            "https"
+        }
     }
 }
