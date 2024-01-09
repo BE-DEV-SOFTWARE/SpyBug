@@ -10,11 +10,11 @@ import SnapPix
 
 struct ReportProblemImagePicker: View {
     @Binding var problemUIImages: [UIImage]
-    @Binding var isShowingXmark: Bool
     
     // TODO: Make it work even if the images are not all sent
     
     var body: some View {
+        //TODO: update SnapPix to have a "allowDeletion" option that should not be a binding instead of isShowingXmark
         SnapPix(
             uIImages: $problemUIImages,
             imageCount: 3,
@@ -25,7 +25,7 @@ struct ReportProblemImagePicker: View {
             imageHeight: 46,
             gridMinumum: 100,
             spacing: 16,
-            isShowingXMark: $isShowingXmark,
+            isShowingXMark: .constant(true),
             xMarkColor: .white,
             xMarkOffset: CGSize(width: 50, height: -70),
             xMarkFrame: CGSize(width: 30, height: 30),
@@ -37,11 +37,12 @@ struct ReportProblemImagePicker: View {
 }
 
 #if DEBUG
-struct ReportProblemImagePicker_Previews: PreviewProvider {
-    @State static var selectedImages: [UIImage] = [UIImage(imageLiteralResourceName: "AppIcon"), UIImage(imageLiteralResourceName: "AppIcon"), UIImage(imageLiteralResourceName: "AppIcon")]
-    static var previews: some View {
-        ReportProblemImagePicker(problemUIImages: $selectedImages, isShowingXmark: .constant(false))
-    }
-}
+//TODO: Fix this preview
+//struct ReportProblemImagePicker_Previews: PreviewProvider {
+//    @State static var selectedImages: [UIImage] = [UIImage(imageLiteralResourceName: "AppIcon"), UIImage(imageLiteralResourceName: "AppIcon"), UIImage(imageLiteralResourceName: "AppIcon")]
+//    static var previews: some View {
+//        ReportProblemImagePicker(problemUIImages: $selectedImages)
+//    }
+//}
 #endif
 

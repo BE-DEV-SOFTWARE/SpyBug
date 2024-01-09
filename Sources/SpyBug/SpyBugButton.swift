@@ -1,65 +1,52 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-
+// SpyBugButton
+//
+// Created and maintained by Bereyziat Development
+// Visit https://bereyziat.dev to contact us
+// Or https://spybug.io to get an API key and get started
+//
+//
 
 import SwiftUI
 import SwiftUIAdaptiveActionSheet
-import UIKit
+
 
 
 @available(iOS 15.0, *)
-public struct SpyBug: View {
+public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
     
-    var apiKey: String
-    var authorId: String?
-    var useCustomButtonStyle: Bool = false
+    private var apiKey: String
+    private var author: String?
+    
+    @ViewBuilder private var label: () -> Label
         
     public init(
         apiKey: String,
-        authorId: String?,
-        useCustomButtonStyle: Bool = false
+        author: String?,
+        @ViewBuilder label: @escaping () -> Label
     ) {
         self.apiKey = apiKey
-        self.authorId = authorId
-        self.useCustomButtonStyle = useCustomButtonStyle
+        self.author = author
+        self.label = label
     }
     
     public var body: some View {
-        VStack {
-            Button {
-                isShowingReportOptionsView = true
-            } label: {
-                HStack(spacing: 16) {
-                    Image(packageResource: "bug-regular", ofType: "png")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                        .foregroundStyle(.black.opacity(0.6))
-                    
-                    Text("Report a bug")
-                        .foregroundStyle(Color.black.opacity(0.8))
-                        .font(.system(size: 18))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .resizable()
-                        .frame(width: 12, height: 21)
-                        .foregroundStyle(.black.opacity(0.6))
-                        .padding(.trailing)
-                }
-            }
+        Button {
+            isShowingReportOptionsView = true
+        } label: {
+            label()
         }
-        .if(!useCustomButtonStyle) {
-            $0.buttonStyle(ReportBugButtonStyle.defaultStyle)
-        }
-        .onShake(perform: {
+        .onShake {
             isShowingReportOptionsView.toggle()
-        })
-        .adaptiveHeightSheet(isPresented: $isShowingReportOptionsView) {
+        }
+        .adaptiveHeightSheet(
+            isPresented: $isShowingReportOptionsView
+        ) {
             NavigationView {
-                ReportOptionsView(apiKey: apiKey)
+                ReportOptionsView(
+                    apiKey: apiKey,
+                    author: author
+                )
             }
             .frame(height: 450)
         }
@@ -68,7 +55,21 @@ public struct SpyBug: View {
 
 @available(iOS 15.0, *)
 #Preview {
-    SpyBug(apiKey: "", authorId: "")
+    VStack {
+        SpyBugButton(apiKey: "", author: "") {
+            Text("Click on me, I am custom 😉")
+        }
+        .buttonStyle(.borderedProminent)
+        
+        SpyBugButton(apiKey: "", author: "") {
+            Text("I can also look like this 😱")
+        }
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
+    }
 }
 
 extension View {

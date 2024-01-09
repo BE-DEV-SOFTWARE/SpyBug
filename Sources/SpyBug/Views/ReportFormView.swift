@@ -1,5 +1,5 @@
 //
-//  RequestView.swift
+//  ReportFormView.swift
 //
 //
 //  Created by Pavel Kurzo on 13/12/2023.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @available(iOS 15.0, *)
-struct RequestView: View {
+struct ReportFormView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
@@ -16,7 +16,7 @@ struct RequestView: View {
     @State private var showTextError: Bool = false
     
     var apiKey: String
-    var authorId: String?
+    var author: String?
     var type: ReportType
     
     private var isBugReport: Bool {
@@ -44,7 +44,7 @@ struct RequestView: View {
                 }
                 Task {
                     do {
-                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: authorId))
+                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
                         
                         if isBugReport {
                             let imageDataArray = bugUIImages.map { image in
@@ -175,6 +175,6 @@ struct RequestView: View {
 @available(iOS 15.0, *)
 #Preview {
     NavigationView {
-        RequestView(apiKey: "", type: .bug)
+        ReportFormView(apiKey: "", type: .bug)
     }
 }

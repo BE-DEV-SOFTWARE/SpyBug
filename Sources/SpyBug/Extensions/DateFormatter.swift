@@ -1,8 +1,8 @@
 //
-//  SwiftUIView.swift
-//  
+//  DateFormatter.swift
 //
-//  Created by Pavel Kurzo on 19/12/2023.
+//
+//  Created by Jonathan Bereyziat on 09/01/2024.
 //
 
 import Foundation

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//TODO: Make it work on all screens thanks to configuration
 //Do smt when the phone is shaking
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")

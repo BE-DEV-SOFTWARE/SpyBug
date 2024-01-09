@@ -26,10 +26,6 @@ let package = Package(
         .target(
             name: "SpyBug",
             dependencies: ["SnapPix", "SwiftUIAdaptiveActionSheet"],
-            resources: [.process("Resources")]),
-        .testTarget(
-            name: "SpyBugTests",
-            dependencies: ["SpyBug"]
-        )
+            resources: [.process("Resources")])
     ]
 )
