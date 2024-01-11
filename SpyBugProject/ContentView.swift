@@ -11,12 +11,7 @@ import SpyBug
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            
-            SpyBug(apiKey: "", authorId: "", useCustomButtonStyle: false)
+            SpyBugButton(apiKey: "", author: "") { }
         }
         .padding()
     }
