@@ -24,25 +24,32 @@ import SpyBug
 2. Pass apiKey, author 
 Author can be anything that let you identify the users of your project, a username, an email, an id. Author is an optional value so you can use SpyBug to make anonymous reports.
 
- SpyBugButton(apiKey: "123", author: "123")
+```swift
+ SpyBugButton(apiKey: "", author: "") { Your Label } 
+   ```
 
-## Example
-For a quick start, you can use the provided ready-to-use examples or provide your own label to the SpyBugButton to adapt it to your project's Design System:
-   ```swift
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            SpyBugButton(apiKey: "123", author: "John Doe") {
-                Text("Click me")
-            }
-            .buttonStyle(.bordered)
-        }
-        .padding()
+### Using Default Button Style
+
+```swift
+
+SpyBugButton(apiKey: "your_api_key", author: "your_author_name") {
+    Text("Click on me, I am custom 😉")
+}
+.buttonStyle(.borderedProminent)
+
 ```
+### Using Custom Button Style
+```swift
+        SpyBugButton(apiKey: "", author: "") {
+            Text("I can also look like this 😱")
+        }
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
 
-![Simulator Screen Recording - iPhone 15 Pro - 2023-10-17 at 15 16 34](https://github.com/Bereyziat-Development/SpyBug/assets/72884798/1c58903e-fc7a-45fe-b81b-ad62eaa511d3) 
-
-
+![Simulator Screen Recording - iPhone 15 Pro - 2023-10-17 at 15 16 34](https://github.com/Bereyziat-Development/SpyBug/assets/72884798/20dfed3a-914a-4782-82d9-05a10d86e3e3)
 
 ## License
 This library is available under the MIT license. See the [LICENSE](LICENSE) file for more information.
