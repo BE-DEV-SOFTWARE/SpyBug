@@ -22,12 +22,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A86522632B502B84004924D7 /* SpyBug */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpyBug; path = ../../../Downloads/SpyBug; sourceTree = "<group>"; };
 		A882F9602B29BD90000F5B6E /* SpyBugProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpyBugProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A882F9632B29BD90000F5B6E /* SpyBugProjectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpyBugProjectApp.swift; sourceTree = "<group>"; };
 		A882F9652B29BD90000F5B6E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A882F9672B29BD92000F5B6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A882F96A2B29BD92000F5B6E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A88F7DEA2B515D1900267DCA /* SpyBug */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpyBug; path = ../../../Downloads/SpyBug; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,8 +68,8 @@
 		A882F9622B29BD90000F5B6E /* SpyBugProject */ = {
 			isa = PBXGroup;
 			children = (
-				A86522632B502B84004924D7 /* SpyBug */,
 				A882F9632B29BD90000F5B6E /* SpyBugProjectApp.swift */,
+				A88F7DEA2B515D1900267DCA /* SpyBug */,
 				A882F9652B29BD90000F5B6E /* ContentView.swift */,
 				A882F9672B29BD92000F5B6E /* Assets.xcassets */,
 				A882F9692B29BD92000F5B6E /* Preview Content */,
