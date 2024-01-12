@@ -18,7 +18,7 @@ struct ReportProblemImagePicker: View {
         SnapPix(
             uIImages: $problemUIImages,
             imageCount: 3,
-            cameraImage: Image(packageResource: "cameraImage", ofType: "png"),
+            cameraImage: Image.camera,
             imageCornerRadius: 25,
             frameHeight: 150,
             frameWidth: 116,

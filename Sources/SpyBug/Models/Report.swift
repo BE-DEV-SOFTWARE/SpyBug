@@ -27,21 +27,17 @@ enum ReportType: String, Codable, CaseIterable {
         }
     }
     
-    private var resourceName: String {
+    var icon: Image {
         switch self {
         case .bug:
-            return "bug-regular"
+            return Image.bug
         case .improvement:
-            return "rocket-launch-regular"
+            return Image.rocket
         case .question:
-            return "circle-question-regular"
+            return Image.circleQuestion
         case .feature:
-            return "wand-magic-sparkles-regular"
+            return Image.wand
         }
-    }
-    
-    var icon: Image {
-        Image(packageResource: self.resourceName, ofType: "png")
     }
 }
 
