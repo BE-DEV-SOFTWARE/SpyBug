@@ -22,7 +22,7 @@ public struct SpyBugButton<Label: View>: View {
     public init(
         apiKey: String,
         author: String?,
-        @ViewBuilder label: @escaping () -> Label
+        @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
     ) {
         self.apiKey = apiKey
         self.author = author
@@ -60,6 +60,8 @@ public struct SpyBugButton<Label: View>: View {
         }
         .buttonStyle(.borderedProminent)
         
+        SpyBugButton(apiKey: "", author: "")
+        
         SpyBugButton(apiKey: "", author: "") {
             Text("I can also look like this 😱")
         }
@@ -69,4 +71,14 @@ public struct SpyBugButton<Label: View>: View {
             )
         )
     }
+}
+
+#Preview("Demo setup") {
+    SpyBugButton(apiKey: "YOUR_API_KEY", author: "jonathan@bereyziat.dev")
+//        .buttonStyle(.borderedProminent)
+//        .buttonStyle(
+//            ReportButtonStyle(
+//                icon: Image(systemName: "cursorarrow.rays")
+//            )
+//        )
 }
