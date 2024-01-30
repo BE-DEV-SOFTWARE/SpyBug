@@ -27,6 +27,9 @@ enum APIError: Error {
     case decodingError
 }
 
+fileprivate let apiScheme = "http"
+fileprivate let baseURL = "localhost/api/v1"
+
 struct ServiceHelper {
     var dateFormatter = DateFormatter()
     private func isResponseOK(statusCode:  Int) -> Bool {
@@ -35,8 +38,8 @@ struct ServiceHelper {
     
     private func createURL(endpoint: String, parameters: [URLQueryItem]? = []) -> URL? {
         var component = URLComponents()
-        component.scheme = EnvConfig.apiScheme
-        component.path = EnvConfig.baseURL + endpoint
+        component.scheme = apiScheme
+        component.path = baseURL + endpoint
         component.queryItems = parameters
         return component.url
     }
