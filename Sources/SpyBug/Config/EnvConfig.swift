@@ -32,9 +32,9 @@ enum EnvConfig: String {
         case .debug:
             return "localhost/api/v1"
         case .staging:
-            return "stag.spybug.io/api/v1"
+            return "localhost/api/v1"
         case .production:
-            return "app.spybug.io/api/v1"
+            return "localhost/api/v1"
         }
         
     }
