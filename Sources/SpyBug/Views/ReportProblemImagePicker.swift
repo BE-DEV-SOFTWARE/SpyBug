@@ -15,24 +15,9 @@ struct ReportProblemImagePicker: View {
     
     var body: some View {
         //TODO: update SnapPix to have a "allowDeletion" option that should not be a binding instead of isShowingXmark
-        SnapPix(
-            uIImages: $problemUIImages,
-            imageCount: 3,
-            cameraImage: Image.camera,
-            imageCornerRadius: 25,
-            frameHeight: 150,
-            frameWidth: 116,
-            imageHeight: 46,
-            gridMinumum: 100,
-            spacing: 16,
-            isShowingXMark: .constant(true),
-            xMarkColor: .white,
-            xMarkOffset: CGSize(width: 50, height: -70),
-            xMarkFrame: CGSize(width: 30, height: 30),
-            shadowColor: .black.opacity(0.1),
-            shadowRadius: 4,
-            shadowPosition: CGPoint(x: 0, y: 0)
-        )
+        SnapPix(uiImages: $problemUIImages, maxImageCount: 3, allowDeletion: true)
+            .padding(.bottom, 12)
+            .padding(.top, 6)
     }
 }
 
