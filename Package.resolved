@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Bereyziat-Development/SnapPix",
       "state" : {
-        "branch" : "main",
-        "revision" : "3f30ee0e264364d1d25c6e52043f2812dd77b00f"
+        "revision" : "b964d16081d4efb3701614aaa8a7f61dc78d80eb",
+        "version" : "0.1.0"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
       "state" : {
-        "branch" : "main",
-        "revision" : "85a7f919e96b2b2376e882e4f1ff46c535e35ba1"
+        "revision" : "85a7f919e96b2b2376e882e4f1ff46c535e35ba1",
+        "version" : "0.1.0"
       }
     }
   ],

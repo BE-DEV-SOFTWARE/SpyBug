@@ -12,7 +12,7 @@ struct SpyBugService {
         let parameters = [
             URLQueryItem(name: "key", value: apiKey),
         ]
-        let request = try ServiceHelper().createRequest(endpoint: "/reports", method: .post, parameters: parameters, payload: reportIn)
+        let request = try ServiceHelper().createRequest(endpoint: "/reports/", method: .post, parameters: parameters, payload: reportIn)
         return try await ServiceHelper().fetchJSON(request: request)
     }
 
@@ -22,7 +22,7 @@ struct SpyBugService {
         ]
         let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/pictures", parameters: parameters)
         for picture in pictures {
-            request.addDataField(named: "pictures", filename: "pet.jpeg", data: picture, mimeType: "image/jpeg")
+            request.addDataField(named: "pictures", filename: "report.jpeg", data: picture, mimeType: "image/jpeg")
         }
         return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }

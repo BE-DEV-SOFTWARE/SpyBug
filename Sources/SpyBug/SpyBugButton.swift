@@ -53,7 +53,7 @@ public struct SpyBugButton<Label: View>: View {
 }
 
 @available(iOS 15.0, *)
-#Preview {
+#Preview("Button styling demo") {
     VStack {
         SpyBugButton(apiKey: "", author: "") {
             Text("Click on me, I am custom 😉")
@@ -73,12 +73,12 @@ public struct SpyBugButton<Label: View>: View {
     }
 }
 
-#Preview("Demo setup") {
-    SpyBugButton(apiKey: "YOUR_API_KEY", author: "jonathan@bereyziat.dev")
-//        .buttonStyle(.borderedProminent)
-//        .buttonStyle(
-//            ReportButtonStyle(
-//                icon: Image(systemName: "cursorarrow.rays")
-//            )
-//        )
+#Preview("Demo") {
+    SpyBugButton(apiKey: "", author: "A nice person")
+       .buttonStyle(.borderedProminent)
+       .buttonStyle(
+           ReportButtonStyle(
+               icon: Image(systemName: "cursorarrow.rays")
+           )
+       )
 }

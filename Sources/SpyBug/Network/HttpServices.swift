@@ -27,8 +27,8 @@ enum APIError: Error {
     case decodingError
 }
 
-fileprivate let apiScheme = "http"
-fileprivate let baseURL = "localhost/api/v1"
+fileprivate let apiScheme = "https"
+fileprivate let baseURL = "service.spybug.io/api/v1"
 
 struct ServiceHelper {
     var dateFormatter = DateFormatter()
@@ -79,6 +79,7 @@ struct ServiceHelper {
         }
         if let payload {
             let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToSnakeCase
             encoder.dateEncodingStrategy = .formatted(DateFormatter.isoFull)
             request.httpBody = try encoder.encode(payload)
         }
@@ -106,6 +107,7 @@ struct ServiceHelper {
             DateFormatter.yearMonthDay,
             DateFormatter.iso8601
         ]
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
             return try decoder.decode(T.self, from: data)
         } catch {

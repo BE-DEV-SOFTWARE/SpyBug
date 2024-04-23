@@ -13,13 +13,13 @@ let package = Package(
         ),
     ],
     dependencies: [
-                .package(
-                    url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
-                    branch: "main"
-                ),
+        .package(
+            url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
+            exact: "0.1.0"
+        ),
         .package(
             url: "https://github.com/Bereyziat-Development/SnapPix",
-            branch: "main"
+            exact: "0.1.0"
         )
     ],
     targets: [
