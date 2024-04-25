@@ -19,7 +19,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/Bereyziat-Development/SnapPix",
-            exact: "0.1.0"
+            exact: "0.1.1"
         )
     ],
     targets: [

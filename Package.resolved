@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Bereyziat-Development/SnapPix",
       "state" : {
-        "revision" : "b964d16081d4efb3701614aaa8a7f61dc78d80eb",
-        "version" : "0.1.0"
+        "revision" : "0e3661437628ce7165de5efaccef7a28a7f10b23",
+        "version" : "0.1.1"
       }
     },
     {
