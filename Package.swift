@@ -14,8 +14,8 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
-            exact: "0.1.0"
+            url: "https://github.com/Bereyziat-Development/AdaptiveSheet",
+            exact: "0.2.0"
         ),
         .package(
             url: "https://github.com/Bereyziat-Development/SnapPix",
@@ -25,7 +25,7 @@ let package = Package(
     targets: [
         .target(
             name: "SpyBug",
-            dependencies: ["SnapPix", "SwiftUIAdaptiveActionSheet"],
+            dependencies: ["SnapPix", "AdaptiveSheet"],
             resources: [.process("Media.xcassets")]
         )
     ]

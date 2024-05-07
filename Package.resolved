@@ -1,21 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "adaptivesheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Bereyziat-Development/AdaptiveSheet",
+      "state" : {
+        "revision" : "d0b480c49c40af99aab05a157dbb936aa289253e",
+        "version" : "0.2.0"
+      }
+    },
+    {
       "identity" : "snappix",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Bereyziat-Development/SnapPix",
       "state" : {
         "revision" : "0e3661437628ce7165de5efaccef7a28a7f10b23",
         "version" : "0.1.1"
-      }
-    },
-    {
-      "identity" : "swiftuiadaptiveactionsheet",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Bereyziat-Development/SwiftUIAdaptiveActionSheet",
-      "state" : {
-        "revision" : "85a7f919e96b2b2376e882e4f1ff46c535e35ba1",
-        "version" : "0.1.0"
       }
     }
   ],
