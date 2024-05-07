@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import SwiftUIAdaptiveActionSheet
+import AdaptiveSheet
 
 
 @available(iOS 15.0, *)
@@ -38,7 +38,7 @@ public struct SpyBugButton<Label: View>: View {
         .onShake {
             isShowingReportOptionsView.toggle()
         }
-        .adaptiveHeightSheet(
+        .adaptiveSheet(
             isPresented: $isShowingReportOptionsView
         ) {
             NavigationView {
