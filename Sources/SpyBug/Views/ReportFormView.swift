@@ -9,6 +9,7 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 struct ReportFormView: View {
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
@@ -31,7 +32,7 @@ struct ReportFormView: View {
             
             Text(isBugReport ? "Add comment" : "Add description")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.black.opacity(0.8))
+                .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.6))
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             AddDescription()
@@ -64,22 +65,22 @@ struct ReportFormView: View {
                 HStack {
                     Text("Send request")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.black.opacity(0.8))
+                        .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.45))
                     
                     Spacer()
                     
                     Image(systemName: "paperplane")
                         .resizable()
                         .frame(width: 20, height: 20)
-                        .foregroundStyle(.black.opacity(0.8))
+                        .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.45))
                         .padding(.trailing)
                 }
                 .padding(.horizontal)
                 .frame(height: 69)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.white)
-                        .shadow(color: .gray.opacity(0.25), radius: 4)
+                        .fill(colorScheme == .light ? Color.white : .black.opacity(0.8))
+                        .shadow(color: colorScheme == .light ? .gray.opacity(0.25) : .white.opacity(0.45), radius: 4)
                 )
             }
         }
@@ -98,7 +99,7 @@ struct ReportFormView: View {
             VStack {
                 Text("Add screenshots")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.black.opacity(0.8))
+                    .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.6))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 ReportProblemImagePicker(problemUIImages: $bugUIImages)
             }
@@ -113,12 +114,13 @@ struct ReportFormView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(.black.opacity(0.6))
+                    .foregroundStyle(.primary.opacity(0.6))
+                    .foregroundStyle(colorScheme == .light ? .black.opacity(0.6) : .white.opacity(0.6))
                     .padding(.leading)
             }
             Spacer()
             Text(type.title)
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 24, weight: .bold))     .foregroundStyle(colorScheme == .light ? .black.opacity(0.6) : .white.opacity(0.6))
             
             Spacer()
             //Cheap way to center the title
@@ -140,7 +142,9 @@ struct ReportFormView: View {
                 VStack {
                     HStack {
                         Text(showTextError ? "This field should not be empty" : "Type here...")
-                            .foregroundStyle(showTextError ? .red : .black.opacity(0.7))
+                            .foregroundStyle(showTextError ? .red :
+                                                colorScheme == .light ? .black.opacity(0.7) : .white.opacity(0.45))
+                        
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
                         Spacer()
@@ -165,9 +169,9 @@ struct ReportFormView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
+                .fill(colorScheme == .light ? .white : .black.opacity(0.8))
                 .cornerRadius(25, corners: .allCorners)
-                .shadow(color: .black.opacity(0.15), radius: 5)
+                .shadow(color: colorScheme == .light ? .black.opacity(0.15) : .white.opacity(0.45), radius: 5)
         )
     }
 }

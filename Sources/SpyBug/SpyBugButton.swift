@@ -81,4 +81,15 @@ public struct SpyBugButton<Label: View>: View {
                icon: Image(systemName: "cursorarrow.rays")
            )
        )
+       .preferredColorScheme(.dark)
+}
+#Preview("DemoLight") {
+    SpyBugButton(apiKey: "", author: "A nice person")
+       .buttonStyle(.borderedProminent)
+       .buttonStyle(
+           ReportButtonStyle(
+               icon: Image(systemName: "cursorarrow.rays")
+           )
+       )
+       .preferredColorScheme(.light)
 }
