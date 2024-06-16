@@ -16,7 +16,8 @@ public struct SpyBugButton<Label: View>: View {
     private var author: String?
     @ObservedObject private var spyBug = SpyBug.shared
 
-    
+    @State private var isSheetPresented: Bool = false
+
     @ViewBuilder private var label: () -> Label
         
     public init(
@@ -31,14 +32,15 @@ public struct SpyBugButton<Label: View>: View {
     
     public var body: some View {
         Button {
-            spyBug.isPresented.toggle()
+            isSheetPresented = true
         } label: {
             label()
         }
         .adaptiveSheet(
-            isPresented: $spyBug.isPresented
-            , onDismiss: {
-                spyBug.isPresented = false
+            isPresented: $isSheetPresented,
+            onDismiss: {
+                isSheetPresented = false
+                spyBug.isPresented = false // Ensure global state is updated
             }) {
             NavigationView {
                 ReportOptionsView(
@@ -48,36 +50,12 @@ public struct SpyBugButton<Label: View>: View {
             }
             .frame(height: 450)
         }
-    }
-}
-
-@available(iOS 15.0, *)
-#Preview("Button styling demo") {
-    VStack {
-        SpyBugButton(apiKey: "", author: "") {
-            Text("Click on me, I am custom 😉")
+        .onAppear {
+            // Sync state if already presented via shake
+            isSheetPresented = spyBug.isPresented
         }
-        .buttonStyle(.borderedProminent)
-        
-        SpyBugButton(apiKey: "", author: "")
-        
-        SpyBugButton(apiKey: "", author: "") {
-            Text("I can also look like this 😱")
+        .onChange(of: spyBug.isPresented) { newValue in
+            isSheetPresented = newValue
         }
-        .buttonStyle(
-            ReportButtonStyle(
-                icon: Image(systemName: "cursorarrow.rays")
-            )
-        )
     }
-}
-
-#Preview("Demo") {
-    SpyBugButton(apiKey: "", author: "A nice person")
-       .buttonStyle(.borderedProminent)
-       .buttonStyle(
-           ReportButtonStyle(
-               icon: Image(systemName: "cursorarrow.rays")
-           )
-       )
 }
