@@ -31,13 +31,15 @@ public struct SpyBugButton<Label: View>: View {
     
     public var body: some View {
         Button {
-            SpyBug.shared.isPresented.toggle()
+            spyBug.isPresented.toggle()
         } label: {
             label()
         }
         .adaptiveSheet(
             isPresented: $spyBug.isPresented
-        ) {
+            , onDismiss: {
+                spyBug.isPresented = false
+            }) {
             NavigationView {
                 ReportOptionsView(
                     apiKey: apiKey,
