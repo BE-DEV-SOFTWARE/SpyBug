@@ -12,10 +12,10 @@ import AdaptiveSheet
 
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
-    @State private var isShowingReportOptionsView = false
-    
     private var apiKey: String
     private var author: String?
+    @ObservedObject private var spyBug = SpyBug.shared
+
     
     @ViewBuilder private var label: () -> Label
         
@@ -31,15 +31,12 @@ public struct SpyBugButton<Label: View>: View {
     
     public var body: some View {
         Button {
-            isShowingReportOptionsView = true
+            SpyBug.shared.isPresented.toggle()
         } label: {
             label()
         }
-        .onShake {
-            isShowingReportOptionsView.toggle()
-        }
         .adaptiveSheet(
-            isPresented: $isShowingReportOptionsView
+            isPresented: $spyBug.isPresented
         ) {
             NavigationView {
                 ReportOptionsView(
