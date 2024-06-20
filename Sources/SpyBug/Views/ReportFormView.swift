@@ -32,7 +32,7 @@ struct ReportFormView: View {
             
             Text(isBugReport ? "Add comment" : "Add description")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.6))
+                .foregroundStyle(Color.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             AddDescription()
@@ -63,31 +63,32 @@ struct ReportFormView: View {
                 }
             } label: {
                 HStack {
+                    Spacer()
                     Text("Send request")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.45))
+                        .foregroundStyle(Color.white)
                     
                     Spacer()
                     
                     Image(systemName: "paperplane")
                         .resizable()
                         .frame(width: 20, height: 20)
-                        .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.45))
+                        .foregroundStyle(.white)
                         .padding(.trailing)
                 }
                 .padding(.horizontal)
-                .frame(height: 69)
+                .frame(height: 60)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(colorScheme == .light ? Color.white : .black.opacity(0.8))
-                        .shadow(color: colorScheme == .light ? .gray.opacity(0.25) : .white.opacity(0.45), radius: 4)
+                    RoundedRectangle(cornerRadius: 35)
+                        .fill(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
+                        .shadow(color: Color.shadowColor, radius: 4)
                 )
             }
         }
         .frame(height: 450)
         .navigationBarHidden(true)
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.backgroundColor)
         .onChange(of: buttonPressed) { newValue in
             showTextError = true
         }
@@ -99,7 +100,7 @@ struct ReportFormView: View {
             VStack {
                 Text("Add screenshots")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(colorScheme == .light ? .black.opacity(0.8) : .white.opacity(0.6))
+                    .foregroundStyle(Color.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 ReportProblemImagePicker(problemUIImages: $bugUIImages)
             }
@@ -114,13 +115,12 @@ struct ReportFormView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(.primary.opacity(0.6))
-                    .foregroundStyle(colorScheme == .light ? .black.opacity(0.6) : .white.opacity(0.6))
+                    .foregroundStyle(Color.secondary)
                     .padding(.leading)
             }
             Spacer()
             Text(type.title)
-                .font(.system(size: 24, weight: .bold))     .foregroundStyle(colorScheme == .light ? .black.opacity(0.6) : .white.opacity(0.6))
+                .font(.system(size: 24, weight: .bold))     .foregroundStyle(Color.titleColor)
             
             Spacer()
             //Cheap way to center the title
@@ -143,7 +143,7 @@ struct ReportFormView: View {
                     HStack {
                         Text(showTextError ? "This field should not be empty" : "Type here...")
                             .foregroundStyle(showTextError ? .red :
-                                                colorScheme == .light ? .black.opacity(0.7) : .white.opacity(0.45))
+                                    .secondary)
                         
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
@@ -169,9 +169,9 @@ struct ReportFormView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(colorScheme == .light ? .white : .black.opacity(0.8))
+                .fill(Color.buttonColor)
                 .cornerRadius(25, corners: .allCorners)
-                .shadow(color: colorScheme == .light ? .black.opacity(0.15) : .white.opacity(0.45), radius: 5)
+                .shadow(color: .shadowColor, radius: 5)
         )
     }
 }

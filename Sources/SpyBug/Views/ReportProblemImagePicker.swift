@@ -19,16 +19,15 @@ struct ReportProblemImagePicker: View {
         SnapPix(uiImages: $problemUIImages, maxImageCount: 3, allowDeletion: true, addImageLabel: {
             
                 RoundedRectangle(cornerRadius: 20)
-                .fill(colorScheme == .light ? .white : .black.opacity(0.8))
+                .fill(Color.buttonColor)
                     .frame(width: 100, height: 100)
-                    .shadow(color: .gray.opacity(0.4), radius: 8, x: 4, y: 4)
+                    .shadow(color: .shadowColor, radius: 8, x: 4, y: 4)
                     .overlay(
                         Image(systemName: "camera")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 50, height: 50)
-                            .foregroundStyle(colorScheme == .light ?
-                                             Color.black.opacity(0.6) : .white.opacity(0.45))
+                            .foregroundStyle(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
                     )
             
         })

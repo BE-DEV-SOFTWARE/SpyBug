@@ -19,7 +19,7 @@ struct ReportOptionsView: View {
         VStack(spacing: 16) {
             Text("Need help?")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(colorScheme == .light ? .white : .white.opacity(0.6))
+                .foregroundStyle(Color.titleColor)
                 .padding(.vertical, 10)
             ForEach(ReportType.allCases, id: \.self) { type in
                 ZStack {
@@ -33,7 +33,7 @@ struct ReportOptionsView: View {
             }
             Spacer()
         }
-        .background(colorScheme == .light ? .white : .gray.opacity(0.15))
+        .background(Color.backgroundColor)
         
     }
     
@@ -52,6 +52,7 @@ struct ReportOptionsView_Previews: PreviewProvider {
         NavigationView {
             ReportOptionsView(apiKey: "", author: "John Doe")
         }
+        .preferredColorScheme(.dark)
     }
 }
 
