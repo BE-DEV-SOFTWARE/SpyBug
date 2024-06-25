@@ -9,6 +9,8 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 struct ReportOptionsView: View {
+    @Environment(\.colorScheme) var colorScheme
+
     var apiKey: String
     var author: String?
     @State private var selectedType: ReportType?
@@ -17,6 +19,7 @@ struct ReportOptionsView: View {
         VStack(spacing: 16) {
             Text("Need help?")
                 .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Color.titleColor)
                 .padding(.vertical, 10)
             ForEach(ReportType.allCases, id: \.self) { type in
                 ZStack {
@@ -30,6 +33,8 @@ struct ReportOptionsView: View {
             }
             Spacer()
         }
+        .background(Color.backgroundColor)
+        
     }
     
     @ViewBuilder
@@ -47,6 +52,7 @@ struct ReportOptionsView_Previews: PreviewProvider {
         NavigationView {
             ReportOptionsView(apiKey: "", author: "John Doe")
         }
+        .preferredColorScheme(.dark)
     }
 }
 

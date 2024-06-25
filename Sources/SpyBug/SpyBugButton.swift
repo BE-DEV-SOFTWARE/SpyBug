@@ -13,7 +13,8 @@ import AdaptiveSheet
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
-    
+    @Environment(\.colorScheme) var colorScheme
+
     private var apiKey: String
     private var author: String?
     
@@ -39,7 +40,7 @@ public struct SpyBugButton<Label: View>: View {
             isShowingReportOptionsView.toggle()
         }
         .adaptiveSheet(
-            isPresented: $isShowingReportOptionsView
+            isPresented: $isShowingReportOptionsView, sheetBackground: Color.backgroundColor
         ) {
             NavigationView {
                 ReportOptionsView(
@@ -81,4 +82,15 @@ public struct SpyBugButton<Label: View>: View {
                icon: Image(systemName: "cursorarrow.rays")
            )
        )
+       .preferredColorScheme(.dark)
+}
+#Preview("DemoLight") {
+    SpyBugButton(apiKey: "", author: "A nice person")
+       .buttonStyle(.borderedProminent)
+       .buttonStyle(
+           ReportButtonStyle(
+               icon: Image(systemName: "cursorarrow.rays")
+           )
+       )
+       .preferredColorScheme(.light)
 }
