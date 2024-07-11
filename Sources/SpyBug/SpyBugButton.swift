@@ -48,7 +48,7 @@ public struct SpyBugButton<Label: View>: View {
                     author: author
                 )
             }
-            .frame(height: 450)
+            .frame(height: 500)
         }
     }
 }
