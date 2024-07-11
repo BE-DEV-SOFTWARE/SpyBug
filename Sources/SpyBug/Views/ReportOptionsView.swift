@@ -9,8 +9,8 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 struct ReportOptionsView: View {
-    @Environment(\.colorScheme) var colorScheme
-
+    @Environment(\.openURL) private var openURL
+    
     var apiKey: String
     var author: String?
     @State private var selectedType: ReportType?
@@ -32,9 +32,43 @@ struct ReportOptionsView: View {
                 }
             }
             Spacer()
+            
+            PoweredBySpybug()
         }
         .background(Color.backgroundColor)
         
+    }
+    
+    @ViewBuilder
+    private func PoweredBySpybug() -> some View {
+        let urlString = "https://www.spybug.io/"
+        let textColor = Color(.poweredBy)
+        
+        HStack{
+            VStack(alignment: .leading, spacing: 5){
+                HStack{
+                    Text("Powered by")     
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(textColor)
+                    Button{
+                        guard let url = URL(string: urlString) else { return }
+                        openURL(url)
+                    } label: {
+                        Text("SpyBug")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
+                    }
+                    
+                }
+                Text("All right reserved 2024")
+                    .font(.system(size: 12))
+                    .foregroundStyle(textColor)
+            }
+            Spacer()
+            Image(.spyBugLogo)
+                .aspectRatio(contentMode: .fit)
+        }
+        .padding(.horizontal, 20)
     }
     
     @ViewBuilder
