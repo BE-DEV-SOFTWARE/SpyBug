@@ -69,6 +69,7 @@ struct ReportOptionsView: View {
                             .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
                     }
+                    .buttonStyle(.plain)
                     
                 }
                 Text("All right reserved 2024")
@@ -87,8 +88,8 @@ struct ReportOptionsView: View {
         Button(type.title) {
             withAnimation {
                 showReportForm = true
+                selectedType = type
             }
-            selectedType = type
         }
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }

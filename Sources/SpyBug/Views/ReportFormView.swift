@@ -90,6 +90,7 @@ struct ReportFormView: View {
                             .shadow(color: Color.shadowColor, radius: 4)
                     )
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding()
