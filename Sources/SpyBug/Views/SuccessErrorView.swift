@@ -65,7 +65,6 @@ struct SuccessErrorView: View {
                 .font(.system(size: 18, weight: .regular))
                 .foregroundStyle(Color(.graySuccess))
                 .lineSpacing(5)
-            
             Spacer()
             Button {
                 dismiss()

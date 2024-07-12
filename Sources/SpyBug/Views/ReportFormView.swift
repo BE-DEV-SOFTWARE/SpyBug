@@ -45,7 +45,6 @@ struct ReportFormView: View {
                             await sendRequest()
                         }
                     }
-                    .padding()
                     .background(Color(.background))
             } else {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
