@@ -15,9 +15,9 @@ enum ViewState {
         
         switch self {
         case .error:
-            Image(.error)
+            Image(.errorEmoji)
         case .success:
-            Image(.success)
+            Image(.greenRocket)
         }
     }
     var title: LocalizedStringKey {
@@ -49,11 +49,14 @@ enum ViewState {
 
 struct SuccessErrorView: View {
     @Environment(\.dismiss) private var dismiss
-    var state: ViewState = .error
+    var state: ViewState
+    
     var body: some View {
-        
         VStack(spacing: 20){
             state.icon
+                .resizable()
+                .scaledToFit()
+                .frame(height: 120)
                 .padding(.top, 80)
             Text(state.title)
                 .font(.system(size: 32, weight: .bold))
@@ -67,27 +70,29 @@ struct SuccessErrorView: View {
             Button {
                 dismiss()
             }
-        label: {
-            HStack{
-                Spacer()
-                Text(state.buttonText)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundStyle(Color.primary)
-                Spacer()
+            label: {
+                HStack{
+                    Spacer()
+                    Text(state.buttonText)
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundStyle(Color.primary)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .frame(height: 60)
+                .background(
+                    RoundedRectangle(cornerRadius: 35)
+                        .fill(Color(.doveGray))
+                )
             }
-            .padding(.horizontal)
-            .frame(height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 35)
-                    .fill(Color(.doveGray))
-            )
-        }
-            
-            
         }
     }
 }
 
-#Preview {
-    SuccessErrorView()
+#Preview("Success") {
+    SuccessErrorView(state: .success)
+}
+
+#Preview("Fail") {
+    SuccessErrorView(state: .error)
 }

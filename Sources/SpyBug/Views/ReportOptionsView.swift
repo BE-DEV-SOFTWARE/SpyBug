@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+
 struct ReportOptionsView: View {
     @Environment(\.openURL) private var openURL
     var apiKey: String
@@ -21,7 +21,7 @@ struct ReportOptionsView: View {
                 VStack(spacing: 16) {
                     Text("Need help?")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(Color.titleColor)
+                        .foregroundStyle(Color(.title))
                         .padding(.vertical, 10)
                     
                     ForEach(ReportType.allCases, id: \.self) { type in
@@ -31,7 +31,7 @@ struct ReportOptionsView: View {
                     Spacer()
                     PoweredBySpybug()
                 }
-                .background(Color.backgroundColor)
+                .padding(.horizontal)
                 .transition(.move(edge: .leading))
             } else {
                 if let selectedType {
@@ -46,7 +46,6 @@ struct ReportOptionsView: View {
             }
             
         }
-        
     }
     
     
@@ -67,7 +66,7 @@ struct ReportOptionsView: View {
                     } label: {
                         Text("SpyBug")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
+                            .foregroundStyle(spyBugGradient)
                     }
                     .buttonStyle(.plain)
                     
@@ -78,9 +77,10 @@ struct ReportOptionsView: View {
             }
             Spacer()
             Image(.spyBugLogo)
-                .aspectRatio(contentMode: .fit)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 80)
         }
-        .padding(.horizontal, 20)
     }
     
     @ViewBuilder
@@ -95,11 +95,12 @@ struct ReportOptionsView: View {
     }
 }
 
-@available(iOS 15.0, *)
+
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
         ReportOptionsView(apiKey: "", author: "John Doe")
             .preferredColorScheme(.dark)
+            .background(Color(.background))
     }
 }
 

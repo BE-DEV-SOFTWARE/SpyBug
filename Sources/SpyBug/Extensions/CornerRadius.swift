@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
 struct RoundedCorner: Shape {
     var radius: CGFloat = .infinity
     var corners: UIRectCorner = .allCorners
@@ -18,7 +17,6 @@ struct RoundedCorner: Shape {
     }
 }
 
-@available(iOS 15.0, *)
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner, borderColor: Color? = nil, borderWidth: CGFloat? = nil) -> some View {
         overlay(

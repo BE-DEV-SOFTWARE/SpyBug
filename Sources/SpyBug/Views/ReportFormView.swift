@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+
 struct ReportFormView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
@@ -46,14 +46,14 @@ struct ReportFormView: View {
                         }
                     }
                     .padding()
-                    .background(Color.backgroundColor)
+                    .background(Color(.background))
             } else {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
                 Text(isBugReport ? "Add comment" : "Add description")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 AddDescription()
@@ -86,15 +86,15 @@ struct ReportFormView: View {
                     .frame(height: 60)
                     .background(
                         RoundedRectangle(cornerRadius: 35)
-                            .fill(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
-                            .shadow(color: Color.shadowColor, radius: 4)
+                            .fill(spyBugGradient)
+                            .shadow(color: Color(.shadow), radius: 4)
                     )
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding()
-        .background(Color.backgroundColor)
+        .padding(.horizontal)
+        .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
                 Task {
@@ -147,7 +147,7 @@ struct ReportFormView: View {
             VStack {
                 Text("Add screenshots")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 ReportProblemImagePicker(problemUIImages: $bugUIImages)
             }
@@ -164,13 +164,13 @@ struct ReportFormView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color(.secondary))
                     .padding(.leading)
             }
             Spacer()
             Text(type.title)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(Color.titleColor)
+                .foregroundStyle(Color(.title))
             
             Spacer()
             // Cheap way to center the title
@@ -184,7 +184,6 @@ struct ReportFormView: View {
         .buttonStyle(.plain)
     }
     
-    @available(iOS 15.0, *)
     @ViewBuilder
     private func AddDescription() -> some View {
         ZStack {
@@ -192,7 +191,7 @@ struct ReportFormView: View {
                 VStack {
                     HStack {
                         Text(showTextError ? "This field should not be empty" : "Type here...")
-                            .foregroundStyle(showTextError ? .red : .secondary)
+                            .foregroundStyle(showTextError ? .red : Color(.secondary))
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
                         Spacer()
@@ -217,15 +216,14 @@ struct ReportFormView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.buttonColor)
+                .fill(Color(.button))
                 .cornerRadius(25, corners: .allCorners)
-                .shadow(color: .shadowColor, radius: 5)
+                .shadow(color: Color(.shadow), radius: 5)
         )
     }
 }
 
 
-@available(iOS 15.0, *)
 #Preview {
     ReportFormView(showReportForm: .constant(false), apiKey: "", type: .bug)
 }
