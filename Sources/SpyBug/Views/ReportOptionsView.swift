@@ -10,34 +10,45 @@ import SwiftUI
 @available(iOS 15.0, *)
 struct ReportOptionsView: View {
     @Environment(\.openURL) private var openURL
-    
     var apiKey: String
     var author: String?
     @State private var selectedType: ReportType?
+    @State private var showReportForm = false
     
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Need help?")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(Color.titleColor)
-                .padding(.vertical, 10)
-            ForEach(ReportType.allCases, id: \.self) { type in
-                ZStack {
-                    NavigationLink(
-                        destination: ReportFormView(apiKey: apiKey, author: author, type: type),
-                        tag: type,
-                        selection: $selectedType
-                    ) { EmptyView() }.hidden()
-                    ReportOptionRow(type: type)
+        VStack {
+            if !showReportForm {
+                VStack(spacing: 16) {
+                    Text("Need help?")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(Color.titleColor)
+                        .padding(.vertical, 10)
+                    
+                    ForEach(ReportType.allCases, id: \.self) { type in
+                        ReportOptionRow(type: type)
+                        
+                    }
+                    Spacer()
+                    PoweredBySpybug()
+                }
+                .background(Color.backgroundColor)
+                .transition(.move(edge: .leading))
+            } else {
+                if let selectedType {
+                    ReportFormView(
+                        showReportForm: $showReportForm,
+                        apiKey: apiKey,
+                        author: author,
+                        type: selectedType
+                    )
+                    .transition(.move(edge: .trailing))
                 }
             }
-            Spacer()
             
-            PoweredBySpybug()
         }
-        .background(Color.backgroundColor)
         
     }
+    
     
     @ViewBuilder
     private func PoweredBySpybug() -> some View {
@@ -47,7 +58,7 @@ struct ReportOptionsView: View {
         HStack{
             VStack(alignment: .leading, spacing: 5){
                 HStack{
-                    Text("Powered by")     
+                    Text("Powered by")
                         .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(textColor)
                     Button{
@@ -74,6 +85,9 @@ struct ReportOptionsView: View {
     @ViewBuilder
     private func ReportOptionRow(type: ReportType) -> some View {
         Button(type.title) {
+            withAnimation {
+                showReportForm = true
+            }
             selectedType = type
         }
         .buttonStyle(ReportButtonStyle(icon: type.icon))
@@ -83,10 +97,8 @@ struct ReportOptionsView: View {
 @available(iOS 15.0, *)
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            ReportOptionsView(apiKey: "", author: "John Doe")
-        }
-        .preferredColorScheme(.dark)
+        ReportOptionsView(apiKey: "", author: "John Doe")
+            .preferredColorScheme(.dark)
     }
 }
 

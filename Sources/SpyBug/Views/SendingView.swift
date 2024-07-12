@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SendingView: View {
+    
     var body: some View {
-        
         VStack(spacing: 70){
             ProgressView()
                 .tint(Color(.yellowOrange))

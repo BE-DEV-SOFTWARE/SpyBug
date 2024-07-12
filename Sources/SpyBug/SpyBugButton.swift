@@ -42,12 +42,10 @@ public struct SpyBugButton<Label: View>: View {
         .adaptiveSheet(
             isPresented: $isShowingReportOptionsView, sheetBackground: Color.backgroundColor
         ) {
-            NavigationView {
                 ReportOptionsView(
                     apiKey: apiKey,
                     author: author
                 )
-            }
             .frame(height: 500)
         }
     }

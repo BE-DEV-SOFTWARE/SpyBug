@@ -16,7 +16,9 @@ struct ReportFormView: View {
     @State private var buttonPressed: Bool = false
     @State private var showTextError: Bool = false
     @State private var isLoading = false
-    
+    @State private var showSuccessErrorView: ViewState?
+    @State private var timer: Timer?
+    @Binding var showReportForm: Bool
     var apiKey: String
     var author: String?
     var type: ReportType
@@ -27,18 +29,26 @@ struct ReportFormView: View {
     
     var body: some View {
         VStack {
-            
-            if isLoading{
+            if let showSuccessErrorView = showSuccessErrorView {
+                SuccessErrorView(state: showSuccessErrorView)
+                    .onTapGesture {
+                        withAnimation {
+                            self.showSuccessErrorView = nil
+                            self.showReportForm = false
+                        }
+                    }
+            } else if isLoading {
                 SendingView()
-                    .frame(height: 500)
-                    .navigationBarHidden(true)
+                    .onAppear {
+                        startTimer()
+                        Task {
+                            await sendRequest()
+                        }
+                    }
                     .padding()
                     .background(Color.backgroundColor)
-                    
-                    
             } else {
-                TitleAndBackButton()
-                
+                TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
                 Text(isBugReport ? "Add comment" : "Add description")
@@ -51,28 +61,11 @@ struct ReportFormView: View {
                 Spacer()
                 
                 Button {
-                    if !isBugReport {
+                    if text.isEmpty {
+                        showTextError = true
+                    } else {
+                        isLoading = true
                         buttonPressed.toggle()
-                    }
-                    Task {
-                        do {
-                            isLoading = true
-                            let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
-                            
-                            if isBugReport {
-                                let imageDataArray = bugUIImages.map { image in
-                                    guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
-                                    return imageData
-                                }
-                                
-                                _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
-                            }
-                                                      try await Task.sleep(nanoseconds: 2_000_000_000) 
-                                                      isLoading = false
-                                                      dismiss()
-                        } catch {
-                            print(error)
-                        }
                     }
                 } label: {
                     HStack {
@@ -97,15 +90,55 @@ struct ReportFormView: View {
                             .shadow(color: Color.shadowColor, radius: 4)
                     )
                 }
-            }}
-                .frame(height: 500)
-                .navigationBarHidden(true)
-                .padding()
-                .background(Color.backgroundColor)
-                .onChange(of: buttonPressed) { newValue in
-                    showTextError = true
+            }
+        }
+        .padding()
+        .background(Color.backgroundColor)
+        .onChange(of: buttonPressed) { newValue in
+            if newValue && !text.isEmpty {
+                Task {
+                    await sendRequest()
+                }
+            }
+        }
+    }
+    
+    private func sendRequest() async {
+        do {
+            let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            
+            if isBugReport {
+                let imageDataArray = bugUIImages.map { image in
+                    guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
+                    return imageData
+                }
                 
-        }}
+                _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+            }
+            
+            timer?.invalidate()
+            withAnimation {
+                showSuccessErrorView = .success
+                isLoading = false
+            }
+        } catch {
+            timer?.invalidate()
+            withAnimation {
+                showSuccessErrorView = .error
+                isLoading = false
+            }
+        }
+    }
+    
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
+            withAnimation {
+                showSuccessErrorView = .error
+                isLoading = false
+            }
+        }
+    }
     
     @ViewBuilder
     private func ImagePicker() -> some View {
@@ -121,10 +154,12 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
-    private func TitleAndBackButton() -> some View {
+    private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
         HStack(alignment: .center) {
             Button {
-                dismiss()
+                withAnimation {
+                    showReportForm.wrappedValue = false
+                }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .regular))
@@ -133,10 +168,11 @@ struct ReportFormView: View {
             }
             Spacer()
             Text(type.title)
-                .font(.system(size: 24, weight: .bold))     .foregroundStyle(Color.titleColor)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Color.titleColor)
             
             Spacer()
-            //Cheap way to center the title
+            // Cheap way to center the title
             Image(systemName: "chevron.left")
                 .font(.system(size: 28, weight: .regular))
                 .padding(.leading)
@@ -155,9 +191,7 @@ struct ReportFormView: View {
                 VStack {
                     HStack {
                         Text(showTextError ? "This field should not be empty" : "Type here...")
-                            .foregroundStyle(showTextError ? .red :
-                                    .secondary)
-                        
+                            .foregroundStyle(showTextError ? .red : .secondary)
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
                         Spacer()
@@ -189,9 +223,8 @@ struct ReportFormView: View {
     }
 }
 
+
 @available(iOS 15.0, *)
 #Preview {
-    NavigationView {
-        ReportFormView(apiKey: "", type: .bug)
-    }
+    ReportFormView(showReportForm: .constant(false), apiKey: "", type: .bug)
 }

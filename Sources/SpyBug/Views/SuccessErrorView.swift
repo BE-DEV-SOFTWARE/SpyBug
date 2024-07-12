@@ -8,8 +8,8 @@
 import SwiftUI
 
 enum ViewState {
-case error
-case success
+    case error
+    case success
     
     var icon: Image{
         
@@ -51,7 +51,7 @@ struct SuccessErrorView: View {
     @Environment(\.dismiss) private var dismiss
     var state: ViewState = .error
     var body: some View {
-       
+        
         VStack(spacing: 20){
             state.icon
                 .padding(.top, 80)
