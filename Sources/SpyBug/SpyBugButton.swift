@@ -14,12 +14,12 @@ import AdaptiveSheet
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
     @Environment(\.colorScheme) var colorScheme
-
+    
     private var apiKey: String
     private var author: String?
     
     @ViewBuilder private var label: () -> Label
-        
+    
     public init(
         apiKey: String,
         author: String?,
@@ -40,20 +40,18 @@ public struct SpyBugButton<Label: View>: View {
             isShowingReportOptionsView.toggle()
         }
         .adaptiveSheet(
-            isPresented: $isShowingReportOptionsView, sheetBackground: Color.backgroundColor
+            isPresented: $isShowingReportOptionsView,
+            sheetBackground: Color(.background)
         ) {
-            NavigationView {
-                ReportOptionsView(
-                    apiKey: apiKey,
-                    author: author
-                )
-            }
-            .frame(height: 450)
+            ReportOptionsView(
+                apiKey: apiKey,
+                author: author
+            )
+            .frame(height: 500)
         }
     }
 }
 
-@available(iOS 15.0, *)
 #Preview("Button styling demo") {
     VStack {
         SpyBugButton(apiKey: "", author: "") {
@@ -76,21 +74,21 @@ public struct SpyBugButton<Label: View>: View {
 
 #Preview("Demo") {
     SpyBugButton(apiKey: "", author: "A nice person")
-       .buttonStyle(.borderedProminent)
-       .buttonStyle(
-           ReportButtonStyle(
-               icon: Image(systemName: "cursorarrow.rays")
-           )
-       )
-       .preferredColorScheme(.dark)
+        .buttonStyle(.borderedProminent)
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
+        .preferredColorScheme(.dark)
 }
 #Preview("DemoLight") {
     SpyBugButton(apiKey: "", author: "A nice person")
-       .buttonStyle(.borderedProminent)
-       .buttonStyle(
-           ReportButtonStyle(
-               icon: Image(systemName: "cursorarrow.rays")
-           )
-       )
-       .preferredColorScheme(.light)
+        .buttonStyle(.borderedProminent)
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
+        .preferredColorScheme(.light)
 }

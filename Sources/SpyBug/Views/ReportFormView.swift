@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+
 struct ReportFormView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
@@ -15,7 +15,10 @@ struct ReportFormView: View {
     @State private var text = ""
     @State private var buttonPressed: Bool = false
     @State private var showTextError: Bool = false
-    
+    @State private var isLoading = false
+    @State private var showSuccessErrorView: ViewState?
+    @State private var timer: Timer?
+    @Binding var showReportForm: Bool
     var apiKey: String
     var author: String?
     var type: ReportType
@@ -26,71 +29,114 @@ struct ReportFormView: View {
     
     var body: some View {
         VStack {
-            TitleAndBackButton()
-            
-            ImagePicker()
-            
-            Text(isBugReport ? "Add comment" : "Add description")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(Color.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            AddDescription()
-            
-            Spacer()
-            
-            Button {
-                if !isBugReport {
-                    buttonPressed.toggle()
-                }
-                Task {
-                    do {
-                        let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
-                        
-                        if isBugReport {
-                            let imageDataArray = bugUIImages.map { image in
-                                guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
-                                return imageData
-                            }
-                            
-                            _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+            if let showSuccessErrorView = showSuccessErrorView {
+                SuccessErrorView(state: showSuccessErrorView)
+                    .onTapGesture {
+                        withAnimation {
+                            self.showSuccessErrorView = nil
+                            self.showReportForm = false
                         }
-                        
-                        dismiss()
-                    } catch {
-                        print(error)
                     }
+            } else if isLoading {
+                SendingView()
+                    .onAppear {
+                        startTimer()
+                        Task {
+                            await sendRequest()
+                        }
+                    }
+                    .background(Color(.background))
+            } else {
+                TitleAndBackButton(showReportForm: $showReportForm, type: type)
+                ImagePicker()
+                
+                Text(isBugReport ? "Add comment" : "Add description")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(.secondary))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                AddDescription()
+                
+                Spacer()
+                
+                Button {
+                    if text.isEmpty {
+                        showTextError = true
+                    } else {
+                        isLoading = true
+                        buttonPressed.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Send request")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(Color.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "paperplane")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.white)
+                            .padding(.trailing)
+                    }
+                    .padding(.horizontal)
+                    .frame(height: 60)
+                    .background(
+                        RoundedRectangle(cornerRadius: 35)
+                            .fill(spyBugGradient)
+                            .shadow(color: Color(.shadow), radius: 4)
+                    )
                 }
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Send request")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(Color.white)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "paperplane")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.white)
-                        .padding(.trailing)
-                }
-                .padding(.horizontal)
-                .frame(height: 60)
-                .background(
-                    RoundedRectangle(cornerRadius: 35)
-                        .fill(.linearGradient(colors: [.linearOrange, .linearRed], startPoint: .leading, endPoint: .trailing))
-                        .shadow(color: Color.shadowColor, radius: 4)
-                )
+                .buttonStyle(.plain)
             }
         }
-        .frame(height: 450)
-        .navigationBarHidden(true)
-        .padding()
-        .background(Color.backgroundColor)
+        .padding(.horizontal)
+        .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
-            showTextError = true
+            if newValue && !text.isEmpty {
+                Task {
+                    await sendRequest()
+                }
+            }
+        }
+    }
+    
+    private func sendRequest() async {
+        do {
+            let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            
+            if isBugReport {
+                let imageDataArray = bugUIImages.map { image in
+                    guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
+                    return imageData
+                }
+                
+                _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+            }
+            
+            timer?.invalidate()
+            withAnimation {
+                showSuccessErrorView = .success
+                isLoading = false
+            }
+        } catch {
+            timer?.invalidate()
+            withAnimation {
+                showSuccessErrorView = .error
+                isLoading = false
+            }
+        }
+    }
+    
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
+            withAnimation {
+                showSuccessErrorView = .error
+                isLoading = false
+            }
         }
     }
     
@@ -100,7 +146,7 @@ struct ReportFormView: View {
             VStack {
                 Text("Add screenshots")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 ReportProblemImagePicker(problemUIImages: $bugUIImages)
             }
@@ -108,22 +154,25 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
-    private func TitleAndBackButton() -> some View {
+    private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
         HStack(alignment: .center) {
             Button {
-                dismiss()
+                withAnimation {
+                    showReportForm.wrappedValue = false
+                }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color(.secondary))
                     .padding(.leading)
             }
             Spacer()
             Text(type.title)
-                .font(.system(size: 24, weight: .bold))     .foregroundStyle(Color.titleColor)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Color(.title))
             
             Spacer()
-            //Cheap way to center the title
+            // Cheap way to center the title
             Image(systemName: "chevron.left")
                 .font(.system(size: 28, weight: .regular))
                 .padding(.leading)
@@ -134,7 +183,6 @@ struct ReportFormView: View {
         .buttonStyle(.plain)
     }
     
-    @available(iOS 15.0, *)
     @ViewBuilder
     private func AddDescription() -> some View {
         ZStack {
@@ -142,9 +190,7 @@ struct ReportFormView: View {
                 VStack {
                     HStack {
                         Text(showTextError ? "This field should not be empty" : "Type here...")
-                            .foregroundStyle(showTextError ? .red :
-                                    .secondary)
-                        
+                            .foregroundStyle(showTextError ? .red : Color(.secondary))
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
                         Spacer()
@@ -169,16 +215,14 @@ struct ReportFormView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.buttonColor)
+                .fill(Color(.button))
                 .cornerRadius(25, corners: .allCorners)
-                .shadow(color: .shadowColor, radius: 5)
+                .shadow(color: Color(.shadow), radius: 5)
         )
     }
 }
 
-@available(iOS 15.0, *)
+
 #Preview {
-    NavigationView {
-        ReportFormView(apiKey: "", type: .bug)
-    }
+    ReportFormView(showReportForm: .constant(false), apiKey: "", type: .bug)
 }

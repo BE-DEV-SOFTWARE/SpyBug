@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  Token.swift
 //  
 //
 //  Created by Pavel Kurzo on 20/12/2023.

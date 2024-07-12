@@ -15,28 +15,28 @@ enum ReportType: String, Codable, CaseIterable {
     case feature
     
     var title: LocalizedStringKey {
-        switch self {
+        return switch self {
         case .bug:
-            return "Report a problem"
+            "Report a problem"
         case .improvement:
-            return "Request improvement"
+            "Request improvement"
         case .question:
-            return "Ask a question"
+            "Ask a question"
         case .feature:
-            return "Propose a feature"
+            "Propose a feature"
         }
     }
     
     var icon: Image {
-        switch self {
+        return switch self {
         case .bug:
-            return Image.bug
+            Image(.bug)
         case .improvement:
-            return Image.rocket
+            Image(.rocket)
         case .question:
-            return Image.circleQuestion
+            Image(.circleQuestion)
         case .feature:
-            return Image.wand
+            Image(.wand)
         }
     }
 }
