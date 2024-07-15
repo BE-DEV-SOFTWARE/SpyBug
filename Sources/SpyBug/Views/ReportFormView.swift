@@ -16,7 +16,6 @@ struct ReportFormView: View {
     @State private var showTextError: Bool = false
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
-    @State private var timer: Timer?
     @Binding var showReportForm: Bool
     var author: String?
     var type: ReportType
@@ -37,12 +36,6 @@ struct ReportFormView: View {
                     }
             } else if isLoading {
                 SendingView()
-                    .onAppear {
-                        startTimer()
-                        Task {
-                            await sendRequest()
-                        }
-                    }
                     .background(Color(.background))
             } else {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
@@ -114,23 +107,11 @@ struct ReportFormView: View {
                 _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
             }
             
-            timer?.invalidate()
             withAnimation {
                 showSuccessErrorView = .success
                 isLoading = false
             }
         } catch {
-            timer?.invalidate()
-            withAnimation {
-                showSuccessErrorView = .error
-                isLoading = false
-            }
-        }
-    }
-    
-    private func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
             withAnimation {
                 showSuccessErrorView = .error
                 isLoading = false
