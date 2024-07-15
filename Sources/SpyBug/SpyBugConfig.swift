@@ -8,11 +8,11 @@
 import Foundation
 
 public class SpyBugConfig {
-    static let shared = SpyBugConfig()
+    public static let shared = SpyBugConfig()
     
     private init() {}
     
-    func setApiKey(_ apiKey: String) {
+    public func setApiKey(_ apiKey: String) {
         let query = [
             kSecValueData: apiKey.data(using: .utf8)!,
             kSecClass: kSecClassGenericPassword,
