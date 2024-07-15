@@ -27,9 +27,6 @@ enum APIError: Error {
     case decodingError
 }
 
-fileprivate let apiScheme = "https"
-fileprivate let baseURL = "service.spybug.io/api/v1"
-
 struct ServiceHelper {
     private func isResponseOK(statusCode:  Int) -> Bool {
         return (200...299).contains(statusCode)
@@ -37,8 +34,8 @@ struct ServiceHelper {
     
     private func createURL(endpoint: String, parameters: [URLQueryItem]? = []) -> URL? {
         var component = URLComponents()
-        component.scheme = apiScheme
-        component.path = baseURL + endpoint
+        component.scheme = Constant.apiScheme
+        component.path = Constant.baseURL + endpoint
         component.queryItems = parameters
         return component.url
     }

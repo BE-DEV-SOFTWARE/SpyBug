@@ -9,7 +9,6 @@ import SwiftUI
 
 
 struct ReportFormView: View {
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
@@ -19,7 +18,6 @@ struct ReportFormView: View {
     @State private var showSuccessErrorView: ViewState?
     @State private var timer: Timer?
     @Binding var showReportForm: Bool
-    var apiKey: String
     var author: String?
     var type: ReportType
     
@@ -105,7 +103,7 @@ struct ReportFormView: View {
     
     private func sendRequest() async {
         do {
-            let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
             
             if isBugReport {
                 let imageDataArray = bugUIImages.map { image in
@@ -113,7 +111,7 @@ struct ReportFormView: View {
                     return imageData
                 }
                 
-                _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
             }
             
             timer?.invalidate()
@@ -227,7 +225,6 @@ struct ReportFormView: View {
     TabView {
         ReportFormView(
             showReportForm: .constant(false),
-            apiKey: "",
             type: .bug
         )
         .tabItem {
@@ -235,7 +232,6 @@ struct ReportFormView: View {
         }
         ReportFormView(
             showReportForm: .constant(false),
-            apiKey: "",
             type: .question
         )
         .tabItem {
@@ -243,7 +239,6 @@ struct ReportFormView: View {
         }
         ReportFormView(
             showReportForm: .constant(false),
-            apiKey: "",
             type: .feature
         )
         .tabItem {
@@ -251,7 +246,6 @@ struct ReportFormView: View {
         }
         ReportFormView(
             showReportForm: .constant(false),
-            apiKey: "",
             type: .improvement
         )
         .tabItem {

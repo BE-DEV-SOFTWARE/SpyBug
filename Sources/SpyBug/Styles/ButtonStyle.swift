@@ -15,7 +15,6 @@ let spyBugGradient: LinearGradient = .linearGradient(
 
 public struct ReportButtonStyle: ButtonStyle {
     var icon: Image
-    @Environment(\.colorScheme) var colorScheme
     
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 16){
