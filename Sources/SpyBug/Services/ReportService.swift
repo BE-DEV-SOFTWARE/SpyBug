@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  SpyBugService.swift
+//
 //
 //  Created by Pavel Kurzo on 19/12/2023.
 //

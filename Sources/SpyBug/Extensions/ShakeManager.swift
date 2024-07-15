@@ -69,7 +69,7 @@ struct DeviceShakeViewModifier: ViewModifier {
 }
 
 extension View {
-    func onDeviceShake(identifier: String, perform action: @escaping () -> Void) -> some View {
+    func onShake(identifier: String, perform action: @escaping () -> Void) -> some View {
         self.modifier(DeviceShakeViewModifier(identifier: identifier, action: action))
     }
 }

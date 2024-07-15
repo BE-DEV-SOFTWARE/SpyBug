@@ -1,14 +1,21 @@
 //
-//  SwiftUIView.swift
-//  
+//  ButtonStyle.swift
+//
 //
 //  Created by Pavel Kurzo on 19/12/2023.
 //
 
 import SwiftUI
 
+let spyBugGradient: LinearGradient = .linearGradient(
+    colors: [Color(.linearOrange), Color(.linearRed)],
+    startPoint: .leading,
+    endPoint: .trailing
+)
+
 public struct ReportButtonStyle: ButtonStyle {
     var icon: Image
+    @Environment(\.colorScheme) var colorScheme
     
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 16){
@@ -16,24 +23,23 @@ public struct ReportButtonStyle: ButtonStyle {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
-                .colorMultiply(Color.gray.opacity(0.8))
+                .foregroundStyle(Color(.secondary))
             configuration.label
                 .font(.system(size: 18))
-                .foregroundStyle(.black.opacity(0.8))
+                .foregroundStyle(Color(.secondary))
             Spacer()
             Image(systemName: "chevron.right")
                 .resizable()
                 .frame(width: 12, height: 21)
-                .foregroundStyle(.black.opacity(0.6))
+                .foregroundStyle(Color(.secondary))
                 .padding(.trailing)
         }
         .padding(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 8))
         .frame(height: 69)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
-                .shadow(color: .gray.opacity(0.25), radius: 4)
+                .fill(Color(.button))
+                .shadow(color: Color(.shadow), radius: 4)
         )
-        .padding(.horizontal)
     }
 }

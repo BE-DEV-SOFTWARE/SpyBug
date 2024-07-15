@@ -12,12 +12,11 @@ import AdaptiveSheet
 
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
+    @State private var isShowingReportOptionsView = false
+    @Environment(\.colorScheme) private var colorScheme
+    
     private var apiKey: String
     private var author: String?
-    private var identifier: String
-    
-    @State private var isPresented: Bool
-    @State private var shaked: Bool
     
     @ViewBuilder private var label: () -> Label
     
@@ -26,71 +25,41 @@ public struct SpyBugButton<Label: View>: View {
     public init(
         apiKey: String,
         author: String?,
-        identifier: String,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
     ) {
         self.apiKey = apiKey
         self.author = author
-        self.identifier = identifier
-        self._isPresented = State(initialValue: false)
-        self._shaked = State(initialValue: false)
         self.label = label
-        ShakeDetector.shared.startMonitoring()
     }
     
     public var body: some View {
         Button {
-            presentSheet()
+            isShowingReportOptionsView.toggle()
         } label: {
             label()
         }
-        .adaptiveSheet(isPresented: $isPresented) {
+        .adaptiveSheet(isPresented: $isShowingReportOptionsView) {
             NavigationView {
                 ReportOptionsView(
                     apiKey: apiKey,
                     author: author
                 )
             }
-            .frame(height: 450)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .shakeDetected)) { _ in
-            handleShake()
-        }
-        .onChange(of: isPresented) { item in
-            if !item {
-                presentationManager.activeButtonIdentifier = nil
-            }
-        }
-        .onChange(of: shaked) { _ in }
-    }
-    
-    private func presentSheet() {
-        if presentationManager.activeButtonIdentifier == nil {
-            presentationManager.activeButtonIdentifier = identifier
-            isPresented = true
-        }
-    }
-    
-    private func handleShake() {
-        if presentationManager.activeButtonIdentifier == nil {
-            presentationManager.activeButtonIdentifier = identifier
-            isPresented = true
-            shaked.toggle()
+            .frame(height: 520)
         }
     }
 }
 
-@available(iOS 15.0, *)
 #Preview("Button styling demo") {
     VStack {
-        SpyBugButton(apiKey: "", author: "", identifier: "id2") {
+        SpyBugButton(apiKey: "", author: "") {
             Text("Click on me, I am custom 😉")
         }
         .buttonStyle(.borderedProminent)
         
-        SpyBugButton(apiKey: "", author: "", identifier: "id3")
+        SpyBugButton(apiKey: "", author: "")
         
-        SpyBugButton(apiKey: "", author: "", identifier: "id4") {
+        SpyBugButton(apiKey: "", author: "") {
             Text("I can also look like this 😱")
         }
         .buttonStyle(
@@ -101,12 +70,23 @@ public struct SpyBugButton<Label: View>: View {
     }
 }
 
-#Preview("Demo") {
-    SpyBugButton(apiKey: "", author: "A nice person", identifier: "id1")
-       .buttonStyle(.borderedProminent)
-       .buttonStyle(
-           ReportButtonStyle(
-               icon: Image(systemName: "cursorarrow.rays")
-           )
-       )
+#Preview("Demo Dark") {
+    SpyBugButton(apiKey: "", author: "A nice person")
+        .buttonStyle(.borderedProminent)
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
+        .preferredColorScheme(.dark)
+}
+#Preview("Demo Light") {
+    SpyBugButton(apiKey: "", author: "A nice person")
+        .buttonStyle(.borderedProminent)
+        .buttonStyle(
+            ReportButtonStyle(
+                icon: Image(systemName: "cursorarrow.rays")
+            )
+        )
+        .preferredColorScheme(.light)
 }
