@@ -9,7 +9,6 @@ import SwiftUI
 import SnapPix
 
 struct ReportProblemImagePicker: View {
-    @Environment(\.colorScheme) var colorScheme
     @Binding var problemUIImages: [UIImage]
     
     // TODO: Make it work even if the images are not all sent

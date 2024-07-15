@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct SpyBugService {
-    func createBugReport(apiKey: String, reportIn: ReportCreate) async throws -> Report {
+    func createBugReport(reportIn: ReportCreate) async throws -> Report {
+        guard let apiKey = SpyBugConfigAccessor.shared.getApiKey() else {
+            fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
+        }
         let parameters = [
             URLQueryItem(name: "key", value: apiKey),
         ]
@@ -16,7 +19,10 @@ struct SpyBugService {
         return try await ServiceHelper().fetchJSON(request: request)
     }
 
-    func addPicturesToCreateBugReport(apiKey: String, reportId: UUID, pictures: [Data]) async throws -> Report {
+    func addPicturesToCreateBugReport(reportId: UUID, pictures: [Data]) async throws -> Report {
+        guard let apiKey = SpyBugConfigAccessor.shared.getApiKey() else {
+            fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
+        }
         let parameters = [
             URLQueryItem(name: "key", value: apiKey),
         ]

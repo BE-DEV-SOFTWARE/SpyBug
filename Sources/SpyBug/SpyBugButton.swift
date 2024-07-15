@@ -13,38 +13,29 @@ import AdaptiveSheet
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
-    @Environment(\.colorScheme) var colorScheme
-    
-    private var apiKey: String
     private var author: String?
     
     @ViewBuilder private var label: () -> Label
     
     public init(
-        apiKey: String,
         author: String?,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
     ) {
-        self.apiKey = apiKey
         self.author = author
         self.label = label
     }
     
     public var body: some View {
         Button {
-            isShowingReportOptionsView = true
+            isShowingReportOptionsView.toggle()
         } label: {
             label()
-        }
-        .onShake {
-            isShowingReportOptionsView.toggle()
         }
         .adaptiveSheet(
             isPresented: $isShowingReportOptionsView,
             sheetBackground: Color(.background)
         ) {
             ReportOptionsView(
-                apiKey: apiKey,
                 author: author
             )
             .frame(height: 500)
@@ -54,14 +45,14 @@ public struct SpyBugButton<Label: View>: View {
 
 #Preview("Button styling demo") {
     VStack {
-        SpyBugButton(apiKey: "", author: "") {
+        SpyBugButton(author: "") {
             Text("Click on me, I am custom 😉")
         }
         .buttonStyle(.borderedProminent)
         
-        SpyBugButton(apiKey: "", author: "")
+        SpyBugButton(author: "")
         
-        SpyBugButton(apiKey: "", author: "") {
+        SpyBugButton(author: "") {
             Text("I can also look like this 😱")
         }
         .buttonStyle(
@@ -72,8 +63,8 @@ public struct SpyBugButton<Label: View>: View {
     }
 }
 
-#Preview("Demo") {
-    SpyBugButton(apiKey: "", author: "A nice person")
+#Preview("Demo Dark") {
+    SpyBugButton(author: "A nice person")
         .buttonStyle(.borderedProminent)
         .buttonStyle(
             ReportButtonStyle(
@@ -82,8 +73,8 @@ public struct SpyBugButton<Label: View>: View {
         )
         .preferredColorScheme(.dark)
 }
-#Preview("DemoLight") {
-    SpyBugButton(apiKey: "", author: "A nice person")
+#Preview("Demo Light") {
+    SpyBugButton(author: "A nice person")
         .buttonStyle(.borderedProminent)
         .buttonStyle(
             ReportButtonStyle(

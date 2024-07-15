@@ -10,7 +10,6 @@ import SwiftUI
 
 struct ReportOptionsView: View {
     @Environment(\.openURL) private var openURL
-    var apiKey: String
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
@@ -37,7 +36,6 @@ struct ReportOptionsView: View {
                 if let selectedType {
                     ReportFormView(
                         showReportForm: $showReportForm,
-                        apiKey: apiKey,
                         author: author,
                         type: selectedType
                     )
@@ -101,7 +99,7 @@ struct ReportOptionsView: View {
 
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportOptionsView(apiKey: "", author: "John Doe")
+        ReportOptionsView(author: "John Doe")
             .preferredColorScheme(.dark)
             .background(Color(.background))
     }

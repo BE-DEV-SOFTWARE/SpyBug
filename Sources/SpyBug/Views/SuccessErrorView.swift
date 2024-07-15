@@ -31,7 +31,7 @@ enum ViewState {
     var viewText: LocalizedStringKey {
         switch self {
         case .error:
-            "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later."
+            "Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later."
         case .success:
             "We successfully received your request.  Our team will take it into account as soon as possible. "
         }
