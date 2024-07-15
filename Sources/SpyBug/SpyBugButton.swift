@@ -17,8 +17,6 @@ public struct SpyBugButton<Label: View>: View {
     
     @ViewBuilder private var label: () -> Label
     
-    @ObservedObject private var presentationManager = PresentationManager.shared
-    
     public init(
         author: String?,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
