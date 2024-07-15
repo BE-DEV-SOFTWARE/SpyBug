@@ -91,4 +91,5 @@ public struct SpyBugButton<Label: View>: View {
             )
         )
         .preferredColorScheme(.light)
+        .environment(\.locale, .init(identifier: "in"))
 }
