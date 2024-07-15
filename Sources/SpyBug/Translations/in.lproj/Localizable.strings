@@ -1,0 +1,29 @@
+/* 
+  Localizable.strings
+  
+
+  Created by Szymon Wnuk on 15/07/2024.
+  
+*/
+"Report a problem" = "Laporkan masalah";
+"Propose a feature" = "Ajukan fitur";
+"Ask a question" = "Ajukan pertanyaan";
+"Request improvement" = "Minta perbaikan";
+"Type here..." = "Ketik di sini...";
+"This field should not be empty" = "Kolom ini tidak boleh kosong";
+"Add screenshots" = "Tambahkan tangkapan layar";
+"Image data compression failed" = "Kompresi data gambar gagal";
+"Send" = "Kirim permintaan";
+"Add description" = "Tambahkan deskripsi";
+"Our spies need a moment, please wait for your request to be sent." = "Mata-mata kami butuh waktu, harap tunggu permintaan Anda dikirim.";
+"Sending..." = "Mengirim...";
+"Thank you!" = "Terima kasih!";
+"Close" = "Tutup";
+"We successfully received your request. Our team will take it into account as soon as possible." = "Kami berhasil menerima permintaan Anda. Tim kami akan mempertimbangkannya sesegera mungkin.";
+"Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Laporan ini tidak dapat dikirim. Mata-mata kami mungkin melewatkan satu bug di sini...\nSilakan coba lagi nanti.";
+"It’s sent!" = "Terkirim!";
+"Oh no!" = "Oh tidak!";
+"Powered by" = "Dipersembahkan oleh";
+"All rights reserved 2024" = "Baiklah, dilindungi undang-undang pada tahun 2024";
+"Need help?" = "Butuh bantuan?";
+

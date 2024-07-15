@@ -41,7 +41,7 @@ struct ReportFormView: View {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
-                Text("Add description")
+                Text("Add description", bundle: .module)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -60,7 +60,7 @@ struct ReportFormView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text("Send request")
+                        Text("Send request", bundle: .module)
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(Color.white)
                         
@@ -123,7 +123,7 @@ struct ReportFormView: View {
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
-                Text("Add screenshots")
+                Text("Add screenshots", bundle: .module)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -146,7 +146,7 @@ struct ReportFormView: View {
                     .padding(.leading)
             }
             Spacer()
-            Text(type.title)
+            Text(type.title, bundle: .module)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
             
@@ -168,7 +168,7 @@ struct ReportFormView: View {
             if text.isEmpty {
                 VStack {
                     HStack {
-                        Text(showTextError ? "This field should not be empty" : "Type here...")
+                        Text(showTextError ? "This field should not be empty" : "Type here...", bundle: .module)
                             .foregroundStyle(showTextError ? .red : Color(.secondary))
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)

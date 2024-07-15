@@ -1,0 +1,30 @@
+/* 
+  Localizable.strings
+  
+
+  Created by Szymon Wnuk on 15/07/2024.
+  
+*/
+"Report a problem" = "Ein Problem melden";
+"Propose a feature" = "Eine Funktion vorschlagen";
+"Ask a question" = "Eine Frage stellen";
+"Request improvement" = "Verbesserung anfordern";
+"Type here..." = "Hier eingeben...";
+"This field should not be empty" = "Dieses Feld darf nicht leer sein";
+"Add screenshots" = "Screenshots hinzufügen";
+"Image data compression failed" = "Bilddatenkomprimierung fehlgeschlagen";
+"Send request" = "Anfrage senden";
+"Add description" = "Beschreibung hinzufügen";
+"Propose a feature" = "Eine Funktion vorschlagen";
+"Ask a question" = "Eine Frage stellen";
+"Our spies need a moment, please wait for your request to be sent." = "Unsere Spione brauchen einen Moment, bitte warten Sie, bis Ihre Anfrage gesendet wird.";
+"Sending..." = "Wird gesendet...";
+"Thank you!" = "Danke!";
+"Close" = "Schließen";
+"We successfully received your request. Our team will take it into account as soon as possible." = "Wir haben Ihre Anfrage erfolgreich erhalten. Unser Team wird sie so schnell wie möglich berücksichtigen.";
+"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Dieser Bericht konnte nicht gesendet werden. Unsere Spione haben hier wahrscheinlich einen Fehler übersehen...\nBitte versuchen Sie es später noch einmal.";
+"It’s sent!" = "Es ist gesendet!";
+"Oh no!" = "Oh nein!";
+"Powered by" = "Angetrieben von";
+"All right reserved 2024" = "Alle Rechte vorbehalten 2024";
+"Need help?" = "Brauchen Sie Hilfe?";

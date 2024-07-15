@@ -58,10 +58,10 @@ struct SuccessErrorView: View {
                 .scaledToFit()
                 .frame(height: 120)
                 .padding(.top, 80)
-            Text(state.title)
+            Text(state.title, bundle: .module)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundStyle(state == .error ? Color(.yourPink) : Color.primary)
-            Text(state.viewText)
+            Text(state.viewText, bundle: .module)
                 .font(.system(size: 18, weight: .regular))
                 .foregroundStyle(Color(.graySuccess))
                 .lineSpacing(5)
@@ -72,7 +72,7 @@ struct SuccessErrorView: View {
             label: {
                 HStack{
                     Spacer()
-                    Text(state.buttonText)
+                    Text(state.buttonText, bundle: .module)
                         .font(.system(size: 16, weight: .regular))
                         .foregroundStyle(Color.primary)
                     Spacer()

@@ -18,7 +18,7 @@ struct ReportOptionsView: View {
         VStack {
             if !showReportForm {
                 VStack(spacing: 16) {
-                    Text("Need help?")
+                    Text("Need help?", bundle: .module)
                         .font(.system(size: 24, weight: .bold))
                         .foregroundStyle(Color(.title))
                         .padding(.vertical, 10)
@@ -55,21 +55,21 @@ struct ReportOptionsView: View {
         HStack{
             VStack(alignment: .leading, spacing: 5){
                 HStack{
-                    Text("Powered by")
+                    Text("Powered by", bundle: .module)
                         .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(textColor)
                     Button{
                         guard let url = URL(string: urlString) else { return }
                         openURL(url)
                     } label: {
-                        Text("SpyBug")
+                        Text("SpyBug", bundle: .module)
                             .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(spyBugGradient)
                     }
                     .buttonStyle(.plain)
                     
                 }
-                Text("All right reserved 2024")
+                Text("All right reserved 2024", bundle: .module)
                     .font(.system(size: 12))
                     .foregroundStyle(textColor)
             }
@@ -83,12 +83,15 @@ struct ReportOptionsView: View {
     
     @ViewBuilder
     private func ReportOptionRow(type: ReportType) -> some View {
-        Button(type.title) {
+        Button {
             withAnimation {
                 showReportForm = true
                 selectedType = type
             }
         }
+    label: {
+        Text(type.title, bundle: .module)
+    }
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
 }
