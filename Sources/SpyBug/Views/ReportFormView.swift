@@ -9,7 +9,6 @@ import SwiftUI
 
 
 struct ReportFormView: View {
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
@@ -17,9 +16,7 @@ struct ReportFormView: View {
     @State private var showTextError: Bool = false
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
-    @State private var timer: Timer?
     @Binding var showReportForm: Bool
-    var apiKey: String
     var author: String?
     var type: ReportType
     
@@ -39,18 +36,12 @@ struct ReportFormView: View {
                     }
             } else if isLoading {
                 SendingView()
-                    .onAppear {
-                        startTimer()
-                        Task {
-                            await sendRequest()
-                        }
-                    }
                     .background(Color(.background))
             } else {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
-                Text(isBugReport ? "Add comment" : "Add description")
+                Text("Add description")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -105,7 +96,7 @@ struct ReportFormView: View {
     
     private func sendRequest() async {
         do {
-            let result = try await SpyBugService().createBugReport(apiKey: apiKey, reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
             
             if isBugReport {
                 let imageDataArray = bugUIImages.map { image in
@@ -113,26 +104,14 @@ struct ReportFormView: View {
                     return imageData
                 }
                 
-                _ = try await SpyBugService().addPicturesToCreateBugReport(apiKey: apiKey, reportId: result.id, pictures: imageDataArray)
+                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
             }
             
-            timer?.invalidate()
             withAnimation {
                 showSuccessErrorView = .success
                 isLoading = false
             }
         } catch {
-            timer?.invalidate()
-            withAnimation {
-                showSuccessErrorView = .error
-                isLoading = false
-            }
-        }
-    }
-    
-    private func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
             withAnimation {
                 showSuccessErrorView = .error
                 isLoading = false
@@ -224,5 +203,34 @@ struct ReportFormView: View {
 
 
 #Preview {
-    ReportFormView(showReportForm: .constant(false), apiKey: "", type: .bug)
+    TabView {
+        ReportFormView(
+            showReportForm: .constant(false),
+            type: .bug
+        )
+        .tabItem {
+            Image(.bug)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            type: .question
+        )
+        .tabItem {
+            Image(.circleQuestion)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            type: .feature
+        )
+        .tabItem {
+            Image(.rocket)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            type: .improvement
+        )
+        .tabItem {
+            Image(.wand)
+        }
+    }
 }
