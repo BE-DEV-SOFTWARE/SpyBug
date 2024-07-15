@@ -50,7 +50,7 @@ struct ReportFormView: View {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
-                Text(isBugReport ? "Add comment" : "Add description")
+                Text("Add description")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -224,5 +224,38 @@ struct ReportFormView: View {
 
 
 #Preview {
-    ReportFormView(showReportForm: .constant(false), apiKey: "", type: .bug)
+    TabView {
+        ReportFormView(
+            showReportForm: .constant(false),
+            apiKey: "",
+            type: .bug
+        )
+        .tabItem {
+            Image(.bug)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            apiKey: "",
+            type: .question
+        )
+        .tabItem {
+            Image(.circleQuestion)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            apiKey: "",
+            type: .feature
+        )
+        .tabItem {
+            Image(.rocket)
+        }
+        ReportFormView(
+            showReportForm: .constant(false),
+            apiKey: "",
+            type: .improvement
+        )
+        .tabItem {
+            Image(.wand)
+        }
+    }
 }
