@@ -31,7 +31,6 @@ fileprivate let apiScheme = "https"
 fileprivate let baseURL = "service.spybug.io/api/v1"
 
 struct ServiceHelper {
-    var dateFormatter = DateFormatter()
     private func isResponseOK(statusCode:  Int) -> Bool {
         return (200...299).contains(statusCode)
     }
@@ -68,15 +67,12 @@ struct ServiceHelper {
         }
     }
     
-    func createRequest(endpoint: String, method: HTTPMethod, parameters: [URLQueryItem]? = [], token: Token? = nil, payload: Encodable? = nil, tokenString: String? = nil) throws -> URLRequest {
+    func createRequest(endpoint: String, method: HTTPMethod, parameters: [URLQueryItem]? = [], payload: Encodable? = nil, tokenString: String? = nil) throws -> URLRequest {
         guard let url = createURL(endpoint: endpoint, parameters: parameters) else { throw APIError.errorCreatingURL }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        if let token {
-            request.setValue( "Bearer \(token.token)", forHTTPHeaderField: "Authorization")
-        }
         if let payload {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
@@ -86,9 +82,9 @@ struct ServiceHelper {
         return request
     }
     
-    func createDataRequest(endpoint: String, token: Token? = nil, parameters: [URLQueryItem]? = []) throws -> MultipartFormDataRequest {
+    func createDataRequest(endpoint: String, parameters: [URLQueryItem]? = []) throws -> MultipartFormDataRequest {
         guard let url = createURL(endpoint: endpoint, parameters: parameters) else { throw APIError.errorCreatingURL }
-        return MultipartFormDataRequest(url: url, token: token)
+        return MultipartFormDataRequest(url: url)
     }
     
     func fetchJSON<T:Decodable>(request: URLRequest) async throws -> T {
@@ -135,31 +131,9 @@ struct ServiceHelper {
             } else {
                 print("Decoding error:", error.localizedDescription)
             }
-            
             throw error
         }
     }
-    
-    func fetch(request: URLRequest) async throws {
-        let sesssion = URLSession.shared
-#if DEBUG
-        request.debug()
-#endif
-        let (data, response) = try await sesssion.data(for: request)
-        
-        try handelHttpError(data: data, response: response)
-    }
-    
-    func fetchData(request: URLRequest) async throws -> Data {
-        let sesssion = URLSession.shared
-        
-        let (data, response) = try await sesssion.data(for: request)
-        
-        try handelHttpError(data: data, response: response)
-        
-        return data
-    }
-    
 }
 
 fileprivate extension URLRequest {
@@ -173,6 +147,5 @@ fileprivate extension URLRequest {
         } else {
             print("No body :(")
         }
-        
     }
 }
