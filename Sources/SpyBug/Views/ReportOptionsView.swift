@@ -42,7 +42,6 @@ struct ReportOptionsView: View {
                     .transition(.move(edge: .trailing))
                 }
             }
-            
         }
     }
     

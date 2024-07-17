@@ -10,7 +10,6 @@ import SwiftUI
 
 struct ReportFormView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var keyboardResponder = KeyboardResponder()
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
     @State private var buttonPressed: Bool = false
@@ -51,17 +50,19 @@ struct ReportFormView: View {
                 
                 AddDescription()
                 
-                Spacer()
-                
                 if !isTextEditorFocused {
+                    Spacer()
+                    
                     SendRequestButton()
                 }
             }
         }
+        .padding(.top, isTextEditorFocused && ScreenSizeChecke ? 16 : 0)
+        .frame(maxHeight: .infinity, alignment: .top)
         .padding(.horizontal)
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
-            if newValue && !text.isEmpty && text != "" {
+            if newValue && !text.isEmpty {
                 Task {
                     await sendRequest()
                 }
@@ -98,12 +99,7 @@ struct ReportFormView: View {
     @ViewBuilder
     private func SendRequestButton() -> some View {
         Button {
-            if text.isEmpty || text == "" {
-                showTextError = true
-            } else {
-                isLoading = true
-                buttonPressed.toggle()
-            }
+            sendRequestAction()
         } label: {
             HStack {
                 Spacer()
@@ -186,7 +182,19 @@ struct ReportFormView: View {
     
     @ViewBuilder
     private func AddDescription() -> some View {
-        ZStack {
+        HStack {
+            NavigationView {
+                TextEditor(text: $text)
+                    .disableAutocorrection(true)
+                    .keyboardType(.alphabet)
+                    .focused($isTextEditorFocused)
+                    .modifier(KeyboardSendRequestButton(action: {
+                        sendRequestAction()
+                    }))
+                Spacer()
+            }
+        }
+        .overlay {
             if text.isEmpty {
                 VStack {
                     HStack {
@@ -199,38 +207,6 @@ struct ReportFormView: View {
                     Spacer()
                 }
                 .padding([.top, .leading], 4)
-            }
-            HStack {
-                if #available(iOS 16.0, *) {
-                    NavigationView {
-                        TextEditor(text: $text)
-                            .scrollContentBackground(.hidden)
-                            .disableAutocorrection(true)
-                            .keyboardType(.alphabet)
-                            .focused($isTextEditorFocused)
-                            .modifier(KeyboardSendRequestButton(action: {
-                                sendRequestAction()
-                            }))
-                    }
-                    Spacer()
-                } else {
-                    NavigationView {
-                        TextEditor(text: $text)
-                            .disableAutocorrection(true)
-                            .keyboardType(.alphabet)
-                            .focused($isTextEditorFocused)
-                            .modifier(KeyboardSendRequestButton(action: {
-                                sendRequestAction()
-                            }))
-                    }
-                    Spacer()
-                }
-            }
-            .onAppear {
-                // to make sure that everything loaded
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    isTextEditorFocused = true
-                }
             }
         }
         .frame(height: isBugReport ? 50 : 200)

@@ -13,6 +13,7 @@ import AdaptiveSheet
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
+    @StateObject private var keyboardObserver = KeyboardResponder()
     private var author: String?
     
     @ViewBuilder private var label: () -> Label
