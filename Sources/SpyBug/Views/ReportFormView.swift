@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ReportFormView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var keyboardResponder = KeyboardResponder()
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
     @State private var buttonPressed: Bool = false
@@ -17,6 +18,8 @@ struct ReportFormView: View {
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
+    @FocusState private var isTextEditorFocused: Bool
+    
     var author: String?
     var type: ReportType
     
@@ -50,37 +53,11 @@ struct ReportFormView: View {
                 
                 Spacer()
                 
-                Button {
-                    if text.isEmpty {
-                        showTextError = true
-                    } else {
-                        isLoading = true
-                        buttonPressed.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Send request", bundle: .module)
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(Color.white)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "paperplane")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.white)
-                            .padding(.trailing)
-                    }
-                    .padding(.horizontal)
-                    .frame(height: 60)
-                    .background(
-                        RoundedRectangle(cornerRadius: 35)
-                            .fill(spyBugGradient)
-                            .shadow(color: Color(.shadow), radius: 4)
-                    )
+                if !keyboardResponder.isKeyboardVisible {
+                    SendRequestButton()
+                } else {
+                    Color.clear
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal)
@@ -91,6 +68,9 @@ struct ReportFormView: View {
                     await sendRequest()
                 }
             }
+        }
+        .onTapGesture {
+            KeyboardUtils.hideKeyboard()
         }
     }
     
@@ -103,10 +83,8 @@ struct ReportFormView: View {
                     guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
                     return imageData
                 }
-                
                 _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
             }
-            
             withAnimation {
                 showSuccessErrorView = .success
                 isLoading = false
@@ -117,6 +95,41 @@ struct ReportFormView: View {
                 isLoading = false
             }
         }
+    }
+    
+    @ViewBuilder
+    private func SendRequestButton() -> some View {
+        Button {
+            if text.isEmpty {
+                showTextError = true
+            } else {
+                isLoading = true
+                buttonPressed.toggle()
+            }
+        } label: {
+            HStack {
+                Spacer()
+                Text("Send request", bundle: .module)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Color.white)
+                Spacer()
+                
+                Image(systemName: "paperplane")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(.white)
+                    .padding(.trailing)
+            }
+            .padding(.horizontal)
+            .frame(height: 60)
+            .background(
+                RoundedRectangle(cornerRadius: 35)
+                    .fill(spyBugGradient)
+                    .shadow(color: Color(.shadow), radius: 4)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 4)
     }
     
     @ViewBuilder
@@ -162,6 +175,16 @@ struct ReportFormView: View {
         .buttonStyle(.plain)
     }
     
+    func sendRequestAction() {
+        if text.isEmpty {
+            showTextError = true
+        } else {
+            isLoading = true
+            buttonPressed.toggle()
+        }
+        KeyboardUtils.hideKeyboard()
+    }
+    
     @ViewBuilder
     private func AddDescription() -> some View {
         ZStack {
@@ -180,12 +203,34 @@ struct ReportFormView: View {
             }
             HStack {
                 if #available(iOS 16.0, *) {
-                    TextEditor(text: $text)
-                        .scrollContentBackground(.hidden)
+                    NavigationView {
+                        TextEditor(text: $text)
+                            .scrollContentBackground(.hidden)
+                            .disableAutocorrection(true)
+                            .keyboardType(.alphabet)
+                            .focused($isTextEditorFocused)
+                            .modifier(KeyboardSendRequestButton(action: {
+                                sendRequestAction()
+                            }))
+                    }
                     Spacer()
                 } else {
-                    TextEditor(text: $text)
+                    NavigationView {
+                        TextEditor(text: $text)
+                            .disableAutocorrection(true)
+                            .keyboardType(.alphabet)
+                            .focused($isTextEditorFocused)
+                            .modifier(KeyboardSendRequestButton(action: {
+                                sendRequestAction()
+                            }))
+                    }
                     Spacer()
+                }
+            }
+            .onAppear {
+                // to make sure that everything loaded
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    isTextEditorFocused = true
                 }
             }
         }
@@ -200,7 +245,6 @@ struct ReportFormView: View {
         )
     }
 }
-
 
 #Preview {
     TabView {
