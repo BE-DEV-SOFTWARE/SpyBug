@@ -27,49 +27,51 @@ struct ReportFormView: View {
     }
     
     var body: some View {
-        VStack {
-            if let showSuccessErrorView = showSuccessErrorView {
-                SuccessErrorView(state: showSuccessErrorView)
-                    .onTapGesture {
-                        withAnimation {
-                            self.showSuccessErrorView = nil
-                            self.showReportForm = false
+        NavigationView {
+            VStack {
+                if let showSuccessErrorView = showSuccessErrorView {
+                    SuccessErrorView(state: showSuccessErrorView)
+                        .onTapGesture {
+                            withAnimation {
+                                self.showSuccessErrorView = nil
+                                self.showReportForm = false
+                            }
                         }
-                    }
-            } else if isLoading {
-                SendingView()
-                    .background(Color(.background))
-            } else {
-                TitleAndBackButton(showReportForm: $showReportForm, type: type)
-                ImagePicker()
-                
-                Text("Add description", bundle: .module)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(.secondary))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                AddDescription()
-                
-                if !isTextEditorFocused {
-                    Spacer()
+                } else if isLoading {
+                    SendingView()
+                        .background(Color(.background))
+                } else {
+                    TitleAndBackButton(showReportForm: $showReportForm, type: type)
+                    ImagePicker()
                     
-                    SendRequestButton()
+                    Text("Add description", bundle: .module)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Color(.secondary))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    AddDescription()
+                    
+                    if !isTextEditorFocused {
+                        Spacer()
+                        
+                        SendRequestButton()
+                    }
                 }
             }
-        }
-        .padding(.top, isTextEditorFocused && ScreenSizeChecke ? 16 : 0)
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding(.horizontal)
-        .background(Color(.background))
-        .onChange(of: buttonPressed) { newValue in
-            if newValue && !text.isEmpty {
-                Task {
-                    await sendRequest()
+            .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding(.horizontal)
+            .background(Color(.background))
+            .onChange(of: buttonPressed) { newValue in
+                if newValue && !text.isEmpty {
+                    Task {
+                        await sendRequest()
+                    }
                 }
             }
-        }
-        .onTapGesture {
-            KeyboardUtils.hideKeyboard()
+            .onTapGesture {
+                KeyboardUtils.hideKeyboard()
+            }
         }
     }
     
@@ -123,7 +125,6 @@ struct ReportFormView: View {
             )
         }
         .buttonStyle(.plain)
-        .padding(.bottom, 4)
     }
     
     @ViewBuilder
@@ -183,16 +184,14 @@ struct ReportFormView: View {
     @ViewBuilder
     private func AddDescription() -> some View {
         HStack {
-            NavigationView {
-                TextEditor(text: $text)
-                    .disableAutocorrection(true)
-                    .keyboardType(.alphabet)
-                    .focused($isTextEditorFocused)
-                    .modifier(KeyboardSendRequestButton(action: {
-                        sendRequestAction()
-                    }))
-                Spacer()
-            }
+            TextEditor(text: $text)
+                .disableAutocorrection(true)
+                .keyboardType(.alphabet)
+                .focused($isTextEditorFocused)
+                .modifier(KeyboardSendRequestButton(action: {
+                    sendRequestAction()
+                }))
+            Spacer()
         }
         .overlay {
             if text.isEmpty {
@@ -206,7 +205,10 @@ struct ReportFormView: View {
                     }
                     Spacer()
                 }
-                .padding([.top, .leading], 4)
+                .padding([.top, .leading], 6)
+                .onTapGesture {
+                    isTextEditorFocused = true
+                }
             }
         }
         .frame(height: isBugReport ? 50 : 200)

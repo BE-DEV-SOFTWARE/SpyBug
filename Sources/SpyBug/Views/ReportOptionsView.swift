@@ -43,6 +43,7 @@ struct ReportOptionsView: View {
                 }
             }
         }
+        .cornerRadius(ScreenSizeChecker.isScreenHeightLessThan670 ? 0 : 20, corners: [.topLeft, .topRight])
     }
     
     @ViewBuilder
