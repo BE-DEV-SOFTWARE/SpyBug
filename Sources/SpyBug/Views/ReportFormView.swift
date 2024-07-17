@@ -53,17 +53,15 @@ struct ReportFormView: View {
                 
                 Spacer()
                 
-                if !keyboardResponder.isKeyboardVisible {
+                if !isTextEditorFocused {
                     SendRequestButton()
-                } else {
-                    Color.clear
                 }
             }
         }
         .padding(.horizontal)
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
-            if newValue && !text.isEmpty {
+            if newValue && !text.isEmpty && text != "" {
                 Task {
                     await sendRequest()
                 }
@@ -100,7 +98,7 @@ struct ReportFormView: View {
     @ViewBuilder
     private func SendRequestButton() -> some View {
         Button {
-            if text.isEmpty {
+            if text.isEmpty || text == "" {
                 showTextError = true
             } else {
                 isLoading = true
@@ -149,6 +147,7 @@ struct ReportFormView: View {
     private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
         HStack(alignment: .center) {
             Button {
+                KeyboardUtils.hideKeyboard()
                 withAnimation {
                     showReportForm.wrappedValue = false
                 }
@@ -229,7 +228,7 @@ struct ReportFormView: View {
             }
             .onAppear {
                 // to make sure that everything loaded
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     isTextEditorFocused = true
                 }
             }
