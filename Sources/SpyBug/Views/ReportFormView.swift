@@ -92,7 +92,7 @@ struct ReportFormView: View {
         do {
             let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
             
-            if isBugReport {
+            if isBugReport && !bugUIImages.isEmpty {
                 let imageDataArray = bugUIImages.map { image in
                     guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
                     return imageData
