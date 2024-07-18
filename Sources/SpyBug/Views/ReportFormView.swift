@@ -17,6 +17,8 @@ struct ReportFormView: View {
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
+    @FocusState private var isTextEditorFocused: Bool
+    @State private var isShowingSendNavigationButton = false
     var author: String?
     var type: ReportType
     
@@ -50,40 +52,13 @@ struct ReportFormView: View {
                 
                 Spacer()
                 
-                Button {
-                    if text.isEmpty {
-                        showTextError = true
-                    } else {
-                        isLoading = true
-                        buttonPressed.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Send request", bundle: .module)
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(Color.white)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "paperplane")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.white)
-                            .padding(.trailing)
-                    }
-                    .padding(.horizontal)
-                    .frame(height: 60)
-                    .background(
-                        RoundedRectangle(cornerRadius: 35)
-                            .fill(spyBugGradient)
-                            .shadow(color: Color(.shadow), radius: 4)
-                    )
+                if !isTextEditorFocused {
+                    SendRequestButton()
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal)
+        .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
@@ -91,6 +66,25 @@ struct ReportFormView: View {
                     await sendRequest()
                 }
             }
+        }
+        .onChange(of: isTextEditorFocused) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                withAnimation {
+                    isShowingSendNavigationButton.toggle()
+                }
+            }
+        }
+        .onTapGesture {
+            KeyboardUtils.hideKeyboard()
+        }
+    }
+    
+    private func sendRequestValidation() {
+        if text.isEmpty {
+            showTextError = true
+        } else {
+            isLoading = true
+            buttonPressed.toggle()
         }
     }
     
@@ -120,6 +114,35 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
+    private func SendRequestButton() -> some View {
+        Button {
+            sendRequestValidation()
+        } label: {
+            HStack {
+                Spacer()
+                Text("Send request", bundle: .module)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Color.white)
+                Spacer()
+                
+                Image(systemName: "paperplane")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(.white)
+                    .padding(.trailing)
+            }
+            .padding(.horizontal)
+            .frame(height: 60)
+            .background(
+                RoundedRectangle(cornerRadius: 35)
+                    .fill(spyBugGradient)
+                    .shadow(color: Color(.shadow), radius: 4)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    
+    @ViewBuilder
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
@@ -133,9 +156,26 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
+    private func SendRequestNavigationButton() -> some View {
+        Button {
+            sendRequestValidation()
+        } label: {
+            Text("Send")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(Color(.darkBrown))
+                .padding(.vertical, 8)
+                .padding(.horizontal, 18)
+        }
+        .background {
+            Capsule().fill(Color(.yellowOrange))
+        }
+    }
+    
+    @ViewBuilder
     private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
         HStack(alignment: .center) {
             Button {
+                KeyboardUtils.hideKeyboard()
                 withAnimation {
                     showReportForm.wrappedValue = false
                 }
@@ -146,16 +186,21 @@ struct ReportFormView: View {
                     .padding(.leading)
             }
             Spacer()
+            
             Text(type.title, bundle: .module)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
-            
             Spacer()
-            // Cheap way to center the title
-            Image(systemName: "chevron.left")
-                .font(.system(size: 28, weight: .regular))
-                .padding(.leading)
-                .hidden()
+            
+            if !isTextEditorFocused {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 28, weight: .regular))
+                    .padding(.leading)
+                    .hidden()
+            } else {
+                SendRequestNavigationButton()
+                    .opacity(isShowingSendNavigationButton ? 1 : 0)
+            }
         }
         .frame(height: 36)
         .padding(.bottom)
@@ -182,9 +227,11 @@ struct ReportFormView: View {
                 if #available(iOS 16.0, *) {
                     TextEditor(text: $text)
                         .scrollContentBackground(.hidden)
+                        .focused($isTextEditorFocused)
                     Spacer()
                 } else {
                     TextEditor(text: $text)
+                        .focused($isTextEditorFocused)
                     Spacer()
                 }
             }
