@@ -1,5 +1,5 @@
 # SpyBug
-SpyBug is a SwiftUI package that offers a flexible bug/feedback collection component for Swift applications. It empowers users to upload images from their devices and include comments to describe specific bugs or suggested improvements. To get an API key you can create your account on app.spybug.io and get started for free 🚀
+SpyBug is a SwiftUI package that offers a flexible bug/feedback collection component for Swift applications. It empowers users to upload images from their devices and include comments to describe specific bugs or suggested improvements. To get an API key you can create your account on [app.spybug.io](https://app.spybug.io) and get started for free 🚀
 
 ## Requirements
 iOS 15 or later
@@ -9,10 +9,10 @@ Swift 5.5 or later
 ### Swift Package Manager
 You can easily integrate SpyBug using the Swift Package Manager. Follow these simple steps:
 
-Open your project in Xcode.
-Navigate to File > Swift Packages > Add Package Dependency.
-Enter the package repository URL: https://github.com/Bereyziat-Development/SpyBug
-Click Next and follow the remaining steps to add the package to your project.
+1. Open your project in Xcode.
+2. Navigate to File > Swift Packages > Add Package Dependency.
+3. Enter the package repository URL: https://github.com/Bereyziat-Development/SpyBug
+4. Click Next and follow the remaining steps to add the package to your project.
 
 ## Usage
 1. Import SpyBug:
@@ -21,31 +21,27 @@ Click Next and follow the remaining steps to add the package to your project.
 import SpyBug
 ```
 
-2. Configure your API key in the main application file
+2. Configure SpyBug API key for your application
+
+Simply add a new key "SpyBugAPIKey" to your Info.plist configuration file and you are good to go. To get a key go to your [SpyBug admin panel](https://app.spybug.io) create a new application and copy the provided API key
+
+3. Now you can add as many SpyBugButton as you want to your application.
+The "author" attribute can be anything that let you identify the users of your project, a username, an email, an id. Author is an optional value so you can use SpyBug to make anonymous reports.
 
 ```swift
-.onAppear {
-    SpyBugConfig.shared.setApiKey( "api-key-copied-from-your-dashboard-on-app.spybug.io")
-}
-```
-
-3. Now you can add as many SpyBugButton as you want.
-Author can be anything that let you identify the users of your project, a username, an email, an id. Author is an optional value so you can use SpyBug to make anonymous reports.
-
-```swift
- SpyBugButton(author: "") { Your Label } 
+ SpyBugButton(author: "AnonymousPlatypus") { <Insert your custom label here> } 
 ```
 
 4. You don't like buttons? Then you can simply activate the feature to report on shake. (Also really suitable for users with anger issues). Add the view modifier to your main app file or to the page you want the shake feature to be available.
 
 ```swift
-.reportOnShake(author: "your-user-identifier-or-username")
+.reportOnShake(author: "your_optional_author_name")
 ```
 
 ### Using Default Button Style
 
 ```swift
-    SpyBugButton(author: "your_author_name") {
+    SpyBugButton(author: "your_optional_author_name") {
         Text("Click on me, I am custom 😉")
     }
     .buttonStyle(.borderedProminent)
@@ -53,7 +49,7 @@ Author can be anything that let you identify the users of your project, a userna
 
 ### Using Custom Button Style
 ```swift
-    SpyBugButton(apiKey: "", author: "") {
+    SpyBugButton(author: "") {
         Text("I can also look like this 😱")
     }
     .buttonStyle(

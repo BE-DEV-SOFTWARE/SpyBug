@@ -73,6 +73,7 @@ public struct SpyBugButton<Label: View>: View {
         )
         .preferredColorScheme(.dark)
 }
+
 #Preview("Demo Light") {
     SpyBugButton(author: "A nice person")
         .buttonStyle(.borderedProminent)
@@ -82,5 +83,5 @@ public struct SpyBugButton<Label: View>: View {
             )
         )
         .preferredColorScheme(.light)
-        .environment(\.locale, .init(identifier: "in"))
+        .environment(\.locale, .init(identifier: "en"))
 }

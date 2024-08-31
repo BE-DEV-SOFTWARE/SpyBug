@@ -9,6 +9,7 @@ import Foundation
 
 enum Constant {
     static let keychainAPIKeyLocation = "APIKey"
+    static let plistAPIKeyLocation = "SpyBugAPIKey"
     static let apiScheme = "https"
     static let baseURL = "service.spybug.io/api/v1"
 }

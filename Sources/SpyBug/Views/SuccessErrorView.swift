@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AdaptiveSheet
 
 enum ViewState {
     case error
@@ -49,7 +50,7 @@ enum ViewState {
 }
 
 struct SuccessErrorView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.adaptiveDismiss) private var dismiss
     var state: ViewState
     
     var body: some View {

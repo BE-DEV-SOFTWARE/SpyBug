@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SpyBugService {
     func createBugReport(reportIn: ReportCreate) async throws -> Report {
-        guard let apiKey = SpyBugConfigAccessor.shared.getApiKey() else {
+        guard let apiKey = SpyBugConfig.shared.getApiKey() else {
             fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
         }
         let parameters = [
@@ -20,7 +20,7 @@ struct SpyBugService {
     }
 
     func addPicturesToCreateBugReport(reportId: UUID, pictures: [Data]) async throws -> Report {
-        guard let apiKey = SpyBugConfigAccessor.shared.getApiKey() else {
+        guard let apiKey = SpyBugConfig.shared.getApiKey() else {
             fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
         }
         let parameters = [
