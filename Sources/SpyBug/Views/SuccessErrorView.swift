@@ -11,8 +11,7 @@ enum ViewState {
     case error
     case success
     
-    var icon: Image{
-        
+    var icon: Image {
         switch self {
         case .error:
             Image(.errorEmoji)
@@ -20,6 +19,7 @@ enum ViewState {
             Image(.greenRocket)
         }
     }
+    
     var title: LocalizedStringKey {
         switch self {
         case .error:
@@ -28,6 +28,7 @@ enum ViewState {
             "It’s sent!"
         }
     }
+    
     var viewText: LocalizedStringKey {
         switch self {
         case .error:
@@ -52,7 +53,7 @@ struct SuccessErrorView: View {
     var state: ViewState
     
     var body: some View {
-        VStack(spacing: 20){
+        VStack(spacing: 20) {
             state.icon
                 .resizable()
                 .scaledToFit()
@@ -68,8 +69,7 @@ struct SuccessErrorView: View {
             Spacer()
             Button {
                 dismiss()
-            }
-            label: {
+            } label: {
                 HStack{
                     Spacer()
                     Text(state.buttonText, bundle: .module)
