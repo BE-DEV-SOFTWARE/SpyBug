@@ -59,7 +59,9 @@ The "author" attribute can be anything that let you identify the users of your p
     )
 ```
 
-![Simulator Screen Recording - iPhone 15 Pro - 2023-10-17 at 15 16 34](https://github.com/Bereyziat-Development/SpyBug/assets/72884798/20dfed3a-914a-4782-82d9-05a10d86e3e3)
+
+https://github.com/user-attachments/assets/2d71cf88-3ed0-46b5-82cc-1d11d8d02c19
+
 
 ## License
 This library is available under the MIT license. See the [LICENSE](LICENSE) file for more information.
