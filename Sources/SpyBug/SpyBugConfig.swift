@@ -7,12 +7,20 @@
 
 import Foundation
 
-public class SpyBugConfig {
-    public static let shared = SpyBugConfig()
+class SpyBugConfig {
+    static let shared = SpyBugConfig()
     
-    private init() {}
+    //Force users of SpyBugConfig to use the shared instance
+    private init() {
+        setApiKey()
+    }
     
-    public func setApiKey(_ apiKey: String) {
+    private func setApiKey() {
+        // Get API key from the .plist
+        guard let apiKey = Bundle.main.infoDictionary?[Constant.plistAPIKeyLocation] as? String else {
+            fatalError("⚠️`SpyBugAPIKey` key is missing in your Info.plist configuration file. Go to app.spybug.io to get copy the API key of your app and add it to your Info.plist file.⚠️")
+        }
+        // Store API key in keychain during usage
         let query = [
             kSecValueData: apiKey.data(using: .utf8)!,
             kSecClass: kSecClassGenericPassword,
@@ -23,17 +31,8 @@ public class SpyBugConfig {
         SecItemDelete(query)
         
         // Add new value to keychain
-        let status = SecItemAdd(query, nil)
+        let _ = SecItemAdd(query, nil)
     }
-}
-
-
-// Get API key function is separated to make that only setting the API key is public not accessing it
-// This ensures that the access to the API key is
-class SpyBugConfigAccessor {
-    static let shared = SpyBugConfigAccessor()
-    
-    private init() {}
     
     func getApiKey() -> String? {
         let query = [
@@ -52,4 +51,14 @@ class SpyBugConfigAccessor {
         
         return nil
     }
+}
+
+
+// Get API key function is separated to make that only setting the API key is public not accessing it
+// This ensures that the access to the API key is
+class SpyBugConfigAccessor {
+    static let shared = SpyBugConfigAccessor()
+    
+    private init() {}
+    
 }

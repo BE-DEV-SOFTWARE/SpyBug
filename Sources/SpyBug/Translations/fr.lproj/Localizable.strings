@@ -9,12 +9,15 @@
 "Propose a feature" = "Proposer une fonctionnalité";
 "Ask a question" = "Poser une question";
 "Request improvement" = "Demander une amélioration";
-"Type here..." = "Saisissez votre texte ici...";
+"Bug" = "Bug";
+"Feature" = "Fonctionnalité";
+"Question" = "Question";
+"Improvement" = "Amélioration";
+"Add a description here..." = "Ajoutez une description ici...";
 "This field should not be empty" = "Ce champ ne doit pas être vide";
 "Add screenshots" = "Ajouter des captures d'écran";
 "Image data compression failed" = "La compression des image a échoué";
 "Send" = "Envoyer";
-"Add description" = "Ajouter une description";
 "Our spies need a moment, please wait for your request to be sent." = "Nos espions ont besoin d'un instant, veuillez patienter pendant le traitement de votre demande.";
 "Sending..." = "Envoi en cours...";
 "Thank you!" = "Merci !";

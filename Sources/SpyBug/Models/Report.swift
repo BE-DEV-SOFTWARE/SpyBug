@@ -27,6 +27,19 @@ enum ReportType: String, Codable, CaseIterable {
         }
     }
     
+    var shortTitle: LocalizedStringKey {
+        return switch self {
+        case .bug:
+            "Bug"
+        case .improvement:
+            "Improvement"
+        case .question:
+            "Question"
+        case .feature:
+            "Feature"
+        }
+    }
+    
     var icon: Image {
         return switch self {
         case .bug:

@@ -7,18 +7,16 @@
 
 import SwiftUI
 
-
 struct ReportFormView: View {
-    @Environment(\.dismiss) private var dismiss
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
-    @State private var buttonPressed: Bool = false
-    @State private var showTextError: Bool = false
+    @State private var buttonPressed = false
+    @State private var showTextError = false
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
     @FocusState private var isTextEditorFocused: Bool
-    @State private var isShowingSendNavigationButton = false
+
     var author: String?
     var type: ReportType
     
@@ -43,18 +41,9 @@ struct ReportFormView: View {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 ImagePicker()
                 
-                Text("Add description", bundle: .module)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(.secondary))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
                 AddDescription()
                 
                 Spacer()
-                
-                if !isTextEditorFocused {
-                    SendRequestButton()
-                }
             }
         }
         .padding(.horizontal)
@@ -64,13 +53,6 @@ struct ReportFormView: View {
             if newValue && !text.isEmpty {
                 Task {
                     await sendRequest()
-                }
-            }
-        }
-        .onChange(of: isTextEditorFocused) { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                withAnimation {
-                    isShowingSendNavigationButton.toggle()
                 }
             }
         }
@@ -114,35 +96,6 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
-    private func SendRequestButton() -> some View {
-        Button {
-            sendRequestValidation()
-        } label: {
-            HStack {
-                Spacer()
-                Text("Send request", bundle: .module)
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(Color.white)
-                Spacer()
-                
-                Image(systemName: "paperplane")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(.white)
-                    .padding(.trailing)
-            }
-            .padding(.horizontal)
-            .frame(height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 35)
-                    .fill(spyBugGradient)
-                    .shadow(color: Color(.shadow), radius: 4)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
-    @ViewBuilder
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
@@ -173,36 +126,29 @@ struct ReportFormView: View {
     
     @ViewBuilder
     private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
-        HStack(alignment: .center) {
-            Button {
-                KeyboardUtils.hideKeyboard()
-                withAnimation {
-                    showReportForm.wrappedValue = false
+        ZStack {
+            HStack(alignment: .center) {
+                Button {
+                    KeyboardUtils.hideKeyboard()
+                    withAnimation {
+                        showReportForm.wrappedValue = false
+                    }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 28, weight: .regular))
+                        .foregroundStyle(Color(.secondary))
+                        .padding(.leading)
                 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(Color(.secondary))
-                    .padding(.leading)
+                Spacer()
             }
-            Spacer()
-            
-            Text(type.title, bundle: .module)
+            Text(type.shortTitle, bundle: .module)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
-            Spacer()
-            
-            if !isTextEditorFocused {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 28, weight: .regular))
-                    .padding(.leading)
-                    .hidden()
-            } else {
+            HStack(alignment: .center) {
+                Spacer()
                 SendRequestNavigationButton()
-                    .opacity(isShowingSendNavigationButton ? 1 : 0)
             }
         }
-        .frame(height: 36)
         .padding(.bottom)
         .buttonStyle(.plain)
     }
@@ -213,7 +159,7 @@ struct ReportFormView: View {
             if text.isEmpty {
                 VStack {
                     HStack {
-                        Text(showTextError ? "This field should not be empty" : "Type here...", bundle: .module)
+                        Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
                             .foregroundStyle(showTextError ? .red : Color(.secondary))
                             .font(.system(size: 16, weight: .regular))
                             .padding(.top, 2)
