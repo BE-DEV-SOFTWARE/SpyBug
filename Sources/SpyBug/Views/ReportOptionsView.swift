@@ -12,6 +12,7 @@ struct ReportOptionsView: View {
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
+    var reportTypes: [ReportType]
     
     var body: some View {
         VStack {
@@ -22,7 +23,7 @@ struct ReportOptionsView: View {
                         .foregroundStyle(Color(.title))
                         .padding(.vertical, 10)
                     
-                    ForEach(ReportType.allCases, id: \.self) { type in
+                    ForEach(reportTypes, id: \.self) { type in
                         ReportOptionRow(type: type)
                     }
                     Spacer()
@@ -93,7 +94,7 @@ struct ReportOptionsView: View {
 
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportOptionsView(author: "John Doe")
+        ReportOptionsView(author: "John Doe", reportTypes: ReportType.allCases)
             .preferredColorScheme(.dark)
             .background(Color(.background))
     }

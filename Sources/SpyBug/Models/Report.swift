@@ -8,8 +8,7 @@
 import SwiftUI
 import Foundation
 
-enum ReportType: String, Codable, CaseIterable {
-    case bug
+public enum ReportType: String, Codable, CaseIterable {    case bug
     case improvement
     case question
     case feature

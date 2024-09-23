@@ -9,8 +9,8 @@ import SwiftUI
 
 
 public extension View {
-    func reportOnShake(author: String?) -> some View {
-        self.modifier(ReportOnShakeViewModifier(author: author))
+    func reportOnShake(author: String?, reportTypes: [ReportType] = ReportType.allCases) -> some View {
+        self.modifier(ReportOnShakeViewModifier(author: author, reportTypes: reportTypes))
     }
 }
 
@@ -29,6 +29,7 @@ extension UIWindow {
 
 struct ReportOnShakeViewModifier: ViewModifier {
     let author: String?
+    let reportTypes: [ReportType]
     
     @State private var isShowingReportOptionsView = false
     
@@ -44,7 +45,8 @@ struct ReportOnShakeViewModifier: ViewModifier {
                 sheetBackground: Color(.background)
             ) {
                 ReportOptionsView(
-                    author: author
+                    author: author,
+                    reportTypes: reportTypes
                 )
                 .frame(height: 500)
             }
