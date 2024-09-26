@@ -20,15 +20,16 @@ public struct SpyBugButton<Label: View>: View {
     @ViewBuilder private var label: () -> Label
     
     public init(
-            author: String?,
-            reportTypes: ReportType...,
-            @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
-        ) {
-            self.author = author
-            self.reportTypes = reportTypes
-            self.label = label
-            configurationManager.saveSelectedReportTypes(reportTypes)
-        }
+        author: String?,
+        reportTypes: ReportType...,
+        @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
+    ) {
+        self.author = author
+        let resolvedReportTypes = reportTypes.isEmpty ? ReportType.allCases : reportTypes
+        self.reportTypes = resolvedReportTypes
+        self.label = label
+        configurationManager.saveSelectedReportTypes(resolvedReportTypes)
+    }
     
     public var body: some View {
         Button {
@@ -45,6 +46,9 @@ public struct SpyBugButton<Label: View>: View {
                 reportTypes: configurationManager.loadSelectedReportTypes()
             )
             .frame(height: 500)
+        }
+        .onAppear {
+            print("report types \(reportTypes)")
         }
     }
 }
