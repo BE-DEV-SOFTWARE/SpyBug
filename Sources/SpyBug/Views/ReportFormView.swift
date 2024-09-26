@@ -130,7 +130,7 @@ struct ReportFormView: View {
             HStack(alignment: .center) {
                 Button {
                     KeyboardUtils.hideKeyboard()
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         showReportForm.wrappedValue = false
                     }
                 } label: {

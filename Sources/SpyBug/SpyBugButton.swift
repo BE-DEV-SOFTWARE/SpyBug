@@ -21,13 +21,12 @@ public struct SpyBugButton<Label: View>: View {
     
     public init(
             author: String?,
-            reportTypes: [ReportType] = ReportType.allCases,
+            reportTypes: ReportType...,
             @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
         ) {
             self.author = author
             self.reportTypes = reportTypes
             self.label = label
-            
             configurationManager.saveSelectedReportTypes(reportTypes)
         }
     
