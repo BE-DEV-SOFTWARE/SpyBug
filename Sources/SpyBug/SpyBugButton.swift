@@ -14,15 +14,21 @@ import AdaptiveSheet
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
     private var author: String?
+    private var reportTypes: [ReportType]
+    private let configurationManager = ReportTypeConfigurationManager()
     
     @ViewBuilder private var label: () -> Label
     
     public init(
         author: String?,
+        reportTypes: ReportType...,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
     ) {
         self.author = author
+        let resolvedReportTypes = reportTypes.isEmpty ? ReportType.allCases : reportTypes
+        self.reportTypes = resolvedReportTypes
         self.label = label
+        configurationManager.saveSelectedReportTypes(resolvedReportTypes)
     }
     
     public var body: some View {
@@ -36,9 +42,13 @@ public struct SpyBugButton<Label: View>: View {
             sheetBackground: Color(.background)
         ) {
             ReportOptionsView(
-                author: author
+                author: author,
+                reportTypes: configurationManager.loadSelectedReportTypes()
             )
             .frame(height: 500)
+        }
+        .onAppear {
+            print("report types \(reportTypes)")
         }
     }
 }
