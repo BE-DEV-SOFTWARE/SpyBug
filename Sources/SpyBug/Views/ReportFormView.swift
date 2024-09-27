@@ -24,6 +24,10 @@ struct ReportFormView: View {
         type == ReportType.bug
     }
     
+    private var isCharacterLimitReached: Bool {
+        text.count > 500
+    }
+    
     var body: some View {
         VStack {
             if let showSuccessErrorView = showSuccessErrorView {
@@ -122,6 +126,7 @@ struct ReportFormView: View {
         .background {
             Capsule().fill(Color(.yellowOrange))
         }
+        .disabled(isCharacterLimitReached)
     }
     
     @ViewBuilder
@@ -169,20 +174,27 @@ struct ReportFormView: View {
                 }
                 .padding([.top, .leading], 4)
             }
-            HStack {
-                if #available(iOS 16.0, *) {
-                    TextEditor(text: $text)
-                        .scrollContentBackground(.hidden)
-                        .focused($isTextEditorFocused)
-                    Spacer()
-                } else {
-                    TextEditor(text: $text)
-                        .focused($isTextEditorFocused)
-                    Spacer()
+            VStack {
+                HStack {
+                    if #available(iOS 16.0, *) {
+                        TextEditor(text: $text)
+                            .scrollContentBackground(.hidden)
+                            .focused($isTextEditorFocused)
+                        Spacer()
+                    } else {
+                        TextEditor(text: $text)
+                            .focused($isTextEditorFocused)
+                        Spacer()
+                    }
                 }
+                HStack {
+                    Spacer()
+                    DescriptionValidation(text: text)
+                }
+                .offset(x: 4, y: 8)
             }
         }
-        .frame(height: isBugReport ? 50 : 200)
+        .frame(height: isBugReport ? 60 : 200)
         .frame(maxWidth: .infinity)
         .padding()
         .background(
