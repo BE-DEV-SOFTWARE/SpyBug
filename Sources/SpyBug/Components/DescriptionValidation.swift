@@ -14,7 +14,7 @@ struct DescriptionValidation: View {
         let characterCount = text.count
         let isOverLimit = characterCount > 500
         
-        return HStack {
+         HStack {
             Text("\(characterCount) / 500")
                 .font(.system(size: 12))
                 .foregroundStyle(isOverLimit ? .red : .gray)
