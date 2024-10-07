@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RealityKit
 
 struct ReportFormView: View {
     @State private var bugUIImages = [UIImage]()
@@ -29,6 +30,7 @@ struct ReportFormView: View {
     }
     
     var body: some View {
+        
         VStack {
             if let showSuccessErrorView = showSuccessErrorView {
                 SuccessErrorView(state: showSuccessErrorView)
@@ -50,8 +52,12 @@ struct ReportFormView: View {
                 Spacer()
             }
         }
+        
         .padding(.horizontal)
+        #if iOS
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
+        #endif
+//       
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {

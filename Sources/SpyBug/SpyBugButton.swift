@@ -45,7 +45,9 @@ public struct SpyBugButton<Label: View>: View {
                 author: author,
                 reportTypes: configurationManager.loadSelectedReportTypes()
             )
-            .frame(height: 500)
+#if iOS
+                  .frame(height: 500)
+        #endif
         }
         .onAppear {
             print("report types \(reportTypes)")

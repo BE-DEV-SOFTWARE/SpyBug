@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "SpyBug",
     defaultLocalization: "en",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v15), .visionOS(.v1)],
     products: [
         .library(
             name: "SpyBug",
@@ -18,10 +18,11 @@ let package = Package(
             url: "https://github.com/Bereyziat-Development/AdaptiveSheet",
             exact: "0.2.0"
         ),
-        .package(
-            url: "https://github.com/Bereyziat-Development/SnapPix",
-            exact: "0.1.1"
-        )
+        .package(url: "https://github.com/Bereyziat-Development/SnapPix", branch: "visionOS")
+//        .package(
+//            url: "https://github.com/Bereyziat-Development/SnapPix",
+//            exact: "0.1.1"
+//        )
     ],
     targets: [
         .target(
