@@ -17,7 +17,7 @@ struct ReportFormView: View {
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
     @FocusState private var isTextEditorFocused: Bool
-
+    
     var author: String?
     var type: ReportType
     
@@ -54,10 +54,10 @@ struct ReportFormView: View {
         }
         
         .padding(.horizontal)
-        #if iOS
+#if iOS
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
-        #endif
-//       
+#endif
+        //       
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
@@ -160,6 +160,9 @@ struct ReportFormView: View {
                 SendRequestNavigationButton()
             }
         }
+#if os(visionOS)
+        .padding(.top)
+#endif
         .padding(.bottom)
         .buttonStyle(.plain)
     }

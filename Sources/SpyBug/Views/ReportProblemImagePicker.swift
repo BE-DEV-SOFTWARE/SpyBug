@@ -26,6 +26,7 @@ struct ReportProblemImagePicker: View {
                         .foregroundStyle(spyBugGradient)
                 )
         })
+        .buttonStyle(.plain)
         .padding(.bottom, 12)
         .padding(.top, 6)
     }

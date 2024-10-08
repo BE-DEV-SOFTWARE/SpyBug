@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReportOptionsView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     var author: String?
     @State private var selectedType: ReportType?
@@ -17,12 +18,37 @@ struct ReportOptionsView: View {
     var body: some View {
         VStack {
             if !showReportForm {
+                
+                
                 VStack(spacing: 16) {
-                    Text("Need help?", bundle: .module)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(Color(.title))
-                        .padding(.vertical, 10)
                     
+                    HStack(alignment: .center) {
+#if os(visionOS)
+                        Button {
+                            KeyboardUtils.hideKeyboard()
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                dismiss()
+                            }
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 28, weight: .regular))
+                                .foregroundStyle(Color(.secondary))
+                                .padding(.leading)
+                        }
+                        .buttonStyle(.plain)
+#endif
+                        Spacer()
+                        
+                        Text("Need help?", bundle: .module)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(Color(.title))
+                            .padding(.vertical, 10)
+                        
+                        Spacer()
+                    }
+#if os(visionOS)
+                    .padding(.top, 10)
+#endif
                     ForEach(reportTypes, id: \.self) { type in
                         ReportOptionRow(type: type)
                     }
@@ -42,6 +68,9 @@ struct ReportOptionsView: View {
                 }
             }
         }
+#if os(visionOS)
+        .padding(.bottom)
+#endif
     }
     
     @ViewBuilder
