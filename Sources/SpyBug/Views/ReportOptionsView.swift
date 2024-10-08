@@ -30,7 +30,7 @@ struct ReportOptionsView: View {
                                 dismiss()
                             }
                         } label: {
-                            Image(systemName: "chevron.left")
+                            Image(systemName: "xmark")
                                 .font(.system(size: 28, weight: .regular))
                                 .foregroundStyle(Color(.secondary))
                                 .padding(.leading)

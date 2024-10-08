@@ -49,17 +49,21 @@ public struct SpyBugButton<Label: View>: View {
             
             .frame(height: 500)
         }
+        
 #endif
 #if os(visionOS)
-        .fullScreenCover(isPresented: $isShowingReportOptionsView, content: {
+        .popover(isPresented: $isShowingReportOptionsView,
+                 arrowEdge: .top,
+                 content: {
             NavigationView{
                 ReportOptionsView(
                     author: author,
                     reportTypes: configurationManager.loadSelectedReportTypes()
                 )}
+            .frame(width: 400, height: 650)
             .navigationBarBackButtonHidden(false)
             
-            .background(Color(.background))
+            .background(Color("Background"))
         })
 #endif
         .onAppear {

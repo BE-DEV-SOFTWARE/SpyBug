@@ -17,6 +17,7 @@ struct ReportFormView: View {
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
     @FocusState private var isTextEditorFocused: Bool
+    @State private var showingImagePicker = false
     
     var author: String?
     var type: ReportType
@@ -57,7 +58,7 @@ struct ReportFormView: View {
 #if iOS
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
 #endif
-        //       
+        //
         .background(Color(.background))
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
@@ -113,7 +114,17 @@ struct ReportFormView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
+                
+#if os(visionOS)
+                HStack{
+                    PhpPickerButton(selectedImages: $bugUIImages)
+                    Spacer()
+                }
+#endif
+                
+#if os(iOS)
                 ReportProblemImagePicker(problemUIImages: $bugUIImages)
+#endif
             }
         }
     }
