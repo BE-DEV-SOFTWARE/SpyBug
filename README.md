@@ -59,6 +59,31 @@ The "author" attribute can be anything that let you identify the users of your p
     )
 ```
 
+## Apple Vision Pro
+To run SpyBug on AppleVision Pro app, you need to define WindowGroup in App.Swift file. 
+
+
+In AppFile:
+```swift
+ WindowGroup(id: "ReportOptionsView"){
+   ReportOptionsView(author: "Author")}
+.windowStyle(.plain)
+.defaultSize(width: 550, height: 1000)
+```
+
+To place SpyBug in specific place you can use modifier:
+```swift
+.defaultWindowPlacement { content, context in
+if let mainWindow = context.windows.first(where: { $0.id == "ContentView" }) { //id of the relative view
+        return WindowPlacement(.below(mainWindow))
+    } else {
+       print("No window with ID 'ContentView' found!")
+        return WindowPlacement()
+    }
+}
+
+```
+
 
 https://github.com/user-attachments/assets/2d71cf88-3ed0-46b5-82cc-1d11d8d02c19
 

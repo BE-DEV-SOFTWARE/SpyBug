@@ -175,7 +175,9 @@ struct ReportFormView: View {
         .padding(.top)
 #endif
         .padding(.bottom)
+        .hoverEffect()
         .buttonStyle(.plain)
+        
     }
     
     @ViewBuilder

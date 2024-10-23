@@ -13,27 +13,37 @@ import AdaptiveSheet
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
+    @Environment(\.supportsMultipleWindows) private var supportsMutlipleWindows
+    @Environment(\.openWindow) private var openWindow
     private var author: String?
     private var reportTypes: [ReportType]
-    private let configurationManager = ReportTypeConfigurationManager()
+    private var id: String = "ReportOptionsView"
     
     @ViewBuilder private var label: () -> Label
     
     public init(
         author: String?,
         reportTypes: ReportType...,
+        id: String = "ReportOptionsView",
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
+     
     ) {
         self.author = author
         let resolvedReportTypes = reportTypes.isEmpty ? ReportType.allCases : reportTypes
         self.reportTypes = resolvedReportTypes
+        self.id = id
         self.label = label
-        configurationManager.saveSelectedReportTypes(resolvedReportTypes)
+     
     }
     
     public var body: some View {
         Button {
-            isShowingReportOptionsView.toggle()
+            if #available(visionOS 1.1, *) {
+                        openWindow(id: id)
+                print("Opening window")
+                    } else {
+                        isShowingReportOptionsView.toggle()
+                    }
         } label: {
             label()
         }
@@ -51,21 +61,7 @@ public struct SpyBugButton<Label: View>: View {
         }
         
 #endif
-#if os(visionOS)
-        .popover(isPresented: $isShowingReportOptionsView,
-                 arrowEdge: .top,
-                 content: {
-            NavigationView{
-                ReportOptionsView(
-                    author: author,
-                    reportTypes: configurationManager.loadSelectedReportTypes()
-                )}
-            .frame(width: 400, height: 650)
-            .navigationBarBackButtonHidden(false)
-            
-            .background(Color("Background"))
-        })
-#endif
+
         .onAppear {
             print("report types \(reportTypes)")
         }
@@ -114,3 +110,4 @@ public struct SpyBugButton<Label: View>: View {
         .preferredColorScheme(.light)
         .environment(\.locale, .init(identifier: "en"))
 }
+

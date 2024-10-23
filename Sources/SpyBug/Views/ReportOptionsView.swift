@@ -10,10 +10,14 @@ import SwiftUI
 struct ReportOptionsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.openWindow) private var openWindow
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
     var reportTypes: [ReportType]
+  
+    let id = "ReportOptionsView"
     
     var body: some View {
         VStack {

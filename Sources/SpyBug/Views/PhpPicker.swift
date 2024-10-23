@@ -8,6 +8,30 @@
 import PhotosUI
 import SwiftUI
 
+//var body: some View {
+//      VStack {
+//          PhotosPicker("Select avatar", selection: $avatarItem, matching: .images)
+//
+//          avatarImage?
+//              .resizable()
+//              .scaledToFit()
+//              .frame(width: 300, height: 300)
+//      }
+//      .onChange(of: avatarItem) {
+//          Task {
+//              if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+//                  avatarImage = loaded
+//              } else {
+//                  print("Failed")
+//              }
+//          }
+//      }
+//  }
+//> than 1.0 visionOS try with windowgroupsd
+//1 define window group
+//2 id
+//3 open window from environment, on click u open window with the id u created. 
+
 struct PhpPicker: UIViewControllerRepresentable {
     @Binding var images: [UIImage]
     
