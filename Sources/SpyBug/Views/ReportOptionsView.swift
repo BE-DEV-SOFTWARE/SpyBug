@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ReportOptionsView: View {
+public struct ReportOptionsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @Environment(\.dismissWindow) private var dismissWindow
@@ -19,7 +19,7 @@ struct ReportOptionsView: View {
   
     let id = "ReportOptionsView"
     
-    var body: some View {
+    public var body: some View {
         VStack {
             if !showReportForm {
                 
