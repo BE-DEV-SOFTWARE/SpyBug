@@ -10,8 +10,10 @@ import SwiftUI
 public struct ReportOptionsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+#if os(visionOS)
     @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.openWindow) private var openWindow
+#endif
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
@@ -23,8 +25,8 @@ public struct ReportOptionsView: View {
         self.showReportForm = showReportForm
         self.author = author
         self.reportTypes = reportTypes
-    
-      }
+        
+    }
     
     public var body: some View {
         VStack {
@@ -79,6 +81,7 @@ public struct ReportOptionsView: View {
                 }
             }
         }
+        .background(Color(.background))
 #if os(visionOS)
         .padding(.bottom)
 #endif
