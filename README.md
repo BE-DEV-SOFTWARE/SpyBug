@@ -66,8 +66,7 @@ To run SpyBug on AppleVision Pro app, you need to define WindowGroup in App.Swif
 In AppFile:
 ```swift
  WindowGroup(id: "ReportOptionsView"){
-   ReportOptionsView(author: "Author")}
-.windowStyle(.plain)
+              ReportOptionsView(reportTypes: ReportType.allCases)}
 .defaultSize(width: 550, height: 1000)
 ```
 
