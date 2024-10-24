@@ -16,8 +16,15 @@ public struct ReportOptionsView: View {
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
     var reportTypes: [ReportType]
-  
+    
     let id = "ReportOptionsView"
+    
+    public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType]) {
+        self.showReportForm = showReportForm
+        self.author = author
+        self.reportTypes = reportTypes
+    
+      }
     
     public var body: some View {
         VStack {
