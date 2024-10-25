@@ -9,8 +9,8 @@ import SwiftUI
 
 
 public extension View {
-    func reportOnShake(author: String?, reportTypes: [ReportType] = ReportType.allCases) -> some View {
-        self.modifier(ReportOnShakeViewModifier(author: author, reportTypes: reportTypes))
+    func reportOnShake(author: String?, reportTypes: [ReportType] = ReportType.allCases, isShakeAllowed: Binding<Bool>? = nil) -> some View {
+        self.modifier(ReportOnShakeViewModifier(author: author, reportTypes: reportTypes, isShakeAllowed: isShakeAllowed))
     }
 }
 
@@ -30,15 +30,25 @@ extension UIWindow {
 struct ReportOnShakeViewModifier: ViewModifier {
     let author: String?
     let reportTypes: [ReportType]
+    var isShakeAllowed: Binding<Bool>?
     
     @State private var isShowingReportOptionsView = false
+    
+    private var shakeAllowed: Bool {
+        isShakeAllowed?.wrappedValue ?? true
+    }
     
     func body(content: Content) -> some View {
         content
             .onAppear {
                 NotificationCenter.default.addObserver(forName: UIDevice.deviceDidShakeNotification, object: nil, queue: nil) { _ in
-                    isShowingReportOptionsView.toggle()
+                    if shakeAllowed {
+                        isShowingReportOptionsView.toggle()
+                    }
                 }
+            }
+            .onDisappear {
+                NotificationCenter.default.removeObserver(self, name: UIDevice.deviceDidShakeNotification, object: nil)
             }
             .adaptiveSheet(
                 isPresented: $isShowingReportOptionsView,
