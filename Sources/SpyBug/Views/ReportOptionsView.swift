@@ -19,22 +19,16 @@ public struct ReportOptionsView: View {
     @State private var showReportForm = false
     var reportTypes: [ReportType]
     
-    let id = "ReportOptionsView"
-    
-    public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType]) {
+    public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType] = ReportType.allCases) {
         self.showReportForm = showReportForm
         self.author = author
         self.reportTypes = reportTypes
-        
     }
     
     public var body: some View {
         VStack {
             if !showReportForm {
-                
-                
                 VStack(spacing: 16) {
-                    
                     HStack(alignment: .center) {
 #if os(visionOS)
                         Button {
@@ -83,13 +77,12 @@ public struct ReportOptionsView: View {
         }
         .background(Color(.background))
 #if os(visionOS)
-        .padding(.bottom)
+            .padding(.bottom)
 #endif
     }
     
     @ViewBuilder
     private func PoweredBySpybug() -> some View {
-        let urlString = "https://www.spybug.io/"
         let textColor = Color(.poweredBy)
         
         HStack {
@@ -99,8 +92,7 @@ public struct ReportOptionsView: View {
                         .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(textColor)
                     Button {
-                        guard let url = URL(string: urlString) else { return }
-                        openURL(url)
+                        openURL(Constant.presentationWebsiteURL)
                     } label: {
                         Text("SpyBug", bundle: .module)
                             .font(.system(size: 18, weight: .bold))
@@ -134,12 +126,10 @@ public struct ReportOptionsView: View {
     }
 }
 
-
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportOptionsView(author: "John Doe", reportTypes: ReportType.allCases)
+        ReportOptionsView(author: "John Doe")
             .preferredColorScheme(.dark)
             .background(Color(.background))
     }
 }
-

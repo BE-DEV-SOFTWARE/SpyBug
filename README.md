@@ -59,30 +59,27 @@ The "author" attribute can be anything that let you identify the users of your p
     )
 ```
 
-## Apple Vision Pro
-To run SpyBug on AppleVision Pro app, you need to define WindowGroup in App.Swift file. 
+## VisionOS
+To run SpyBug on VisionOS app, you need to add the ReportWindow that contains the reporting UI. 
 
 
-In AppFile:
+In you main AppFile add:
 ```swift
- WindowGroup(id: "ReportOptionsView"){
-              ReportOptionsView(reportTypes: ReportType.allCases)}
-.defaultSize(width: 550, height: 1000)
+ ReportWindow()
 ```
+In your info.plist don't forget to set the "Enable Multiple Windows" key to "YES" to enable you app to show multiple windows
 
-To place SpyBug in specific place you can use modifier:
+To place your ReportWindow in a specific place, for example near your main UI you can use this modifier:
 ```swift
-.defaultWindowPlacement { content, context in
-if let mainWindow = context.windows.first(where: { $0.id == "ContentView" }) { //id of the relative view
-        return WindowPlacement(.below(mainWindow))
+.defaultWindowPlacement { _, context in
+    if let relativeWindow = context.windows.first(where: { $0.id == "relativeWindowId" }) {
+        return WindowPlacement(.trailing(relativeWindow))
     } else {
-       print("No window with ID 'ContentView' found!")
         return WindowPlacement()
     }
 }
 
 ```
-
 
 https://github.com/user-attachments/assets/2d71cf88-3ed0-46b5-82cc-1d11d8d02c19
 

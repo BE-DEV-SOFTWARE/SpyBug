@@ -6,9 +6,8 @@
 //
 //
 
-import SwiftUI
 import AdaptiveSheet
-
+import SwiftUI
 
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
@@ -19,46 +18,34 @@ public struct SpyBugButton<Label: View>: View {
 #endif
     private var author: String?
     private var reportTypes: [ReportType]
-    private var id: String = "ReportOptionsView"
-    
+
     @ViewBuilder private var label: () -> Label
-    
+
     public init(
         author: String?,
-        reportTypes: ReportType...,
-        id: String = "ReportOptionsView",
+        reportTypes: [ReportType] = ReportType.allCases,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
-        
     ) {
         self.author = author
-        let resolvedReportTypes = reportTypes.isEmpty ? ReportType.allCases : reportTypes
-        self.reportTypes = resolvedReportTypes
-        self.id = id
+        self.reportTypes = reportTypes
         self.label = label
-        
     }
-    
+
     public var body: some View {
 #if os(visionOS)
         Button {
-            if #available(visionOS 1.1, *) {
-                openWindow(id: id)
-                print("Opening window")
-            } else {
-                isShowingReportOptionsView.toggle()
-            }
+            openWindow(id: Constant.reportWindowId)
         } label: {
             label()
         }
 #endif
 #if os(iOS)
         Button {
-            
             isShowingReportOptionsView.toggle()
         } label: {
             label()
         }
-        
+
         .adaptiveSheet(
             isPresented: $isShowingReportOptionsView,
             sheetBackground: Color(.background)
@@ -67,14 +54,8 @@ public struct SpyBugButton<Label: View>: View {
                 author: author,
                 reportTypes: reportTypes
             )
-            
+
             .frame(height: 500)
-        }
-        
-        
-        
-        .onAppear {
-            print("report types \(reportTypes)")
         }
 #endif
     }
@@ -86,9 +67,9 @@ public struct SpyBugButton<Label: View>: View {
             Text("Click on me, I am custom 😉")
         }
         .buttonStyle(.borderedProminent)
-        
+
         SpyBugButton(author: "")
-        
+
         SpyBugButton(author: "") {
             Text("I can also look like this 😱")
         }
@@ -122,4 +103,3 @@ public struct SpyBugButton<Label: View>: View {
         .preferredColorScheme(.light)
         .environment(\.locale, .init(identifier: "en"))
 }
-
