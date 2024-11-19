@@ -14,6 +14,17 @@ public extension View {
     }
 }
 
+public extension View {
+    func disableReportOnShake() -> some View {
+        self.onAppear {
+            UserDefaults.standard.set(true, forKey: "DisableReportOnShake")
+        }
+        .onDisappear {
+            UserDefaults.standard.set(false, forKey: "DisableReportOnShake")
+        }
+    }
+}
+
 // UIWindow subclass to handle device shake
 extension UIWindow {
     open override var canBecomeFirstResponder: Bool {
@@ -35,8 +46,9 @@ struct ReportOnShakeViewModifier: ViewModifier {
     @State private var isShowingReportOptionsView = false
     
     private var shakeAllowed: Bool {
-        isShakeAllowed?.wrappedValue ?? true
-    }
+         let isGloballyDisabled = UserDefaults.standard.bool(forKey: "DisableReportOnShake")
+         return isShakeAllowed?.wrappedValue ?? true && !isGloballyDisabled
+     }
     
     func body(content: Content) -> some View {
         content
