@@ -29,41 +29,8 @@ public struct ReportOptionsView: View {
         VStack {
             if !showReportForm {
                 VStack(spacing: 16) {
-                    HStack(alignment: .center) {
-#if os(visionOS)
-                        Button {
-                            KeyboardUtils.hideKeyboard()
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                dismiss()
-                            }
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 28, weight: .regular))
-                                .foregroundStyle(Color(.secondary))
-                                .padding(.leading)
-                        }
-                        .buttonStyle(.plain)
-#endif
-                        Spacer()
-                        
-                        Text("Need help?", bundle: .module)
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundStyle(Color(.title))
-                            .padding(.vertical, 10)
-                        
-                        Spacer()
-                    }
-#if os(visionOS)
-                    .padding(.top, 10)
-#endif
-                    ForEach(reportTypes, id: \.self) { type in
-                        ReportOptionRow(type: type)
-                    }
-                    Spacer()
-                    PoweredBySpybug()
-                }
-                .padding(.horizontal)
-                .transition(.move(edge: .leading))
+                    PlatformView()
+                    .transition(.move(edge: .leading))}
             } else {
                 if let selectedType {
                     ReportFormView(
@@ -76,10 +43,74 @@ public struct ReportOptionsView: View {
             }
         }
         .background(Color(.background))
+    }
+    
+    
+    @ViewBuilder
+    private func PlatformView() -> some View {
 #if os(visionOS)
-            .padding(.bottom)
+        VisionOSReportOptionsView()
+#elseif os(iOS)
+        iOSReportOptionsView()
 #endif
     }
+    
+    @ViewBuilder
+    private func iOSReportOptionsView() -> some View {
+        VStack(spacing: 16) {
+            Text("Need help?", bundle: .module)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Color(.title))
+                .padding(.vertical, 10)
+            
+            ForEach(reportTypes, id: \.self) { type in
+                ReportOptionRow(type: type)
+            }
+            
+            Spacer()
+            PoweredBySpybug()
+        }
+        .padding(.horizontal)
+    }
+    
+#if os(visionOS)
+    private func VisionOSReportOptionsView() -> some View {
+        VStack(spacing: 16) {
+            HStack(alignment: .center) {
+                Button {
+                    KeyboardUtils.hideKeyboard()
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        dismissWindow()
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 28, weight: .regular))
+                        .foregroundStyle(Color(.secondary))
+                        .padding(.leading)
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
+                Text("Need help?", bundle: .module)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(Color(.title))
+                    .padding(.vertical, 10)
+                
+                Spacer()
+            }
+            .padding(.top, 10)
+            
+            ForEach(reportTypes, id: \.self) { type in
+                ReportOptionRow(type: type)
+            }
+            
+            Spacer()
+            PoweredBySpybug()
+        }
+        .padding(.horizontal)
+        .padding(.bottom)
+    } #endif
     
     @ViewBuilder
     private func PoweredBySpybug() -> some View {

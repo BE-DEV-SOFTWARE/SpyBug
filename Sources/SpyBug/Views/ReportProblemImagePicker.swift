@@ -12,18 +12,22 @@ import SwiftUI
 
 struct ReportProblemImagePicker: View {
     @Binding var problemUIImages: [UIImage]
-
+    
     var body: some View {
         SnapPix(uiImages: $problemUIImages, maxImageCount: 3, allowDeletion: true, addImageLabel: {
-            imagePickerLabel
+            ImagePickerLabel()
         })
         .buttonStyle(.plain)
         .padding(.bottom, 12)
         .padding(.top, 6)
     }
     
-    // The reusable image picker label
-    var imagePickerLabel: some View {
+    
+}
+
+// The reusable image picker label
+struct ImagePickerLabel: View {
+    var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(Color(.button))
             .frame(width: 100, height: 100)
@@ -36,24 +40,4 @@ struct ReportProblemImagePicker: View {
                     .foregroundStyle(spyBugGradient)
             )
     }
-}
-
-struct PhpPickerButton: View {
-    @Binding var selectedImages: [UIImage]
-    @State private var showingPhpPicker = false
-    
-    var body: some View {
-        Button(action: {
-            showingPhpPicker = true
-        }) {
-            ReportProblemImagePicker(problemUIImages: $selectedImages).imagePickerLabel // Reuse the label
-        }
-        .padding(.bottom, 12)
-        .padding(.top, 6)
-        .buttonStyle(.plain)
-        .sheet(isPresented: $showingPhpPicker) {
-            PhpPicker(images: $selectedImages)
-        }
-    }
-    
 }
