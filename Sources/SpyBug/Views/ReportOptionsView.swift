@@ -42,7 +42,8 @@ public struct ReportOptionsView: View {
                 }
             }
         }
-        .background(Color(.background))
+        
+//
     }
     
     
@@ -70,6 +71,7 @@ public struct ReportOptionsView: View {
             Spacer()
             PoweredBySpybug()
         }
+        .background(Color(.background))
         .padding(.horizontal)
     }
     
@@ -77,27 +79,27 @@ public struct ReportOptionsView: View {
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .center) {
-                Button {
-                    KeyboardUtils.hideKeyboard()
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        dismissWindow()
-                    }
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 28, weight: .regular))
-                        .foregroundStyle(Color(.secondary))
-                        .padding(.leading)
-                }
-                .buttonStyle(.plain)
-                
-                Spacer()
+//                Button {
+//                    KeyboardUtils.hideKeyboard()
+//                    withAnimation(.easeInOut(duration: 0.3)) {
+//                        dismissWindow()
+//                    }
+//                } label: {
+//                    Image(systemName: "xmark")
+//                        .font(.system(size: 28, weight: .regular))
+//                        .foregroundStyle(Color(.secondary))
+//                        .padding(.leading)
+//                }
+//                .buttonStyle(.plain)
+//                
+//                Spacer()
                 
                 Text("Need help?", bundle: .module)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(Color(.title))
                     .padding(.vertical, 10)
                 
-                Spacer()
+//                Spacer()
             }
             .padding(.top, 10)
             
@@ -108,6 +110,7 @@ public struct ReportOptionsView: View {
             Spacer()
             PoweredBySpybug()
         }
+//        .opacity(0.7)
         .padding(.horizontal)
         .padding(.bottom)
     } #endif

@@ -8,9 +8,9 @@
 import SwiftUI
 
 #if os(visionOS)
-public func ReportWindow(reportTypes: [ReportType] = ReportType.allCases) -> some Scene {
+public func ReportWindow(reportTypes: [ReportType] = ReportType.allCases, width: CGFloat = 400, height: CGFloat = 550 ) -> some Scene {
     WindowGroup(id: Constant.reportWindowId){
         ReportOptionsView(reportTypes: reportTypes)}
-    .defaultSize(width: 550, height: 1000)
+    .defaultSize(width: width, height: height)
 }
 #endif
