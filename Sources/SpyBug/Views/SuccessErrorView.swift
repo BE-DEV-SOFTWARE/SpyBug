@@ -130,7 +130,9 @@ struct SuccessErrorViewVisionOS: View {
                     .foregroundStyle(Color(.graySuccess))
                     .lineSpacing(5)
                 Button {
+#if os(visionOS)
                     dismissWindow()
+#endif
                 } label: {
                     HStack{
                         Spacer()

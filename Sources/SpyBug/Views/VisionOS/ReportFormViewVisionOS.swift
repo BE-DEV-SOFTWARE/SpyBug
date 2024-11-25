@@ -137,8 +137,10 @@ struct ReportFormViewVisionOS: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+#if os(visionOS)
                 PhotoSelector()
+#endif
+      
                 
             }
         }
@@ -183,52 +185,54 @@ struct ReportFormViewVisionOS: View {
     
     @ViewBuilder
     private func AddDescription() -> some View {
-        ZStack {
-            if text.isEmpty {
+        if #available(iOS 17.0, *) {
+            ZStack {
+                if text.isEmpty {
+                    VStack {
+                        HStack {
+                            Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
+                                .foregroundStyle(showTextError ? .red : Color(.secondary))
+                                .font(.system(size: 16, weight: .regular))
+                                .padding(.top, 2)
+                            Spacer()
+                        }
+                        Spacer()
+                        
+                    }
+                    .padding([.top, .leading], 4)
+                }
                 VStack {
                     HStack {
-                        Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
-                            .foregroundStyle(showTextError ? .red : Color(.secondary))
-                            .font(.system(size: 16, weight: .regular))
-                            .padding(.top, 2)
-                        Spacer()
+                        if #available(iOS 16.0, *) {
+                            TextEditor(text: $text)
+                                .scrollContentBackground(.hidden)
+                                .focused($isTextEditorFocused)
+                            Spacer()
+                        } else {
+                            TextEditor(text: $text)
+                                .focused($isTextEditorFocused)
+                            Spacer()
+                        }
                     }
-                    Spacer()
-                    
-                }
-                .padding([.top, .leading], 4)
-            }
-            VStack {
-                HStack {
-                    if #available(iOS 16.0, *) {
-                        TextEditor(text: $text)
-                            .scrollContentBackground(.hidden)
-                            .focused($isTextEditorFocused)
+                    HStack {
                         Spacer()
-                    } else {
-                        TextEditor(text: $text)
-                            .focused($isTextEditorFocused)
-                        Spacer()
+                        DescriptionValidation(text: text)
                     }
+                    .offset(x: 4, y: 8)
                 }
-                HStack {
-                    Spacer()
-                    DescriptionValidation(text: text)
-                }
-                .offset(x: 4, y: 8)
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal)
-        .padding(.top)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.black.opacity(0.2)))
-                .cornerRadius(25, corners: .allCorners)
-                .shadow(color: Color(.shadow), radius: 5)
-        )
-        .hoverEffect()
-        .buttonStyle(.plain)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
+            .padding(.top)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.black.opacity(0.2)))
+                    .cornerRadius(25, corners: .allCorners)
+                    .shadow(color: Color(.shadow), radius: 5)
+            )
+            .hoverEffect()
+            .buttonStyle(.plain)
+        } 
     }
 }
 
