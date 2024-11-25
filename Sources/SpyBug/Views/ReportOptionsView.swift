@@ -33,21 +33,21 @@ public struct ReportOptionsView: View {
                     .transition(.move(edge: .leading))}
             } else {
                 if let selectedType {
-                    #if iOS
+#if iOS
                     ReportFormView(
                         showReportForm: $showReportForm,
                         author: author,
                         type: selectedType
                             .transition(.move(edge: .trailing))
                     )
-                    #elseif os(visionOS)
+#elseif os(visionOS)
                     ReportFormViewVisionOS(
-                    showReportForm: $showReportForm,
-                    author: author,
-                    type: selectedType)
+                        showReportForm: $showReportForm,
+                        author: author,
+                        type: selectedType)
                     .transition(.move(edge: .trailing))
 #endif
-                   
+                    
                 }
             }
         }
@@ -168,10 +168,10 @@ public struct ReportOptionsView: View {
             withAnimation{
                 showReportForm = true
                 selectedType = type}
-            } label: {
-                Text(type.title, bundle: .module)
-            } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))
-        }
+        } label: {
+            Text(type.title, bundle: .module)
+        } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))
+    }
 }
 
 struct ReportOptionsView_Previews: PreviewProvider {

@@ -59,7 +59,7 @@ struct ReportFormView: View {
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
         .background(Color(.background))
 #endif
-
+        
         
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
