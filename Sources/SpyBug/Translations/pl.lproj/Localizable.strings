@@ -27,6 +27,8 @@
 "Close" = "Zamknij";
 "We successfully received your request. Our team will take it into account as soon as possible." = "Pomyślnie otrzymaliśmy twoje zgłoszenie. Nasz zespół uwzględni je tak szybko, jak to możliwe.";
 "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Tego zgłoszenia nie można było wysłać. Nasi szpiedzy prawdopodobnie przeoczyli tutaj błąd...\nProszę spróbować ponownie później.";
+"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Nie udało się wysłać raportu. Nasi szpiedzy prawdopodobnie przeoczyli tu jakiś błąd...\nSpróbuj ponownie później.";
+
 "It’s sent!" = "Wysłano!";
 "Oh no!" = "O nie!";
 "Powered by" = "Wspierane przez";

@@ -24,6 +24,7 @@
 "Close" = "Fermer";
 "We successfully received your request. Our team will take it into account as soon as possible." = "Nous avons bien reçu votre demande. Notre équipe en tiendra compte dès que possible.";
 "Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Votre demande n'a pas pu être envoyé. Nos espions ont probablement oublié un bug par ici...\nVeuillez réessayer plus tard.";
+"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Ce rapport n'a pas pu être envoyé. Nos espions ont probablement raté un bug ici...\nVeuillez réessayer plus tard.";
 "It’s sent!" = "C'est envoyé !";
 "Oh no!" = "Oh non !";
 "Powered by" = "Propulsé par";

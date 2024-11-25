@@ -1,14 +1,15 @@
 //
-//  ReportFormView.swift
+//  ReportFormViewVisionOS.swift
+//  SpyBug
 //
-//
-//  Created by Pavel Kurzo on 13/12/2023.
+//  Created by Szymon Wnuk on 25/11/2024.
 //
 
 import SwiftUI
+
 import PhotosUI
 
-struct ReportFormView: View {
+struct ReportFormViewVisionOS: View {
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
     @State private var buttonPressed = false
@@ -34,7 +35,7 @@ struct ReportFormView: View {
         
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
-                SuccessErrorView(state: showSuccessErrorView)
+                SuccessErrorViewVisionOS(state: showSuccessErrorView)
                     .onTapGesture {
                         withAnimation {
                             self.showSuccessErrorView = nil
@@ -43,23 +44,19 @@ struct ReportFormView: View {
                     }
             } else if isLoading {
                 SendingView()
-                    .background(Color(.background))
-            } else {
-                TitleAndBackButton(showReportForm: $showReportForm, type: type)
+            }else {
+                TitleAndBackButtonVisionOS(showReportForm: $showReportForm, type: type)
                 
                 ImagePicker()
                 
                 AddDescription()
                 
                 Spacer()
-            }
-        }
+                
+                SendRequestNavigationButton()
+                
+            }}
         .padding(.horizontal)
-#if iOS
-        .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
-        .background(Color(.background))
-#endif
-
         
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
@@ -72,6 +69,7 @@ struct ReportFormView: View {
             KeyboardUtils.hideKeyboard()
         }
     }
+    
     
     private func sendRequestValidation() {
         if text.isEmpty {
@@ -107,18 +105,6 @@ struct ReportFormView: View {
         }
     }
     
-    @ViewBuilder
-    private func ImagePicker() -> some View {
-        if isBugReport {
-            VStack {
-                Text("Add screenshots", bundle: .module)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(.secondary))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                ReportProblemImagePicker(problemUIImages: $bugUIImages)
-            }
-        }
-    }
     
     @ViewBuilder
     private func SendRequestNavigationButton() -> some View {
@@ -127,49 +113,73 @@ struct ReportFormView: View {
         } label: {
             Text("Send")
                 .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(Color(.darkBrown))
+                .foregroundStyle(Color(.black))
                 .padding(.vertical, 8)
                 .padding(.horizontal, 18)
+                .frame(maxWidth: .infinity, maxHeight: 55)
+            
+                .background {
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(.white)
+                    
+                }
+                .disabled(isCharacterLimitReached)
         }
-        .background {
-            Capsule().fill(Color(.yellowOrange))
-        }
-        .disabled(isCharacterLimitReached)
+        .buttonStyle(.plain)
+        .padding(.bottom)
     }
     
     @ViewBuilder
-    private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
-        ZStack {
-            HStack(alignment: .center) {
-                Button {
-                    KeyboardUtils.hideKeyboard()
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showReportForm.wrappedValue = false
-                    }
-                    
-                    //SW: No back button?
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 28, weight: .regular))
-                        .foregroundStyle(Color(.secondary))
-                        .padding(.leading)
+    private func ImagePicker() -> some View {
+        if isBugReport {
+            VStack {
+                Text("Add screenshots", bundle: .module)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(.secondary))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                PhotoSelector()
+                
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func TitleAndBackButtonVisionOS(showReportForm: Binding<Bool>, type: ReportType) -> some View {
+        HStack(alignment: .center) {
+            Button {
+                KeyboardUtils.hideKeyboard()
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showReportForm.wrappedValue = false
                 }
-                Spacer()
+            } label: {
+                RoundedLabel(reportType: type)
             }
             Text(type.shortTitle, bundle: .module)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
-            HStack(alignment: .center) {
-                Spacer()
-                SendRequestNavigationButton()
-            }
+            Spacer()
         }
-        .padding(.bottom)
+        
+        .padding(.top, 15)
+        .padding(.horizontal, 10)
+        .hoverEffect()
         .buttonStyle(.plain)
         
     }
     
-    
+    @ViewBuilder
+    private func RoundedLabel(reportType: ReportType) -> some View {
+        
+        
+        reportType.iconVisionOS
+            .resizable()
+            .frame(width: 25, height: 25)
+            .padding(5)
+            .background(Circle()
+                .foregroundStyle(.black.opacity(0.2))
+            )
+    }
     
     @ViewBuilder
     private func AddDescription() -> some View {
@@ -184,6 +194,7 @@ struct ReportFormView: View {
                         Spacer()
                     }
                     Spacer()
+                    
                 }
                 .padding([.top, .leading], 4)
             }
@@ -207,48 +218,18 @@ struct ReportFormView: View {
                 .offset(x: 4, y: 8)
             }
         }
-        .frame(height: isBugReport ? 60 : 200)
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(.horizontal)
+        .padding(.top)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.button))
+                .fill(Color(.black.opacity(0.2)))
                 .cornerRadius(25, corners: .allCorners)
                 .shadow(color: Color(.shadow), radius: 5)
         )
+        .hoverEffect()
+        .buttonStyle(.plain)
     }
 }
 
 
-#Preview {
-    TabView {
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .bug
-        )
-        .tabItem {
-            Image(.bug)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .question
-        )
-        .tabItem {
-            Image(.circleQuestion)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .feature
-        )
-        .tabItem {
-            Image(.rocket)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .improvement
-        )
-        .tabItem {
-            Image(.wand)
-        }
-    }
-}

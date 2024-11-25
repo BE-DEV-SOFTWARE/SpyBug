@@ -33,17 +33,25 @@ public struct ReportOptionsView: View {
                     .transition(.move(edge: .leading))}
             } else {
                 if let selectedType {
+                    #if iOS
                     ReportFormView(
                         showReportForm: $showReportForm,
                         author: author,
                         type: selectedType
+                            .transition(.move(edge: .trailing))
                     )
+                    #elseif os(visionOS)
+                    ReportFormViewVisionOS(
+                    showReportForm: $showReportForm,
+                    author: author,
+                    type: selectedType)
                     .transition(.move(edge: .trailing))
+#endif
+                   
                 }
             }
         }
         
-//
     }
     
     
@@ -79,40 +87,35 @@ public struct ReportOptionsView: View {
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .center) {
-//                Button {
-//                    KeyboardUtils.hideKeyboard()
-//                    withAnimation(.easeInOut(duration: 0.3)) {
-//                        dismissWindow()
-//                    }
-//                } label: {
-//                    Image(systemName: "xmark")
-//                        .font(.system(size: 28, weight: .regular))
-//                        .foregroundStyle(Color(.secondary))
-//                        .padding(.leading)
-//                }
-//                .buttonStyle(.plain)
-//                
-//                Spacer()
+                
+                Image(.bugSolid)
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                    .padding(5)
+                    .background(Circle()
+                        .foregroundStyle(.black.opacity(0.2))
+                    )
                 
                 Text("Need help?", bundle: .module)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(Color(.title))
                     .padding(.vertical, 10)
                 
-//                Spacer()
+                Spacer()
             }
             .padding(.top, 10)
+            .padding(.horizontal, 10)
             
             ForEach(reportTypes, id: \.self) { type in
-                ReportOptionRow(type: type)
+                ReportOptionRowVisionOS(type: type)
             }
             
             Spacer()
             PoweredBySpybug()
         }
-//        .opacity(0.7)
-        .padding(.horizontal)
         .padding(.bottom)
+        .padding(.horizontal)
+        .glassBackgroundEffect()
     } #endif
     
     @ViewBuilder
@@ -158,6 +161,17 @@ public struct ReportOptionsView: View {
         }
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
+    
+    @ViewBuilder
+    private func ReportOptionRowVisionOS(type: ReportType) -> some View {
+        Button {
+            withAnimation{
+                showReportForm = true
+                selectedType = type}
+            } label: {
+                Text(type.title, bundle: .module)
+            } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))
+        }
 }
 
 struct ReportOptionsView_Previews: PreviewProvider {

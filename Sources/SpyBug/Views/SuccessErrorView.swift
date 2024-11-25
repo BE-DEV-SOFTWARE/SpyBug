@@ -8,18 +8,28 @@
 import SwiftUI
 import AdaptiveSheet
 
-enum ViewState {
+enum ViewState: Equatable {
     case error
-    case success
+    case success(reportType: ReportType)
     
     var icon: Image {
         switch self {
         case .error:
-            Image(.errorEmoji)
-        case .success:
-            Image(.greenRocket)
+#if os(visionOS)
+            return Image(.pinkFace)
+#else
+            return Image(.errorEmoji)
+#endif
+            
+        case .success(let reportType):
+#if os(visionOS)
+            return reportType.greenSuccessIcon
+#else
+            return Image(.greenRocket)
+#endif
         }
     }
+    
     
     var title: LocalizedStringKey {
         switch self {
@@ -27,6 +37,15 @@ enum ViewState {
             "Oh no!"
         case .success:
             "It’s sent!"
+        }
+    }
+    
+    var viewTextVisionOS: LocalizedStringKey {
+        switch self {
+        case .error:
+            "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later."
+        case .success:
+            "We successfully received your request.  Our team will take it into account as soon as possible. "
         }
     }
     
@@ -89,8 +108,56 @@ struct SuccessErrorView: View {
     }
 }
 
+struct SuccessErrorViewVisionOS: View {
+    var state: ViewState
+#if os(visionOS)
+    @Environment(\.dismissWindow) private var dismissWindow
+#endif
+    
+    var body: some View {
+        VStack(spacing: 70) {
+            state.icon
+                .resizable()
+                .scaledToFit()
+                .frame(height: 180)
+                .padding(.top, 80)
+            VStack(spacing: 20){
+                Text(state.title, bundle: .module)
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundStyle(state == .error ? Color(.yourPink) : Color.primary)
+                Text(state.viewTextVisionOS, bundle: .module)
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(Color(.graySuccess))
+                    .lineSpacing(5)
+                Button {
+                    dismissWindow()
+                } label: {
+                    HStack{
+                        Spacer()
+                        Text("Thank you", bundle: .module)
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundStyle(Color.primary)
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(height: 55)
+                    .background(
+                        RoundedRectangle(cornerRadius: 35)
+                            .fill(Color(.doveGray))
+                    )
+                    
+                }
+                .padding(.top, 25)
+                .hoverEffect()
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 20)
+    }
+}
+
 #Preview("Success") {
-    SuccessErrorView(state: .success)
+    SuccessErrorView(state: .success(reportType: .bug))
 }
 
 #Preview("Fail") {

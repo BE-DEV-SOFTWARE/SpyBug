@@ -25,19 +25,17 @@ struct ReportProblemImagePicker: View {
     
 }
 
-// The reusable image picker label
 struct ImagePickerLabel: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
-            .fill(Color(.button))
+            .fill(.white.opacity(0.3))
             .frame(width: 100, height: 100)
             .shadow(color: Color(.shadow), radius: 8, x: 4, y: 4)
             .overlay(
-                Image(systemName: "camera")
+                Image(systemName: "plus")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50)
-                    .foregroundStyle(spyBugGradient)
+                    .frame(width: 30, height: 30)
             )
     }
 }

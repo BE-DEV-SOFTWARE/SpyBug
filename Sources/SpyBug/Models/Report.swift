@@ -52,6 +52,31 @@ public enum ReportType: String, Codable, CaseIterable {
             Image(.wand)
         }
     }
+    var iconVisionOS: Image {
+        return switch self {
+        case .bug:
+            Image(.bugSolid)
+        case .improvement:
+            Image(.rocket)
+        case .question:
+            Image(.circleQuestion)
+        case .feature:
+            Image(.wand)
+        }
+    }
+    
+    var greenSuccessIcon: Image {
+        return switch self {
+        case .bug:
+            Image(.greenBug)
+        case .improvement:
+            Image(.greenRocket)
+        case .question:
+            Image(.greenQuestion)
+        case .feature:
+            Image(.greenBug)
+        }
+    }
 }
 
 struct Report: Decodable {
