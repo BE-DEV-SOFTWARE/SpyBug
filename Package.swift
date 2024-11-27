@@ -20,7 +20,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/Bereyziat-Development/SnapPix",
-            exact: "0.1.1"
+            branch: "Document-picker-implementation"
         )
     ],
     targets: [

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReportFormView: View {
     @State private var bugUIImages = [UIImage]()
+    @State private var files = [URL]()
     @State private var text = ""
     @State private var buttonPressed = false
     @State private var showTextError = false
@@ -73,20 +74,36 @@ struct ReportFormView: View {
             buttonPressed.toggle()
         }
     }
-    
     private func sendRequest() async {
         do {
-            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
-            
-            if isBugReport && !bugUIImages.isEmpty {
-                let imageDataArray = bugUIImages.map { image in
-                    guard let imageData = image.jpegData(compressionQuality: 0.8) else { fatalError("Image data compression failed") }
-                    return imageData
-                }
+            let result = try await SpyBugService().createBugReport(
+                reportIn: ReportCreate(description: text, type: type, authorEmail: author)
+            )
+
+            if !bugUIImages.isEmpty {
+                let imageDataArray = bugUIImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
                 
-                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
+                if !imageDataArray.isEmpty {
+                    do {
+                        _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
+                    } catch {
+                        print("Error uploading pictures: \(error.localizedDescription)")
+                    }
+                }
             }
-            
+
+            if !files.isEmpty {
+                let validFiles = files.compactMap { try? Data(contentsOf: $0) }
+                
+                if !validFiles.isEmpty {
+                    do {
+                        _ = try await SpyBugService().addFilesToReport(reportId: result.id, files: validFiles)
+                    } catch {
+                        print("Error uploading files: \(error.localizedDescription)")
+                    }
+                }
+            }
+
             withAnimation {
                 showSuccessErrorView = .success
                 isLoading = false
@@ -98,16 +115,12 @@ struct ReportFormView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
-                Text("Add screenshots", bundle: .module)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(.secondary))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                ReportProblemImagePicker(problemUIImages: $bugUIImages)
+                ReportProblemImagePicker(problemUIImages: $bugUIImages, files: $files)
             }
         }
     }
@@ -194,7 +207,7 @@ struct ReportFormView: View {
                 .offset(x: 4, y: 8)
             }
         }
-        .frame(height: isBugReport ? 60 : 200)
+        .frame(height: 200)
         .frame(maxWidth: .infinity)
         .padding()
         .background(

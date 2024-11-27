@@ -10,23 +10,22 @@ import SnapPix
 
 struct ReportProblemImagePicker: View {
     @Binding var problemUIImages: [UIImage]
+    @Binding var files: [URL]
     // TODO: Make it work even if the images are not all sent
     
     var body: some View {
-        SnapPix(uiImages: $problemUIImages, maxImageCount: 3, allowDeletion: true, addImageLabel: {
+        SnapPix(uiImages: $problemUIImages, files: $files, maxImageCount: 3, maxFileSizeB: 2000 * 1024, allowDeletion: true, addItemLabel: {_ in
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.button))
+                .fill(Color(.mischkaGray))
                 .frame(width: 100, height: 100)
-                .shadow(color: Color(.shadow), radius: 8, x: 4, y: 4)
                 .overlay(
-                    Image(systemName: "camera")
+                    Image(systemName: "plus")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 50)
-                        .foregroundStyle(spyBugGradient)
+                        .frame(width: 30, height: 30)
+                        .foregroundStyle(Color(.graySuccess))
                 )
         })
-        .padding(.bottom, 12)
         .padding(.top, 6)
     }
 }
