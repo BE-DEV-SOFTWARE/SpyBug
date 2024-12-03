@@ -159,7 +159,7 @@ struct ReportFormViewVisionOS: View {
     
     @ViewBuilder
     private func AddDescription() -> some View {
-        ZStack {
+        ZStack{
             if text.isEmpty {
                 VStack {
                     HStack {
@@ -180,7 +180,8 @@ struct ReportFormViewVisionOS: View {
                             .scrollContentBackground(.hidden)
                             .focused($isTextEditorFocused)
                         Spacer()
-                    } else {
+                    }
+                    else {
                         TextEditor(text: $text)
                             .focused($isTextEditorFocused)
                         Spacer()
@@ -194,11 +195,16 @@ struct ReportFormViewVisionOS: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(.horizontal)
+        .padding(.top)
+        .padding(0)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.black.opacity(0.2)))
+                .foregroundStyle(.black.opacity(0.2))
                 .cornerRadius(25, corners: .allCorners)
                 .shadow(color: Color(.shadow), radius: 5)
         )
+        .buttonStyle(.plain)
     }
+    
 }

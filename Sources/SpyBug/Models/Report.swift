@@ -62,7 +62,7 @@ public enum ReportType: String, Codable, CaseIterable {
         case .question:
             Image(.greenQuestion)
         case .feature:
-            Image(.greenBug)
+            Image(.greenWand)
         }
     }
 }

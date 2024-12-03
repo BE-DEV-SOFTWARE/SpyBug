@@ -101,12 +101,13 @@ struct SuccessErrorViewVisionOS: View {
 #endif
     
     var body: some View {
-        VStack(spacing: 70) {
+        VStack {
             state.icon
                 .resizable()
                 .scaledToFit()
-                .frame(height: 180)
-                .padding(.top, 80)
+                .frame(height: state == .success(reportType: .improvement) ? 90 : 180)
+                .padding(.top, state == .success(reportType: .improvement) ? 155 : 100)
+                .padding(.bottom, state == .success(reportType: .improvement) ? 40: 0)
             VStack(spacing: 20){
                 Text(state.title, bundle: .module)
                     .font(.system(size: 32, weight: .bold))
@@ -115,27 +116,33 @@ struct SuccessErrorViewVisionOS: View {
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(Color(.graySuccess))
                     .lineSpacing(5)
-                Button {
+                    .fixedSize(horizontal: false, vertical: true)
+                
+                    Button {
 #if os(visionOS)
-                    dismissWindow()
+                        dismissWindow()
 #endif
-                } label: {
-                    HStack{
-                        Spacer()
-                        Text("Thank you", bundle: .module)
-                            .font(.system(size: 16, weight: .regular))
-                            .foregroundStyle(Color.primary)
-                        Spacer()
+                    } label: {
+                        HStack{
+                            Spacer()
+                            Text("Thank you", bundle: .module)
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                        }
+                        .frame(height: 50)
+                        .background(
+                            RoundedRectangle(cornerRadius: 35)
+                                .fill(Color(.doveGray))
+                        )
                     }
-                    .padding()
-                    .frame(height: 55)                    
-                }
-                .padding(.top, 25)
-
+                    .padding(.top, 20)
+//                    .hoverEffectDisabled() 
+                    .buttonStyle(.plain)
+              
             }
-        }
-        .padding(.horizontal, 20)
-    }
+            .padding(30)
+        }}
 }
 
 #Preview("Success") {

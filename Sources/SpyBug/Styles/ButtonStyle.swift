@@ -67,6 +67,8 @@ public struct VisionOSReportButtonStyle: ButtonStyle {
 
         .padding(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 8))
         .frame(height: 69)
+        .contentShape(Rectangle())
+        .hoverEffect(.highlight)
         Divider()
                            .frame(height: 1)
                            .foregroundStyle(Color(.whiteButtonVision))

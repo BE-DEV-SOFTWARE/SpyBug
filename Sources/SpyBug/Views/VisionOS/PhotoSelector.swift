@@ -8,22 +8,29 @@
 import PhotosUI
 import SwiftUI
 
-#if os(visionOS)
+
 struct PhotoSelector: View {
     @State var selectedItems: [PhotosPickerItem] = []
     @State private var maxSelectionCount: Int = 3
-    
+
     var body: some View {
-        HStack{
-            PhotosPicker(selection: $selectedItems, maxSelectionCount: 3, matching: .images, label: {
+        HStack {
+            PhotosPicker(selection: $selectedItems, maxSelectionCount: 3, matching: .images) {
                 ImagePickerLabel()
             }
-            )
             Spacer()
         }
-        .hoverEffect()
         .buttonStyle(.plain)
+        .applyHoverEffectDisabledIfAvailable()
     }
 }
-#endif
 
+extension View {
+    func applyHoverEffectDisabledIfAvailable() -> some View {
+        if #available(iOS 17.0, *) {
+            return AnyView(self.hoverEffectDisabled())
+        } else {
+            return AnyView(self)
+        }
+    }
+}
