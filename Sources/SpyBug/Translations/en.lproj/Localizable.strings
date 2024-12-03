@@ -25,8 +25,7 @@
 "Thank you!" = "Thank you!";
 "Close" = "Close";
 "We successfully received your request. Our team will take it into account as soon as possible." = "We successfully received your request. Our team will take it into account as soon as possible.";
-"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later.";
-"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later.";
+"Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later.";
 "It’s sent!" = "It’s sent!";
 "Oh no!" = "Oh no!";
 "Powered by" = "Powered by";

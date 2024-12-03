@@ -13,12 +13,10 @@ import SwiftUI
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
 #if os(visionOS)
-    @Environment(\.supportsMultipleWindows) private var supportsMutlipleWindows
     @Environment(\.openWindow) private var openWindow
 #endif
     private var author: String?
     private var reportTypes: [ReportType]
-
     @ViewBuilder private var label: () -> Label
 
     public init(
@@ -32,20 +30,13 @@ public struct SpyBugButton<Label: View>: View {
     }
 
     public var body: some View {
-#if os(visionOS)
         Button {
-            openWindow(id: Constant.reportWindowId)
+            print("Button is clicked 👾")
+            openReportDialog()
         } label: {
             label()
         }
-#endif
 #if os(iOS)
-        Button {
-            isShowingReportOptionsView.toggle()
-        } label: {
-            label()
-        }
-
         .adaptiveSheet(
             isPresented: $isShowingReportOptionsView,
             sheetBackground: Color(.background)
@@ -57,6 +48,14 @@ public struct SpyBugButton<Label: View>: View {
 
             .frame(height: 500)
         }
+#endif
+    }
+    
+    private func openReportDialog() {
+#if os(visionOS)
+    openWindow(id: Constant.reportWindowId)
+#elseif os(iOS)
+    isShowingReportOptionsView.toggle()
 #endif
     }
 }

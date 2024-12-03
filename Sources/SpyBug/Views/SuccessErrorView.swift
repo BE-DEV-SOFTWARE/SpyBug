@@ -22,14 +22,9 @@ enum ViewState: Equatable {
 #endif
             
         case .success(let reportType):
-#if os(visionOS)
             return reportType.greenSuccessIcon
-#else
-            return Image(.greenRocket)
-#endif
         }
     }
-    
     
     var title: LocalizedStringKey {
         switch self {
@@ -37,15 +32,6 @@ enum ViewState: Equatable {
             "Oh no!"
         case .success:
             "It’s sent!"
-        }
-    }
-    
-    var viewTextVisionOS: LocalizedStringKey {
-        switch self {
-        case .error:
-            "This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later."
-        case .success:
-            "We successfully received your request.  Our team will take it into account as soon as possible. "
         }
     }
     
@@ -125,7 +111,7 @@ struct SuccessErrorViewVisionOS: View {
                 Text(state.title, bundle: .module)
                     .font(.system(size: 32, weight: .bold))
                     .foregroundStyle(state == .error ? Color(.yourPink) : Color.primary)
-                Text(state.viewTextVisionOS, bundle: .module)
+                Text(state.viewText, bundle: .module)
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(Color(.graySuccess))
                     .lineSpacing(5)
@@ -142,16 +128,10 @@ struct SuccessErrorViewVisionOS: View {
                         Spacer()
                     }
                     .padding()
-                    .frame(height: 55)
-                    .background(
-                        RoundedRectangle(cornerRadius: 35)
-                            .fill(Color(.doveGray))
-                    )
-                    
+                    .frame(height: 55)                    
                 }
                 .padding(.top, 25)
-                .hoverEffect()
-                .buttonStyle(.plain)
+
             }
         }
         .padding(.horizontal, 20)

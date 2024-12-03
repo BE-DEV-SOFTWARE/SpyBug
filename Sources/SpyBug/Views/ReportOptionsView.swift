@@ -87,14 +87,7 @@ public struct ReportOptionsView: View {
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .center) {
-                
-                Image(.bugSolid)
-                    .resizable()
-                    .frame(width: 25, height: 25)
-                    .padding(5)
-                    .background(Circle()
-                        .foregroundStyle(.black.opacity(0.2))
-                    )
+                Spacer()
                 
                 Text("Need help?", bundle: .module)
                     .font(.system(size: 24, weight: .bold))
