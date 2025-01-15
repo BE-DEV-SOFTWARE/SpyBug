@@ -17,7 +17,7 @@ struct DescriptionValidation: View {
          HStack {
             Text("\(characterCount) / 500")
                 .font(.system(size: 12))
-                .foregroundStyle(isOverLimit ? .red : .gray)
+                .foregroundStyle(isOverLimit ? .red : .white)
         }
     }
 }

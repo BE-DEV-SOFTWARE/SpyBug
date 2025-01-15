@@ -152,9 +152,6 @@ struct ReportFormViewVisionOS: View {
             .resizable()
             .frame(width: 25, height: 25)
             .padding(5)
-            .background(Circle()
-                .foregroundStyle(.black.opacity(0.2))
-            )
     }
     
     @ViewBuilder
@@ -191,7 +188,7 @@ struct ReportFormViewVisionOS: View {
                     Spacer()
                     DescriptionValidation(text: text)
                 }
-                .offset(x: 4, y: 8)
+                .offset(x: 4, y: 15)
             }
         }
         .frame(maxWidth: .infinity)

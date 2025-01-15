@@ -130,7 +130,7 @@ public struct ReportOptionsView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Text("All rights reserved 2024", bundle: .module)
+                Text("All rights reserved 2025", bundle: .module)
                     .font(.system(size: 12))
                     .foregroundStyle(textColor)
             }

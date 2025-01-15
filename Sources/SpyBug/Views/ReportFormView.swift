@@ -147,7 +147,6 @@ struct ReportFormView: View {
                         showReportForm.wrappedValue = false
                     }
                     
-                    //SW: No back button?
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 28, weight: .regular))
