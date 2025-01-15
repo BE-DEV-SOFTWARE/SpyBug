@@ -41,4 +41,37 @@ public struct ReportButtonStyle: ButtonStyle {
                 .shadow(color: Color(.shadow), radius: 4)
         )
     }
+    
+}
+
+public struct VisionOSReportButtonStyle: ButtonStyle {
+    var icon: Image
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 16){
+            icon
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 30, height: 30)
+                .foregroundStyle(Color(.secondary))
+            configuration.label
+                .font(.system(size: 18))
+                .foregroundStyle(Color(.secondary))
+            Spacer()
+            Image(systemName: "chevron.right")
+                .resizable()
+                .frame(width: 12, height: 21)
+                .foregroundStyle(.white.opacity(0.23))
+                .padding(.trailing)
+        }
+
+        .padding(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 8))
+        .frame(height: 69)
+        .contentShape(RoundedRectangle(cornerRadius: 20))
+
+        .hoverEffect(.highlight)
+        Divider()
+                           .frame(height: 1)
+                           .foregroundStyle(Color(.whiteButtonVision))
+    }
 }

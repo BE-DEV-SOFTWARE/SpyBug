@@ -25,7 +25,7 @@
 "Thank you!" = "Danke!";
 "Close" = "Schließen";
 "We successfully received your request. Our team will take it into account as soon as possible." = "Wir haben Ihre Anfrage erfolgreich erhalten. Unser Team wird sie so schnell wie möglich berücksichtigen.";
-"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Dieser Bericht konnte nicht gesendet werden. Unsere Spione haben hier wahrscheinlich einen Fehler übersehen...\nBitte versuchen Sie es später noch einmal.";
+"Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Dieser Bericht konnte nicht gesendet werden. Unsere Spione haben hier wahrscheinlich einen Fehler übersehen...\nBitte versuchen Sie es später noch einmal.";
 "It’s sent!" = "Es ist gesendet!";
 "Oh no!" = "Oh nein!";
 "Powered by" = "Angetrieben von";

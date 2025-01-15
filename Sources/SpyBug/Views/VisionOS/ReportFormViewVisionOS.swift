@@ -1,23 +1,22 @@
 //
-//  ReportFormView.swift
+//  ReportFormViewVisionOS.swift
+//  SpyBug
 //
-//
-//  Created by Pavel Kurzo on 13/12/2023.
+//  Created by Szymon Wnuk on 25/11/2024.
 //
 
 import SwiftUI
+
 import PhotosUI
 
-struct ReportFormView: View {
+struct ReportFormViewVisionOS: View {
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
-    @State private var buttonPressed = false
     @State private var showTextError = false
     @State private var isLoading = false
     @State private var showSuccessErrorView: ViewState?
     @Binding var showReportForm: Bool
     @FocusState private var isTextEditorFocused: Bool
-    
     
     var author: String?
     var type: ReportType
@@ -31,10 +30,9 @@ struct ReportFormView: View {
     }
     
     var body: some View {
-        
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
-                SuccessErrorView(state: showSuccessErrorView)
+                SuccessErrorViewVisionOS(state: showSuccessErrorView)
                     .onTapGesture {
                         withAnimation {
                             self.showSuccessErrorView = nil
@@ -43,42 +41,29 @@ struct ReportFormView: View {
                     }
             } else if isLoading {
                 SendingView()
-                    .background(Color(.background))
             } else {
-                TitleAndBackButton(showReportForm: $showReportForm, type: type)
+                TitleAndBackButtonVisionOS(showReportForm: $showReportForm, type: type)
                 
                 ImagePicker()
                 
                 AddDescription()
                 
                 Spacer()
+                
+                SendRequestNavigationButton()
             }
         }
-        .padding(.horizontal)
-#if iOS
-        .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
-        .background(Color(.background))
-#endif
-        
-        
-        .onChange(of: buttonPressed) { newValue in
-            if newValue && !text.isEmpty {
-                Task {
-                    await sendRequest()
-                }
-            }
-        }
-        .onTapGesture {
-            KeyboardUtils.hideKeyboard()
-        }
+        .padding(24)
     }
     
-    private func sendRequestValidation() {
+    private func submit() {
         if text.isEmpty {
             showTextError = true
         } else {
             isLoading = true
-            buttonPressed.toggle()
+            Task {
+                await sendRequest()
+            }
         }
     }
     
@@ -108,6 +93,21 @@ struct ReportFormView: View {
     }
     
     @ViewBuilder
+    private func SendRequestNavigationButton() -> some View {
+        Button(action: submit) {
+            HStack{
+                Spacer()
+                Text("Send", bundle: .module)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(Color.primary)
+                Spacer()
+            }
+            .padding()
+            .frame(height: 55)
+        }
+    }
+    
+    @ViewBuilder
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
@@ -115,64 +115,48 @@ struct ReportFormView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                ReportProblemImagePicker(problemUIImages: $bugUIImages)
+                PhotoSelector()
             }
         }
     }
     
     @ViewBuilder
-    private func SendRequestNavigationButton() -> some View {
-        Button {
-            sendRequestValidation()
-        } label: {
-            Text("Send")
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(Color(.darkBrown))
-                .padding(.vertical, 8)
-                .padding(.horizontal, 18)
-        }
-        .background {
-            Capsule().fill(Color(.yellowOrange))
-        }
-        .disabled(isCharacterLimitReached)
-    }
-    
-    @ViewBuilder
-    private func TitleAndBackButton(showReportForm: Binding<Bool>, type: ReportType) -> some View {
-        ZStack {
-            HStack(alignment: .center) {
-                Button {
-                    KeyboardUtils.hideKeyboard()
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showReportForm.wrappedValue = false
-                    }
-                    
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 28, weight: .regular))
-                        .foregroundStyle(Color(.secondary))
-                        .padding(.leading)
+    private func TitleAndBackButtonVisionOS(showReportForm: Binding<Bool>, type: ReportType) -> some View {
+        HStack(alignment: .center) {
+            Button("Back", systemImage: "chevron.left") {
+                KeyboardUtils.hideKeyboard()
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showReportForm.wrappedValue = false
                 }
-                Spacer()
             }
+            .buttonStyle(.bordered)
+            .labelStyle(.iconOnly)
+            
+            Spacer()
+            
+            RoundedLabel(reportType: type)
             Text(type.shortTitle, bundle: .module)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
-            HStack(alignment: .center) {
-                Spacer()
-                SendRequestNavigationButton()
-            }
+            
+            Spacer()
+            
+            Spacer()
+                .frame(width: 44)
         }
-        .padding(.bottom)
-        .buttonStyle(.plain)
-        
     }
     
-    
+    @ViewBuilder
+    private func RoundedLabel(reportType: ReportType) -> some View {
+        reportType.icon
+            .resizable()
+            .frame(width: 25, height: 25)
+            .padding(5)
+    }
     
     @ViewBuilder
     private func AddDescription() -> some View {
-        ZStack {
+        ZStack{
             if text.isEmpty {
                 VStack {
                     HStack {
@@ -193,7 +177,8 @@ struct ReportFormView: View {
                             .scrollContentBackground(.hidden)
                             .focused($isTextEditorFocused)
                         Spacer()
-                    } else {
+                    }
+                    else {
                         TextEditor(text: $text)
                             .focused($isTextEditorFocused)
                         Spacer()
@@ -203,51 +188,20 @@ struct ReportFormView: View {
                     Spacer()
                     DescriptionValidation(text: text)
                 }
-                .offset(x: 4, y: 8)
+                .offset(x: 4, y: 15)
             }
         }
-        .frame(height: isBugReport ? 60 : 200)
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(.horizontal)
+        .padding(.top)
+        .padding(0)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.button))
+                .foregroundStyle(.black.opacity(0.2))
                 .cornerRadius(25, corners: .allCorners)
                 .shadow(color: Color(.shadow), radius: 5)
         )
+        .buttonStyle(.plain)
     }
-}
-
-
-#Preview {
-    TabView {
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .bug
-        )
-        .tabItem {
-            Image(.bug)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .question
-        )
-        .tabItem {
-            Image(.circleQuestion)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .feature
-        )
-        .tabItem {
-            Image(.rocket)
-        }
-        ReportFormView(
-            showReportForm: .constant(false),
-            type: .improvement
-        )
-        .tabItem {
-            Image(.wand)
-        }
-    }
+    
 }

@@ -12,4 +12,6 @@ enum Constant {
     static let plistAPIKeyLocation = "SpyBugAPIKey"
     static let apiScheme = "https"
     static let baseURL = "service.spybug.io/api/v1"
+    static let reportWindowId = "SpyBugReportView"
+    static let presentationWebsiteURL = URL(string: "https://spybug.io")!
 }

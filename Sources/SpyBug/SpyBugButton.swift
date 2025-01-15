@@ -6,50 +6,57 @@
 //
 //
 
-import SwiftUI
 import AdaptiveSheet
-
+import SwiftUI
 
 @available(iOS 15.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
+#if os(visionOS)
+    @Environment(\.openWindow) private var openWindow
+#endif
     private var author: String?
     private var reportTypes: [ReportType]
-    private let configurationManager = ReportTypeConfigurationManager()
-    
     @ViewBuilder private var label: () -> Label
-    
+
     public init(
         author: String?,
-        reportTypes: ReportType...,
+        reportTypes: [ReportType] = ReportType.allCases,
         @ViewBuilder label: @escaping () -> Label = { Text("Give some feedback") }
     ) {
         self.author = author
-        let resolvedReportTypes = reportTypes.isEmpty ? ReportType.allCases : reportTypes
-        self.reportTypes = resolvedReportTypes
+        self.reportTypes = reportTypes
         self.label = label
-        configurationManager.saveSelectedReportTypes(resolvedReportTypes)
     }
-    
+
     public var body: some View {
         Button {
-            isShowingReportOptionsView.toggle()
+            print("Button is clicked 👾")
+            openReportDialog()
         } label: {
             label()
         }
+#if os(iOS)
         .adaptiveSheet(
             isPresented: $isShowingReportOptionsView,
             sheetBackground: Color(.background)
         ) {
             ReportOptionsView(
                 author: author,
-                reportTypes: configurationManager.loadSelectedReportTypes()
+                reportTypes: reportTypes
             )
+
             .frame(height: 500)
         }
-        .onAppear {
-            print("report types \(reportTypes)")
-        }
+#endif
+    }
+    
+    private func openReportDialog() {
+#if os(visionOS)
+    openWindow(id: Constant.reportWindowId)
+#elseif os(iOS)
+    isShowingReportOptionsView.toggle()
+#endif
     }
 }
 
@@ -59,9 +66,9 @@ public struct SpyBugButton<Label: View>: View {
             Text("Click on me, I am custom 😉")
         }
         .buttonStyle(.borderedProminent)
-        
+
         SpyBugButton(author: "")
-        
+
         SpyBugButton(author: "") {
             Text("I can also look like this 😱")
         }
