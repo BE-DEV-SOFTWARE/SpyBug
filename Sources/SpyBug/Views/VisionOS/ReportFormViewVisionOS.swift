@@ -69,7 +69,7 @@ struct ReportFormViewVisionOS: View {
     
     private func sendRequest() async {
         do {
-            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorId: author))
             
             if isBugReport && !bugUIImages.isEmpty {
                 let imageDataArray = bugUIImages.map { image in
@@ -77,7 +77,7 @@ struct ReportFormViewVisionOS: View {
                     return imageData
                 }
                 
-                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
+                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, files: imageDataArray)
             }
             
             withAnimation {
@@ -115,7 +115,7 @@ struct ReportFormViewVisionOS: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(.secondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                PhotoSelector()
+                PhotoSelector(selectedUIImages: $bugUIImages)
             }
         }
     }

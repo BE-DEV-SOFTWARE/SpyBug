@@ -10,9 +10,14 @@ import SwiftUI
 
 
 struct PhotoSelector: View {
-    @State var selectedItems: [PhotosPickerItem] = []
-    @State private var maxSelectionCount: Int = 3
-    @State private var selectedImages: [Image] = []
+    @Binding var selectedUIImages: [UIImage]
+    @State private var selectedItems: [PhotosPickerItem] = []
+    private let maxSelectionCount: Int = 3
+    private var selectedImages: [Image] {
+        selectedUIImages.map {
+            Image(uiImage: $0)
+        }
+    }
 
     var body: some View {
         HStack {
@@ -35,11 +40,10 @@ struct PhotoSelector: View {
         .applyHoverEffectDisabledIfAvailable()
         .onChange(of: selectedItems) { items in
             Task {
-                selectedImages.removeAll()
                 for item in items {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let uiImage = UIImage(data: data) {
-                        selectedImages.append(Image(uiImage: uiImage))
+                        selectedUIImages.append(uiImage)
                     }
                 }
             }

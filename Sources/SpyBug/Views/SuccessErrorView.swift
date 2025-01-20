@@ -117,32 +117,25 @@ struct SuccessErrorViewVisionOS: View {
                     .foregroundStyle(Color(.graySuccess))
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
-                
-                    Button {
+                Button {
 #if os(visionOS)
-                        dismissWindow()
+                    dismissWindow()
 #endif
-                    } label: {
-                        HStack{
-                            Spacer()
-                            Text("Thank you", bundle: .module)
-                                .font(.system(size: 16, weight: .regular))
-                                .foregroundStyle(Color.primary)
-                            Spacer()
-                        }
-                        .frame(height: 50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 35)
-                                .fill(Color(.doveGray))
-                        )
+                } label: {
+                    HStack{
+                        Spacer()
+                        Text("Thank you", bundle: .module)
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundStyle(Color.primary)
+                        Spacer()
                     }
-                    .padding(.top, 20)
-//                    .hoverEffectDisabled() 
-                    .buttonStyle(.plain)
-              
+                    .padding()
+                    .frame(height: 55)
+                }
             }
             .padding(30)
-        }}
+        }
+    }
 }
 
 #Preview("Success") {
