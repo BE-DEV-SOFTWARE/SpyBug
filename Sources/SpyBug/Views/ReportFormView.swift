@@ -19,7 +19,7 @@ struct ReportFormView: View {
     @FocusState private var isTextEditorFocused: Bool
     
     
-    var author: String?
+    var authorId: String?
     var type: ReportType
     
     private var isBugReport: Bool {
@@ -84,7 +84,7 @@ struct ReportFormView: View {
     
     private func sendRequest() async {
         do {
-            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorEmail: author))
+            let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorId: authorId))
             
             if isBugReport && !bugUIImages.isEmpty {
                 let imageDataArray = bugUIImages.map { image in
@@ -92,7 +92,7 @@ struct ReportFormView: View {
                     return imageData
                 }
                 
-                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, pictures: imageDataArray)
+                _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, files: imageDataArray)
             }
             
             withAnimation {
