@@ -33,12 +33,12 @@ public struct ReportOptionsView: View {
                     .transition(.move(edge: .leading))}
             } else {
                 if let selectedType {
-#if iOS
+#if os(iOS)
                     ReportFormView(
                         showReportForm: $showReportForm,
-                        author: author,
-                        type: selectedType
-                            .transition(.move(edge: .trailing))
+                        authorId: author,
+                        type: selectedType)
+                            .transition(.move(edge: .trailing)
                     )
 #elseif os(visionOS)
                     ReportFormViewVisionOS(
