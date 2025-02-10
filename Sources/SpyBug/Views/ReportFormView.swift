@@ -55,7 +55,7 @@ struct ReportFormView: View {
             }
         }
         .padding(.horizontal)
-#if iOS
+#if os(iOS)
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
         .background(Color(.background))
 #endif

@@ -14,7 +14,7 @@ struct ImagePickerLabel: View {
             .frame(width: 100, height: 100)
             .shadow(color: Color(.shadow), radius: 8, x: 4, y: 4)
             .overlay(
-                Image(systemName: "plus")
+                Image(systemName: "camera")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)

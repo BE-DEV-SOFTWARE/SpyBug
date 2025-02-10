@@ -18,13 +18,13 @@ public struct ReportOptionsView: View {
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
     var reportTypes: [ReportType]
-    
+
     public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType] = ReportType.allCases) {
         self.showReportForm = showReportForm
         self.author = author
         self.reportTypes = reportTypes
     }
-    
+
     public var body: some View {
         VStack {
             if !showReportForm {
@@ -33,13 +33,13 @@ public struct ReportOptionsView: View {
                     .transition(.move(edge: .leading))}
             } else {
                 if let selectedType {
-#if iOS
+#if os(iOS)
                     ReportFormView(
                         showReportForm: $showReportForm,
-                        author: author,
+                        authorId: author,
                         type: selectedType
-                            .transition(.move(edge: .trailing))
                     )
+                    .transition(.move(edge: .trailing))
 #elseif os(visionOS)
                     ReportFormViewVisionOS(
                         showReportForm: $showReportForm,
@@ -47,14 +47,14 @@ public struct ReportOptionsView: View {
                         type: selectedType)
                     .transition(.move(edge: .trailing))
 #endif
-                    
+
                 }
             }
         }
-        
+
     }
-    
-    
+
+
     @ViewBuilder
     private func PlatformView() -> some View {
 #if os(visionOS)
@@ -63,7 +63,7 @@ public struct ReportOptionsView: View {
         iOSReportOptionsView()
 #endif
     }
-    
+
     @ViewBuilder
     private func iOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
@@ -71,50 +71,51 @@ public struct ReportOptionsView: View {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(Color(.title))
                 .padding(.vertical, 10)
-            
+
             ForEach(reportTypes, id: \.self) { type in
                 ReportOptionRow(type: type)
             }
-            
+
             Spacer()
             PoweredBySpybug()
         }
         .background(Color(.background))
         .padding(.horizontal)
     }
-    
+
 #if os(visionOS)
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .center) {
                 Spacer()
-                
+
                 Text("Need help?", bundle: .module)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(Color(.title))
                     .padding(.vertical, 10)
-                
+
                 Spacer()
             }
             .padding(.top, 10)
             .padding(.horizontal, 10)
-            
+
             ForEach(reportTypes, id: \.self) { type in
                 ReportOptionRowVisionOS(type: type)
             }
-            
+
             Spacer()
             PoweredBySpybug()
         }
         .padding(.bottom)
         .padding(.horizontal)
         .glassBackgroundEffect()
-    } #endif
-    
+    }
+#endif
+
     @ViewBuilder
     private func PoweredBySpybug() -> some View {
         let textColor = Color(.poweredBy)
-        
+
         HStack {
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
@@ -141,7 +142,7 @@ public struct ReportOptionsView: View {
                 .frame(height: 80)
         }
     }
-    
+
     @ViewBuilder
     private func ReportOptionRow(type: ReportType) -> some View {
         Button {
@@ -154,7 +155,7 @@ public struct ReportOptionsView: View {
         }
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
-    
+
     @ViewBuilder
     private func ReportOptionRowVisionOS(type: ReportType) -> some View {
         Button {
