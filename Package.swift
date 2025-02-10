@@ -15,14 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/Bereyziat-Development/AdaptiveSheet",
+            url: "https://github.com/BE-DEV-SOFTWARE/AdaptiveSheet",
             exact: "0.2.0"
         ),
-        .package(url: "https://github.com/Bereyziat-Development/SnapPix", branch: "visionOS")
-//        .package(
-//            url: "https://github.com/Bereyziat-Development/SnapPix",
-//            exact: "0.1.1"
-//        )
+        .package(
+            url: "https://github.com/BE-DEV-SOFTWARE/SnapPix",
+            exact: "0.1.2"
+        )
     ],
     targets: [
         .target(
