@@ -9,10 +9,10 @@
 "Propose a feature" = "Eine Funktion vorschlagen";
 "Ask a question" = "Eine Frage stellen";
 "Request improvement" = "Verbesserung anfordern";
-"Bug" = "Problem"
-"Feature" = "Funktion"
-"Question" = "Frage"
-"Improvement" = "Verbesserung"
+"Bug" = "Problem";
+"Feature" = "Funktion";
+"Question" = "Frage";
+"Improvement" = "Verbesserung";
 "Add a description here..." = "Fügen Sie hier eine Beschreibung hinzu...";
 "This field should not be empty" = "Dieses Feld darf nicht leer sein";
 "Add screenshots" = "Screenshots hinzufügen";
