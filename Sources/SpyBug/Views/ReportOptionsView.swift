@@ -47,13 +47,10 @@ public struct ReportOptionsView: View {
                         type: selectedType)
                     .transition(.move(edge: .trailing))
 #endif
-
                 }
             }
         }
-
     }
-
 
     @ViewBuilder
     private func PlatformView() -> some View {
@@ -79,7 +76,7 @@ public struct ReportOptionsView: View {
             Spacer()
             PoweredBySpybug()
         }
-        .background(Color(.background))
+        .conditionalBackground()
         .padding(.horizontal)
     }
 

@@ -6,7 +6,6 @@
 //
 //
 
-import AdaptiveSheet
 import SwiftUI
 
 @available(iOS 15.0, *)
@@ -37,16 +36,29 @@ public struct SpyBugButton<Label: View>: View {
             label()
         }
 #if os(iOS)
-        .adaptiveSheet(
-            isPresented: $isShowingReportOptionsView,
-            sheetBackground: Color(.background)
-        ) {
-            ReportOptionsView(
-                author: author,
-                reportTypes: reportTypes
-            )
-
-            .frame(height: 500)
+        .sheet(isPresented: $isShowingReportOptionsView) {
+            Group {
+                if #available(iOS 26.0, *) {
+                    ReportOptionsView(
+                        author: author,
+                        reportTypes: reportTypes
+                    )
+                    .frame(height: 500)
+                } else {
+                    ZStack {
+                        Color(.background)
+                            .edgesIgnoringSafeArea(.all)
+                        
+                        ReportOptionsView(
+                            author: author,
+                            reportTypes: reportTypes
+                        )
+                        .frame(height: 500)
+                    }
+                }
+            }
+            .conditionalPresentationCornerRadius(24)
+            .presentationDetents([.height(530)])
         }
 #endif
     }
