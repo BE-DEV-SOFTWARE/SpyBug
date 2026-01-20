@@ -92,7 +92,6 @@ struct ServiceHelper {
         let (data, response) = try await sesssion.data(for: request)
         
         try handelHttpError(data: data, response: response)
-        
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategyFormatters = [
             DateFormatter.standard,

@@ -10,17 +10,16 @@ import SnapPix
 
 struct ReportProblemImagePicker: View {
     @Binding var problemUIImages: [UIImage]
+    @Binding var files: [URL]
     
     var body: some View {
-        SnapPix(uiImages: $problemUIImages, maxImageCount: 3, allowDeletion: true, addImageLabel: {
+        SnapPix(uiImages: $problemUIImages, files: $files, maxImageCount: 3, maxFileSizeB: 2000 * 1024, allowDeletion: true, addItemLabel: {_ in
             ImagePickerLabel()
         })
         .buttonStyle(.plain)
         .padding(.bottom, 12)
         .padding(.top, 6)
     }
-    
-    
 }
 
 

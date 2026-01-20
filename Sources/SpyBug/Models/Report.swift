@@ -30,7 +30,7 @@ public enum ReportType: String, Codable, CaseIterable {
     var shortTitle: LocalizedStringKey {
         return switch self {
         case .bug:
-            "Bug"
+            "Problem"
         case .improvement:
             "Improvement"
         case .question:

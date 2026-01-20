@@ -26,7 +26,7 @@ let package = Package(
     targets: [
         .target(
             name: "SpyBug",
-            dependencies: ["SnapPix", "AdaptiveSheet"],
+            dependencies: ["SnapPix"],
             resources: [.process("Media.xcassets")]
         )
     ]

@@ -10,6 +10,7 @@ import PhotosUI
 
 struct ReportFormView: View {
     @State private var bugUIImages = [UIImage]()
+    @State private var files = [URL]()
     @State private var text = ""
     @State private var buttonPressed = false
     @State private var showTextError = false
@@ -81,7 +82,6 @@ struct ReportFormView: View {
             buttonPressed.toggle()
         }
     }
-    
     private func sendRequest() async {
         do {
             let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorId: authorId))
@@ -94,7 +94,19 @@ struct ReportFormView: View {
                 
                 _ = try await SpyBugService().addPicturesToCreateBugReport(reportId: result.id, files: imageDataArray)
             }
-            
+
+            if !files.isEmpty {
+                let validFiles = files.compactMap { try? Data(contentsOf: $0) }
+                
+                if !validFiles.isEmpty {
+                    do {
+                        _ = try await SpyBugService().addFilesToReport(reportId: result.id, files: validFiles)
+                    } catch {
+                        print("Error uploading files: \(error.localizedDescription)")
+                    }
+                }
+            }
+
             withAnimation {
                 showSuccessErrorView = .success(reportType: type)
                 isLoading = false
@@ -106,16 +118,12 @@ struct ReportFormView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func ImagePicker() -> some View {
         if isBugReport {
             VStack {
-                Text("Add screenshots", bundle: .module)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(.secondary))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                ReportProblemImagePicker(problemUIImages: $bugUIImages)
+                ReportProblemImagePicker(problemUIImages: $bugUIImages, files: $files)
             }
         }
     }
@@ -206,7 +214,7 @@ struct ReportFormView: View {
                 .offset(x: 4, y: 8)
             }
         }
-        .frame(height: isBugReport ? 60 : 200)
+        .frame(height: 200)
         .frame(maxWidth: .infinity)
         .padding()
         .background(
