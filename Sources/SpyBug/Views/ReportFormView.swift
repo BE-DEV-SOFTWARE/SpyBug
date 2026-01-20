@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ReportFormView: View {
     @State private var bugUIImages = [UIImage]()
