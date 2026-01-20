@@ -8,16 +8,21 @@
 import SwiftUI
 import AdaptiveSheet
 
-enum ViewState {
+enum ViewState: Equatable {
     case error
-    case success
+    case success(reportType: ReportType)
     
     var icon: Image {
         switch self {
         case .error:
-            Image(.errorEmoji)
-        case .success:
-            Image(.greenRocket)
+#if os(visionOS)
+            return Image(.pinkFace)
+#else
+            return Image(.errorEmoji)
+#endif
+            
+        case .success(let reportType):
+            return reportType.greenSuccessIcon
         }
     }
     
@@ -89,8 +94,52 @@ struct SuccessErrorView: View {
     }
 }
 
+struct SuccessErrorViewVisionOS: View {
+    var state: ViewState
+#if os(visionOS)
+    @Environment(\.dismissWindow) private var dismissWindow
+#endif
+    
+    var body: some View {
+        VStack {
+            state.icon
+                .resizable()
+                .scaledToFit()
+                .frame(height: state == .success(reportType: .improvement) ? 90 : 180)
+                .padding(.top, state == .success(reportType: .improvement) ? 155 : 100)
+                .padding(.bottom, state == .success(reportType: .improvement) ? 40: 0)
+            VStack(spacing: 20){
+                Text(state.title, bundle: .module)
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundStyle(state == .error ? Color(.yourPink) : Color.primary)
+                Text(state.viewText, bundle: .module)
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(Color(.graySuccess))
+                    .lineSpacing(5)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button {
+#if os(visionOS)
+                    dismissWindow()
+#endif
+                } label: {
+                    HStack{
+                        Spacer()
+                        Text("Thank you", bundle: .module)
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundStyle(Color.primary)
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(height: 55)
+                }
+            }
+            .padding(30)
+        }
+    }
+}
+
 #Preview("Success") {
-    SuccessErrorView(state: .success)
+    SuccessErrorView(state: .success(reportType: .bug))
 }
 
 #Preview("Fail") {

@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "SpyBug",
     defaultLocalization: "en",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v15), .visionOS(.v1)],
     products: [
         .library(
             name: "SpyBug",
@@ -15,18 +15,14 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/Bereyziat-Development/AdaptiveSheet",
-            exact: "0.2.0"
-        ),
-        .package(
-            url: "https://github.com/Bereyziat-Development/SnapPix",
-            branch: "Document-picker-implementation"
+            url: "https://github.com/BE-DEV-SOFTWARE/SnapPix",
+            exact: "0.1.2"
         )
     ],
     targets: [
         .target(
             name: "SpyBug",
-            dependencies: ["SnapPix", "AdaptiveSheet"],
+            dependencies: ["SnapPix"],
             resources: [.process("Media.xcassets")]
         )
     ]

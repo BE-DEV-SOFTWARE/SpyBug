@@ -5,7 +5,6 @@
 //  Created by Jonathan Bereyziat on 09/01/2024.
 //
 
-import SwiftUI
 import Foundation
 
 struct MultipartFormDataRequest {
@@ -23,9 +22,8 @@ struct MultipartFormDataRequest {
 
     private func textFormField(named name: String, value: String) -> String {
         var fieldString = "--\(boundary)\r\n"
-        fieldString += "Content-Disposition: form-data; name=\"\(name)\";\r\n"
-        fieldString += "Content-Type: text/plain; charset=ISO-8859-1\r\n"
-        fieldString += "Content-Transfer-Encoding: 8bit\r\n"
+        fieldString += "Content-Disposition: form-data; name=\"\(name)\"\r\n"
+        fieldString += "Content-Type: text/plain; charset=utf-8\r\n"
         fieldString += "\r\n"
         fieldString += "\(value)\r\n"
 
@@ -59,9 +57,9 @@ struct MultipartFormDataRequest {
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 
-        httpBody.append("--\(boundary)--")
-
-        request.httpBody = httpBody as Data
+        let finalizedBody = NSMutableData(data: httpBody as Data)
+        finalizedBody.append("--\(boundary)--\r\n")
+        request.httpBody = finalizedBody as Data
         return request
     }
 }

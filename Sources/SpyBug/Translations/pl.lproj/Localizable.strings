@@ -10,10 +10,10 @@
 "Propose a feature" = "Zaproponuj funkcję";
 "Ask a question" = "Zadaj pytanie";
 "Request improvement" = "Zgłoś poprawę";
-"Bug" = "Problem"
-"Feature" = "Funkcja"
-"Question" = "Pytanie"
-"Improvement" = "Poprawa"
+"Bug" = "Problem";
+"Feature" = "Funkcja";
+"Question" = "Pytanie";
+"Improvement" = "Poprawa";
 "Add a description here..." = "Dodaj tutaj opis...";
 "This field should not be empty" = "To pole nie powinno być puste";
 "Add screenshots" = "Dodaj zrzuty ekranu";
@@ -26,7 +26,7 @@
 "Thank you!" = "Dziękujemy!";
 "Close" = "Zamknij";
 "We successfully received your request. Our team will take it into account as soon as possible." = "Pomyślnie otrzymaliśmy twoje zgłoszenie. Nasz zespół uwzględni je tak szybko, jak to możliwe.";
-"This report couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Tego zgłoszenia nie można było wysłać. Nasi szpiedzy prawdopodobnie przeoczyli tutaj błąd...\nProszę spróbować ponownie później.";
+"Your request couldn't be sent. Our spies probably overlooked one bug here...\nPlease try again later." = "Tego zgłoszenia nie można było wysłać. Nasi szpiedzy prawdopodobnie przeoczyli tutaj błąd...\nProszę spróbować ponownie później.";
 "It’s sent!" = "Wysłano!";
 "Oh no!" = "O nie!";
 "Powered by" = "Wspierane przez";

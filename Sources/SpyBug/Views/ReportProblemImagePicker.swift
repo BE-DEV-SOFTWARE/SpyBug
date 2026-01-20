@@ -28,5 +28,8 @@ struct ReportProblemImagePicker: View {
         })
         .padding(.top, 6)
     }
+    
+    
 }
+
 

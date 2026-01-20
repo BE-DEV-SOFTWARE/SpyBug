@@ -134,14 +134,23 @@ struct ServiceHelper {
 
 fileprivate extension URLRequest {
     func debug() {
+#if DEBUG
         print("\(self.httpMethod!) \(self.url!)")
         print("Headers:")
         print(self.allHTTPHeaderFields ?? "No headers")
         print("Body:")
         if let httpBody = self.httpBody {
-            print(String(data: httpBody, encoding: .ascii)!)
+            if let str = String(data: httpBody, encoding: .ascii) {
+                print(str)
+            } else if let str = String(data: httpBody, encoding: .utf8) {
+                print(str)
+            } else {
+                print("Could not decode http body")
+            }
+            
         } else {
             print("No body :(")
         }
+#endif
     }
 }

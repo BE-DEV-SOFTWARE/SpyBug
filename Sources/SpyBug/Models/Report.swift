@@ -52,12 +52,25 @@ public enum ReportType: String, Codable, CaseIterable {
             Image(.wand)
         }
     }
+    
+    var greenSuccessIcon: Image {
+        return switch self {
+        case .bug:
+            Image(.greenBug)
+        case .improvement:
+            Image(.greenRocket)
+        case .question:
+            Image(.greenQuestion)
+        case .feature:
+            Image(.greenWand)
+        }
+    }
 }
 
 struct Report: Decodable {
     var description: String?
     var type: ReportType
-    var authorEmail: String?
+    var authorId: String?
     var id: UUID
     var createdAt: Date?
     var pictureUrls: [String]?
@@ -66,5 +79,5 @@ struct Report: Decodable {
 struct ReportCreate: Encodable {
     var description: String?
     var type: ReportType
-    var authorEmail: String?
+    var authorId: String?
 }

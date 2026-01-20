@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ScreenSizeChecker {
+    #if os(iOS)
     static var isScreenHeightLessThan670: Bool {
         let screenHeight = UIScreen.main.bounds.height
         return screenHeight < 670
     }
+    #endif
 }

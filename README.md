@@ -59,6 +59,27 @@ The "author" attribute can be anything that let you identify the users of your p
     )
 ```
 
+## VisionOS
+To run SpyBug on VisionOS app, you need to add the ReportWindow that contains the reporting UI. 
+
+
+In you main AppFile add:
+```swift
+ ReportWindow()
+```
+In your info.plist don't forget to set the "Enable Multiple Windows" key to "YES" to enable you app to show multiple windows
+
+To place your ReportWindow in a specific place, for example near your main UI you can use this modifier:
+```swift
+.defaultWindowPlacement { _, context in
+    if let relativeWindow = context.windows.first(where: { $0.id == "relativeWindowId" }) {
+        return WindowPlacement(.trailing(relativeWindow))
+    } else {
+        return WindowPlacement()
+    }
+}
+
+```
 
 https://github.com/user-attachments/assets/2d71cf88-3ed0-46b5-82cc-1d11d8d02c19
 

@@ -19,16 +19,17 @@ struct SpyBugService {
         return try await ServiceHelper().fetchJSON(request: request)
     }
 
-    func addPicturesToCreateBugReport(reportId: UUID, pictures: [Data]) async throws -> Report {
+    func addPicturesToCreateBugReport(reportId: UUID, files: [Data]) async throws -> Report {
         guard let apiKey = SpyBugConfig.shared.getApiKey() else {
             fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
         }
         let parameters = [
             URLQueryItem(name: "key", value: apiKey),
         ]
-        let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/pictures", parameters: parameters)
-        for picture in pictures {
-            request.addDataField(named: "pictures", filename: "report.jpeg", data: picture, mimeType: "image/jpeg")
+        let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/attachment", parameters: parameters)
+        // TODO: change to handle files and not only jpeg
+        for file in files {
+            request.addDataField(named: "files", filename: "report.jpeg", data: file, mimeType: "image/jpeg")
         }
         return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }
