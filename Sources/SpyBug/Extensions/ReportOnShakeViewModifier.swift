@@ -44,33 +44,57 @@ struct ReportOnShakeViewModifier: ViewModifier {
     var isShakeAllowed: Binding<Bool>?
     
     @State private var isShowingReportOptionsView = false
+    @State private var observer: NSObjectProtocol?
     
     private var shakeAllowed: Bool {
          let isGloballyDisabled = UserDefaults.standard.bool(forKey: "DisableReportOnShake")
-         return isShakeAllowed?.wrappedValue ?? true && !isGloballyDisabled
+         return (isShakeAllowed?.wrappedValue ?? true) && !isGloballyDisabled
      }
     
     func body(content: Content) -> some View {
         content
             .onAppear {
-                NotificationCenter.default.addObserver(forName: UIDevice.deviceDidShakeNotification, object: nil, queue: nil) { _ in
-                    if shakeAllowed {
+                observer = NotificationCenter.default.addObserver(
+                    forName: UIDevice.deviceDidShakeNotification,
+                    object: nil,
+                    queue: .main
+                ) { _ in
+                    let isGloballyDisabled = UserDefaults.standard.bool(forKey: "DisableReportOnShake")
+                    let allowed = (isShakeAllowed?.wrappedValue ?? true) && !isGloballyDisabled
+                    if allowed {
                         isShowingReportOptionsView.toggle()
                     }
                 }
             }
             .onDisappear {
-                NotificationCenter.default.removeObserver(self, name: UIDevice.deviceDidShakeNotification, object: nil)
+                if let observer = observer {
+                    NotificationCenter.default.removeObserver(observer)
+                    self.observer = nil
+                }
             }
-            .adaptiveSheet(
-                isPresented: $isShowingReportOptionsView,
-                sheetBackground: Color(.background)
-            ) {
-                ReportOptionsView(
-                    author: author,
-                    reportTypes: reportTypes
-                )
-                .frame(height: 500)
+            .sheet(isPresented: $isShowingReportOptionsView) {
+                Group {
+                    if #available(iOS 26.0, *) {
+                        ReportOptionsView(
+                            author: author,
+                            reportTypes: reportTypes
+                        )
+                        .frame(height: 500)
+                    } else {
+                        ZStack {
+                            Color(.background)
+                                .edgesIgnoringSafeArea(.all)
+                            
+                            ReportOptionsView(
+                                author: author,
+                                reportTypes: reportTypes
+                            )
+                            .frame(height: 500)
+                        }
+                    }
+                }
+                .conditionalPresentationCornerRadius(24)
+                .presentationDetents([.height(530)])
             }
     }
 }
@@ -78,3 +102,61 @@ struct ReportOnShakeViewModifier: ViewModifier {
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name("deviceDidShakeNotification")
 }
+
+extension View {
+    @ViewBuilder
+    func conditionalPresentationCornerRadius(_ radius: CGFloat) -> some View {
+        if #available(iOS 16.4, *) {
+            self.presentationCornerRadius(radius)
+        } else {
+            self
+        }
+    }
+    
+    @ViewBuilder
+    func conditionalBackground() -> some View {
+        if #available(iOS 26.0, *) {
+            self
+        } else {
+            self.background(Color(.background))
+        }
+    }
+}
+
+#if DEBUG
+struct ReportOnShakePreviewView: View {
+    @State private var isShakeAllowed = true
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            Button("Simulate Shake") {
+                NotificationCenter.default.post(
+                    name: UIDevice.deviceDidShakeNotification,
+                    object: nil
+                )
+            }
+            .buttonStyle(.borderedProminent)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.background))
+        .reportOnShake(
+            author: "Preview User",
+            reportTypes: ReportType.allCases,
+            isShakeAllowed: $isShakeAllowed
+        )
+    }
+}
+
+#Preview("Report On Shake - Enabled") {
+    ReportOnShakePreviewView()
+        .preferredColorScheme(.light)
+}
+
+#Preview("Report On Shake - Dark Mode") {
+    ReportOnShakePreviewView()
+        .preferredColorScheme(.dark)
+}
+#endif

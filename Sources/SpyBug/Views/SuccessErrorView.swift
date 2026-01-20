@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AdaptiveSheet
 
 enum ViewState: Equatable {
     case error
@@ -55,7 +54,7 @@ enum ViewState: Equatable {
 }
 
 struct SuccessErrorView: View {
-    @Environment(\.adaptiveDismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss
     var state: ViewState
     
     var body: some View {
