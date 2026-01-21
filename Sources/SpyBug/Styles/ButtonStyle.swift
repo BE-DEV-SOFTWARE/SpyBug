@@ -38,9 +38,10 @@ public struct ReportButtonStyle: ButtonStyle {
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.button))
-                .shadow(color: Color(.shadow), radius: 5)
+                .shadow(color: Color(.shadow), radius: 4)
         )
     }
+    
 }
 
 public struct VisionOSReportButtonStyle: ButtonStyle {
@@ -63,14 +64,14 @@ public struct VisionOSReportButtonStyle: ButtonStyle {
                 .foregroundStyle(.white.opacity(0.23))
                 .padding(.trailing)
         }
-        
+
         .padding(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 8))
         .frame(height: 69)
         .contentShape(RoundedRectangle(cornerRadius: 20))
+
         .hoverEffect(.highlight)
-        
         Divider()
-            .frame(height: 1)
-            .foregroundStyle(Color(.whiteButtonVision))
+                           .frame(height: 1)
+                           .foregroundStyle(Color(.whiteButtonVision))
     }
 }

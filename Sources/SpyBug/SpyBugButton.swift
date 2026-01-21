@@ -27,7 +27,7 @@ public struct SpyBugButton<Label: View>: View {
         self.reportTypes = reportTypes
         self.label = label
     }
-    
+
     public var body: some View {
         Button {
             print("Button is clicked 👾")
@@ -37,24 +37,28 @@ public struct SpyBugButton<Label: View>: View {
         }
 #if os(iOS)
         .sheet(isPresented: $isShowingReportOptionsView) {
-            NavigationStack {
-                ZStack {
-                    if #available(iOS 26.0, *) {
-                        //
-                    } else {
-                        Color(.background)
-                            .edgesIgnoringSafeArea(.all)
-                    }
-                    
+            Group {
+                if #available(iOS 26.0, *) {
                     ReportOptionsView(
                         author: author,
                         reportTypes: reportTypes
                     )
                     .frame(height: 500)
+                } else {
+                    ZStack {
+                        Color(.background)
+                            .edgesIgnoringSafeArea(.all)
+                        
+                        ReportOptionsView(
+                            author: author,
+                            reportTypes: reportTypes
+                        )
+                        .frame(height: 500)
+                    }
                 }
             }
-            .presentationDetents([.height(530)])
             .conditionalPresentationCornerRadius(24)
+            .presentationDetents([.height(530)])
         }
 #endif
     }

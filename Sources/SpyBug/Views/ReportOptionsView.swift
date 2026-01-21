@@ -26,28 +26,32 @@ public struct ReportOptionsView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 16) {
-            PlatformView()
-        }
-        .navigationDestination(isPresented: $showReportForm) {
-            if let selectedType {
+        VStack {
+            if !showReportForm {
+                VStack(spacing: 16) {
+                    PlatformView()
+                    .transition(.move(edge: .leading))}
+            } else {
+                if let selectedType {
 #if os(iOS)
-                ReportFormView(
-                    showReportForm: $showReportForm,
-                    authorId: author,
-                    type: selectedType
-                )
+                    ReportFormView(
+                        showReportForm: $showReportForm,
+                        authorId: author,
+                        type: selectedType
+                    )
+                    .transition(.move(edge: .trailing))
 #elseif os(visionOS)
-                ReportFormViewVisionOS(
-                    showReportForm: $showReportForm,
-                    author: author,
-                    type: selectedType
-                )
+                    ReportFormViewVisionOS(
+                        showReportForm: $showReportForm,
+                        author: author,
+                        type: selectedType)
+                    .transition(.move(edge: .trailing))
 #endif
+                }
             }
         }
     }
-    
+
     @ViewBuilder
     private func PlatformView() -> some View {
 #if os(visionOS)
@@ -72,6 +76,7 @@ public struct ReportOptionsView: View {
             Spacer()
             PoweredBySpybug()
         }
+        .conditionalBackground()
         .padding(.horizontal)
     }
 

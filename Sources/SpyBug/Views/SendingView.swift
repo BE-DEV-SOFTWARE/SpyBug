@@ -23,7 +23,6 @@ struct SendingView: View {
             }
         }
         .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
