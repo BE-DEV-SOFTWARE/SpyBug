@@ -73,28 +73,24 @@ struct ReportOnShakeViewModifier: ViewModifier {
                 }
             }
             .sheet(isPresented: $isShowingReportOptionsView) {
-                Group {
-                    if #available(iOS 26.0, *) {
+                NavigationStack {
+                    ZStack {
+                        if #available(iOS 26.0, *) {
+                            //
+                        } else {
+                            Color(.background)
+                                .edgesIgnoringSafeArea(.all)
+                        }
+                        
                         ReportOptionsView(
                             author: author,
                             reportTypes: reportTypes
                         )
                         .frame(height: 500)
-                    } else {
-                        ZStack {
-                            Color(.background)
-                                .edgesIgnoringSafeArea(.all)
-                            
-                            ReportOptionsView(
-                                author: author,
-                                reportTypes: reportTypes
-                            )
-                            .frame(height: 500)
-                        }
                     }
                 }
-                .conditionalPresentationCornerRadius(24)
                 .presentationDetents([.height(530)])
+                .conditionalPresentationCornerRadius(24)
             }
     }
 }
@@ -110,15 +106,6 @@ extension View {
             self.presentationCornerRadius(radius)
         } else {
             self
-        }
-    }
-    
-    @ViewBuilder
-    func conditionalBackground() -> some View {
-        if #available(iOS 26.0, *) {
-            self
-        } else {
-            self.background(Color(.background))
         }
     }
 }

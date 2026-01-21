@@ -19,7 +19,6 @@ struct ReportFormView: View {
     @Binding var showReportForm: Bool
     @FocusState private var isTextEditorFocused: Bool
     
-    
     var authorId: String?
     var type: ReportType
     
@@ -32,7 +31,6 @@ struct ReportFormView: View {
     }
     
     var body: some View {
-        
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
                 SuccessErrorView(state: showSuccessErrorView)
@@ -44,7 +42,6 @@ struct ReportFormView: View {
                     }
             } else if isLoading {
                 SendingView()
-                    .background(Color(.background))
             } else {
                 TitleAndBackButton(showReportForm: $showReportForm, type: type)
                 
@@ -55,13 +52,20 @@ struct ReportFormView: View {
                 Spacer()
             }
         }
-        .padding(.horizontal)
+        .navigationBarBackButtonHidden()
+        .clearHostingBackground()
+        .padding()
 #if os(iOS)
         .padding(.top, isTextEditorFocused && ScreenSizeChecker.isScreenHeightLessThan670 ? 16 : 0)
-        .background(Color(.background))
+        .background {
+            if #available(iOS 26.0, *) {
+                //
+            } else {
+                Color(.background)
+                    .edgesIgnoringSafeArea(.all)
+            }
+        }
 #endif
-        
-        
         .onChange(of: buttonPressed) { newValue in
             if newValue && !text.isEmpty {
                 Task {
@@ -82,6 +86,7 @@ struct ReportFormView: View {
             buttonPressed.toggle()
         }
     }
+    
     private func sendRequest() async {
         do {
             let result = try await SpyBugService().createBugReport(reportIn: ReportCreate(description: text, type: type, authorId: authorId))
@@ -96,7 +101,13 @@ struct ReportFormView: View {
             }
 
             if !files.isEmpty {
-                let validFiles = files.compactMap { try? Data(contentsOf: $0) }
+                let validFiles: [Data] = files.compactMap { url in
+                    let accessed = url.startAccessingSecurityScopedResource()
+                    defer {
+                        if accessed { url.stopAccessingSecurityScopedResource() }
+                    }
+                    return try? Data(contentsOf: url)
+                }
                 
                 if !validFiles.isEmpty {
                     do {
@@ -175,8 +186,6 @@ struct ReportFormView: View {
         .buttonStyle(.plain)
         
     }
-    
-    
     
     @ViewBuilder
     private func AddDescription() -> some View {
