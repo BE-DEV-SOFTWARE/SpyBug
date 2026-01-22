@@ -158,6 +158,9 @@ struct ReportFormView: View {
                         .font(.system(size: 28, weight: .regular))
                         .foregroundStyle(Color(.secondary))
                         .padding(.horizontal)
+                        .background {
+                            Color.white.opacity(0.001)
+                        }
                 }
                 Spacer()
             }
