@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SpyBugService {
     func createBugReport(reportIn: ReportCreate) async throws -> Report {
@@ -33,20 +34,80 @@ struct SpyBugService {
         }
         return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }
-    func addFilesToReport(reportId: UUID, files: [Data]) async throws -> Report {
+    
+    func addFilesToReport(reportId: UUID, files: [URL]) async throws -> Report {
         guard let apiKey = SpyBugConfig.shared.getApiKey() else {
             fatalError("SpyBug: it seems like you forgot to provide an API key 🤷🏻‍♂️")
         }
         let parameters = [
             URLQueryItem(name: "key", value: apiKey)
         ]
-        let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/files", parameters: parameters)
-        print("reportID here ")
-        print(reportId)
-        for file in files {
-            request.addDataField(named: "files", filename: "document", data: file, mimeType: "application/octet-stream")
+        let request = try ServiceHelper().createDataRequest(endpoint: "/reports/\(reportId)/attachment", parameters: parameters)
+        for fileURL in files {
+            let accessed = fileURL.startAccessingSecurityScopedResource()
+            defer {
+                if accessed { fileURL.stopAccessingSecurityScopedResource() }
+            }
+            
+            guard let fileData = try? Data(contentsOf: fileURL) else { continue }
+            let filename = fileURL.lastPathComponent
+            let mimeType = mimeType(for: fileURL)
+            
+            request.addDataField(named: "files", filename: filename, data: fileData, mimeType: mimeType)
         }
         return try await ServiceHelper().fetchJSON(request: request.asURLRequest())
     }
-
+    
+    private func mimeType(for url: URL) -> String {
+        let pathExtension = url.pathExtension.lowercased()
+        
+        switch pathExtension {
+        case "pdf":
+            return "application/pdf"
+        case "doc":
+            return "application/msword"
+        case "docx":
+            return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        case "xls":
+            return "application/vnd.ms-excel"
+        case "xlsx":
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        case "ppt":
+            return "application/vnd.ms-powerpoint"
+        case "pptx":
+            return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        case "txt":
+            return "text/plain"
+        case "rtf":
+            return "application/rtf"
+        case "zip":
+            return "application/zip"
+        case "json":
+            return "application/json"
+        case "xml":
+            return "application/xml"
+        case "jpg", "jpeg":
+            return "image/jpeg"
+        case "png":
+            return "image/png"
+        case "gif":
+            return "image/gif"
+        case "webp":
+            return "image/webp"
+        case "mp4":
+            return "video/mp4"
+        case "mov":
+            return "video/quicktime"
+        case "mp3":
+            return "audio/mpeg"
+        case "wav":
+            return "audio/wav"
+        default:
+            if let uti = UTType(filenameExtension: pathExtension),
+               let mimeType = uti.preferredMIMEType {
+                return mimeType
+            }
+            return "application/octet-stream"
+        }
+    }
 }

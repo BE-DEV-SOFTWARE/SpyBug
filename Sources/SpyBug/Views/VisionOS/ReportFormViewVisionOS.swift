@@ -20,6 +20,7 @@ struct ReportFormViewVisionOS: View {
     
     var author: String?
     var type: ReportType
+    var onDismissWindow: (() -> Void)?
     
     private var isBugReport: Bool {
         type == ReportType.bug
@@ -32,13 +33,9 @@ struct ReportFormViewVisionOS: View {
     var body: some View {
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
-                SuccessErrorViewVisionOS(state: showSuccessErrorView)
-                    .onTapGesture {
-                        withAnimation {
-                            self.showSuccessErrorView = nil
-                            self.showReportForm = false
-                        }
-                    }
+                SuccessErrorViewVisionOS(state: showSuccessErrorView, onDismiss: {
+                    onDismissWindow?()
+                })
             } else if isLoading {
                 SendingView()
             } else {

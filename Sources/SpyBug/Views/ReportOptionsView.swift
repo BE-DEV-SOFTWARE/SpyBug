@@ -32,16 +32,25 @@ public struct ReportOptionsView: View {
         .navigationDestination(isPresented: $showReportForm) {
             if let selectedType {
 #if os(iOS)
-                ReportFormView(
-                    showReportForm: $showReportForm,
-                    authorId: author,
-                    type: selectedType
-                )
+                ScrollView {
+                    ReportFormView(
+                        showReportForm: $showReportForm,
+                        authorId: author,
+                        type: selectedType,
+                        onDismissSheet: {
+                            dismiss()
+                        }
+                    )
+                }
+                .clearHostingBackground()
 #elseif os(visionOS)
                 ReportFormViewVisionOS(
                     showReportForm: $showReportForm,
                     author: author,
-                    type: selectedType
+                    type: selectedType,
+                    onDismissWindow: {
+                        dismissWindow()
+                    }
                 )
 #endif
             }
@@ -162,8 +171,10 @@ public struct ReportOptionsView: View {
 
 struct ReportOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportOptionsView(author: "John Doe")
-            .preferredColorScheme(.dark)
-            .background(Color(.background))
+        NavigationStack {
+            ReportOptionsView(author: "John Doe")
+                .preferredColorScheme(.dark)
+                .background(Color(.background))
+        }
     }
 }
