@@ -21,6 +21,7 @@ struct ReportFormView: View {
     
     var authorId: String?
     var type: ReportType
+    var onDismissSheet: (() -> Void)?
     
     private var isBugReport: Bool {
         type == ReportType.bug
@@ -33,13 +34,9 @@ struct ReportFormView: View {
     var body: some View {
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
-                SuccessErrorView(state: showSuccessErrorView)
-                    .onTapGesture {
-                        withAnimation {
-                            self.showSuccessErrorView = nil
-                            self.showReportForm = false
-                        }
-                    }
+                SuccessErrorView(state: showSuccessErrorView, onDismiss: {
+                    onDismissSheet?()
+                })
             } else if isLoading {
                 SendingView()
             } else {
@@ -101,20 +98,10 @@ struct ReportFormView: View {
             }
 
             if !files.isEmpty {
-                let validFiles: [Data] = files.compactMap { url in
-                    let accessed = url.startAccessingSecurityScopedResource()
-                    defer {
-                        if accessed { url.stopAccessingSecurityScopedResource() }
-                    }
-                    return try? Data(contentsOf: url)
-                }
-                
-                if !validFiles.isEmpty {
-                    do {
-                        _ = try await SpyBugService().addFilesToReport(reportId: result.id, files: validFiles)
-                    } catch {
-                        print("Error uploading files: \(error.localizedDescription)")
-                    }
+                do {
+                    _ = try await SpyBugService().addFilesToReport(reportId: result.id, files: files)
+                } catch {
+                    print("Error uploading files: \(error.localizedDescription)")
                 }
             }
 
@@ -170,7 +157,10 @@ struct ReportFormView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 28, weight: .regular))
                         .foregroundStyle(Color(.secondary))
-                        .padding(.leading)
+                        .padding(.horizontal)
+                        .background {
+                            Color.white.opacity(0.001)
+                        }
                 }
                 Spacer()
             }
@@ -189,39 +179,42 @@ struct ReportFormView: View {
     
     @ViewBuilder
     private func AddDescription() -> some View {
-        ZStack {
-            if text.isEmpty {
-                VStack {
-                    HStack {
-                        Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
-                            .foregroundStyle(showTextError ? .red : Color(.secondary))
-                            .font(.system(size: 16, weight: .regular))
-                            .padding(.top, 2)
-                        Spacer()
-                    }
-                    Spacer()
+        VStack {
+            HStack {
+                if #available(iOS 16.0, *) {
+                    TextEditor(text: $text)
+                        .scrollContentBackground(.hidden)
+                        .focused($isTextEditorFocused)
+                        .placeholder(when: text.isEmpty) {
+                            VStack {
+                                Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
+                                    .foregroundStyle(showTextError ? .red : Color(.secondary))
+                                    .font(.system(size: 18, weight: .regular))
+                                    .padding(8)
+                                Spacer()
+                            }
+                        }
+                        .font(.system(size: 18, weight: .regular))
+                } else {
+                    TextEditor(text: $text)
+                        .focused($isTextEditorFocused)
+                        .placeholder(when: text.isEmpty) {
+                            VStack {
+                                Text(showTextError ? "This field should not be empty" : "Add a description here...", bundle: .module)
+                                    .foregroundStyle(showTextError ? .red : Color(.secondary))
+                                    .font(.system(size: 18, weight: .regular))
+                                    .padding(8)
+                                Spacer()
+                            }
+                        }
+                        .font(.system(size: 18, weight: .regular))
                 }
-                .padding([.top, .leading], 4)
             }
-            VStack {
-                HStack {
-                    if #available(iOS 16.0, *) {
-                        TextEditor(text: $text)
-                            .scrollContentBackground(.hidden)
-                            .focused($isTextEditorFocused)
-                        Spacer()
-                    } else {
-                        TextEditor(text: $text)
-                            .focused($isTextEditorFocused)
-                        Spacer()
-                    }
-                }
-                HStack {
-                    Spacer()
-                    DescriptionValidation(text: text)
-                }
-                .offset(x: 4, y: 8)
+            HStack {
+                Spacer()
+                DescriptionValidation(text: text)
             }
+            .offset(x: 4, y: 8)
         }
         .frame(height: 200)
         .frame(maxWidth: .infinity)
@@ -234,7 +227,6 @@ struct ReportFormView: View {
         )
     }
 }
-
 
 #Preview {
     TabView {
