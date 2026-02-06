@@ -13,16 +13,10 @@ let package = Package(
             targets: ["SpyBug"]
         ),
     ],
-    dependencies: [
-        .package(
-            url: "https://github.com/Bereyziat-Development/SnapPix",
-            branch: "Document-picker-implementation"
-        )
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "SpyBug",
-            dependencies: ["SnapPix"],
             resources: [.process("Media.xcassets")]
         )
     ]
