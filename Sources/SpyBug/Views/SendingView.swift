@@ -9,10 +9,13 @@ import SwiftUI
 
 struct SendingView: View {
     var body: some View {
-        VStack(spacing: 70){
+        VStack(spacing: 70) {
+            Spacer()
             ProgressView()
                 .tint(Color(.yellowOrange))
                 .controlSize(.large)
+                .frame(width: 40, height: 40)
+                
             VStack(spacing: 20){
                 Text("Sending..." , bundle: .module)
                     .foregroundStyle(Color(.yellowOrange))
@@ -21,6 +24,7 @@ struct SendingView: View {
                     .foregroundStyle(Color(.poweredBy))
                     .font(.system(size: 18, weight: .regular))
             }
+            Spacer()
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

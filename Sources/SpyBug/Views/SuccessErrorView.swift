@@ -56,6 +56,7 @@ enum ViewState: Equatable {
 struct SuccessErrorView: View {
     @Environment(\.dismiss) private var dismiss
     var state: ViewState
+    var onDismiss: (() -> Void)?
     
     var body: some View {
         VStack(spacing: 20) {
@@ -73,7 +74,7 @@ struct SuccessErrorView: View {
                 .lineSpacing(5)
             Spacer()
             Button {
-                dismiss()
+                onDismiss?()
             } label: {
                 HStack{
                     Spacer()
@@ -95,6 +96,7 @@ struct SuccessErrorView: View {
 
 struct SuccessErrorViewVisionOS: View {
     var state: ViewState
+    var onDismiss: (() -> Void)?
 #if os(visionOS)
     @Environment(\.dismissWindow) private var dismissWindow
 #endif
@@ -117,6 +119,7 @@ struct SuccessErrorViewVisionOS: View {
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
                 Button {
+                    onDismiss?()
 #if os(visionOS)
                     dismissWindow()
 #endif
