@@ -52,6 +52,7 @@ public struct ReportOptionsView: View {
                         dismissWindow()
                     }
                 )
+                .navigationBarBackButtonHidden()
 #endif
             }
         }
