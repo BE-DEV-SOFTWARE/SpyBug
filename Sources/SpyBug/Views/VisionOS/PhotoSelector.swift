@@ -8,6 +8,7 @@
 import PhotosUI
 import SwiftUI
 
+#if os(visionOS)
 
 struct PhotoSelector: View {
     @Binding var selectedUIImages: [UIImage]
@@ -53,10 +54,11 @@ struct PhotoSelector: View {
 
 extension View {
     func applyHoverEffectDisabledIfAvailable() -> some View {
-        if #available(iOS 17.0, *) {
+        if #available(visionOS 1.0, *) {
             return AnyView(self.hoverEffectDisabled())
         } else {
             return AnyView(self)
         }
     }
 }
+#endif

@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-
 import PhotosUI
 
+#if os(visionOS)
 struct ReportFormViewVisionOS: View {
     @State private var bugUIImages = [UIImage]()
     @State private var text = ""
@@ -169,7 +169,7 @@ struct ReportFormViewVisionOS: View {
             }
             VStack {
                 HStack {
-                    if #available(iOS 16.0, *) {
+                    if #available(visionOS 1.0, *) {
                         TextEditor(text: $text)
                             .scrollContentBackground(.hidden)
                             .focused($isTextEditorFocused)
@@ -200,5 +200,5 @@ struct ReportFormViewVisionOS: View {
         )
         .buttonStyle(.plain)
     }
-    
 }
+#endif

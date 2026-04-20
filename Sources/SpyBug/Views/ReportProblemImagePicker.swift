@@ -6,19 +6,31 @@
 
 
 import SwiftUI
+#if os(iOS) || os(visionOS)
+import UIKit
 import PhotosUI
+#elseif os(macOS)
+import AppKit
 import UniformTypeIdentifiers
+#endif
 
 struct ReportProblemImagePicker: View {
+#if os(iOS)
     @Binding var problemUIImages: [UIImage]
+    @State private var selectedCameraImage: UIImage?
+    @State private var isShowingCameraPicker = false
+#elseif os(visionOS)
+    @Binding var problemUIImages: [UIImage]
+#elseif os(macOS)
+    @Binding var problemUIImages: [NSImage]
+    @State private var selectedCameraImage: NSImage?
+#endif
+
     @Binding var files: [URL]
-    
     @State private var isShowingFileImporter = false
     @State private var isShowingActionSheet = false
     @State private var isShowingPhotosPicker = false
-    @State private var isShowingCameraPicker = false
-    @State private var selectedCameraImage: UIImage?
-    
+
     private let maxAttachmentCount = 3
     private let maxFileSizeB = 2000 * 1024
     private let gridMin: CGFloat = 100
@@ -39,7 +51,11 @@ struct ReportProblemImagePicker: View {
                 spacing: spacing
             ) {
                 ForEach(Array(problemUIImages.enumerated()), id: \.offset) { index, uiImage in
+#if os(macOS)
+                    Image(nsImage: uiImage)
+#else
                     Image(uiImage: uiImage)
+#endif
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
@@ -82,12 +98,15 @@ struct ReportProblemImagePicker: View {
                 break
             }
         }
+        #if os(iOS)
         .sheet(isPresented: $isShowingCameraPicker) {
             CameraPicker(
                 uiImage: $selectedCameraImage,
                 isPresented: $isShowingCameraPicker
             )
         }
+        #endif
+        #if os(iOS) || os(visionOS)
         .sheet(isPresented: $isShowingPhotosPicker) {
             PHPickerView(
                 selectedImages: $problemUIImages,
@@ -95,29 +114,54 @@ struct ReportProblemImagePicker: View {
                 maxSelectionCount: remainingAttachmentSlots
             )
         }
-        .actionSheet(isPresented: $isShowingActionSheet) {
-            ActionSheet(
-                title: Text("Add attachment", bundle: .module),
-                buttons: [
-                    .default(Text("Camera", bundle: .module)) {
-                        isShowingCameraPicker = true
-                    },
-                    .default(Text("Photo library", bundle: .module)) {
-                        isShowingPhotosPicker = true
-                    },
-                    .default(Text("Files", bundle: .module)) {
-                        isShowingFileImporter = true
-                    },
-                    .cancel()
-                ]
-            )
+        #elseif os(macOS)
+        .fileImporter(
+            isPresented: $isShowingPhotosPicker,
+            allowedContentTypes: [.image],
+            allowsMultipleSelection: true
+        ) { result in
+            switch result {
+            case .success(let urls):
+                DispatchQueue.main.async {
+                    addPickedImages(urls)
+                }
+            case .failure:
+                break
+            }
         }
+        #endif
+        .confirmationDialog(
+            Text("Add attachment", bundle: .module),
+            isPresented: $isShowingActionSheet,
+            titleVisibility: .visible
+        ) {
+#if os(iOS)
+            Button {
+                isShowingCameraPicker = true
+            } label: {
+                Text("Camera", bundle: .module)
+            }
+#endif
+            Button {
+                isShowingPhotosPicker = true
+            } label: {
+                Text("Photo library", bundle: .module)
+            }
+            Button {
+                isShowingFileImporter = true
+            } label: {
+                Text("Files", bundle: .module)
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        #if os(iOS)
         .onChange(of: selectedCameraImage) { image in
             if let image = image {
                 problemUIImages.append(image)
                 selectedCameraImage = nil
             }
         }
+        #endif
         .padding(.bottom, 12)
         .padding(.top, 6)
     }
@@ -170,6 +214,17 @@ struct ReportProblemImagePicker: View {
             }
         }
     }
+
+#if os(macOS)
+    private func addPickedImages(_ urls: [URL]) {
+        for url in urls {
+            guard canAddMoreAttachments else { break }
+            if let image = NSImage(contentsOf: url) {
+                problemUIImages.append(image)
+            }
+        }
+    }
+#endif
     
     @ViewBuilder
     private func DeleteButton(_ index: Int, isImage: Bool) -> some View {
@@ -218,25 +273,22 @@ struct ReportProblemImagePicker: View {
     }
 }
 
+#if os(iOS)
 struct CameraPicker: UIViewControllerRepresentable {
     @Binding var uiImage: UIImage?
     @Binding var isPresented: Bool
-    
+
     func makeCoordinator() -> CameraPickerCoordinator {
-        return CameraPickerCoordinator(uiImage: $uiImage, isPresented: $isPresented)
+        CameraPickerCoordinator(uiImage: $uiImage, isPresented: $isPresented)
     }
-    
+
     func makeUIViewController(context: Context) -> UIImagePickerController {
-        let pickerController = UIImagePickerController()
-        #if os(iOS)
-        pickerController.sourceType = .camera
-#else
-        pickerController.sourceType = .photoLibrary
-#endif
-        pickerController.delegate = context.coordinator
-        return pickerController
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
     }
-    
+
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 }
 
@@ -260,7 +312,9 @@ class CameraPickerCoordinator: NSObject, UINavigationControllerDelegate, UIImage
         self.isPresented = false
     }
 }
+#endif
 
+#if os(iOS) || os(visionOS)
 struct PHPickerView: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
     @Binding var isPresented: Bool
@@ -314,4 +368,5 @@ struct PHPickerView: UIViewControllerRepresentable {
         }
     }
 }
+#endif
 

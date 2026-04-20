@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "SpyBug",
     defaultLocalization: "en",
-    platforms: [.iOS(.v16), .visionOS(.v1)],
+    platforms: [.iOS(.v16), .visionOS(.v1), .macOS(.v14)],
     products: [
         .library(
             name: "SpyBug",

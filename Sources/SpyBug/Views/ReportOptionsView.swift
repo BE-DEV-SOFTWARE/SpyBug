@@ -158,6 +158,7 @@ public struct ReportOptionsView: View {
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
 
+#if os(visionOS)
     @ViewBuilder
     private func ReportOptionRowVisionOS(type: ReportType) -> some View {
         Button {
@@ -168,6 +169,7 @@ public struct ReportOptionsView: View {
             Text(type.title, bundle: .module)
         } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))
     }
+#endif
 }
 
 struct ReportOptionsView_Previews: PreviewProvider {

@@ -43,6 +43,7 @@ public struct ReportButtonStyle: ButtonStyle {
     }
 }
 
+#if os(visionOS)
 public struct VisionOSReportButtonStyle: ButtonStyle {
     var icon: Image
     
@@ -74,3 +75,4 @@ public struct VisionOSReportButtonStyle: ButtonStyle {
             .foregroundStyle(Color(.whiteButtonVision))
     }
 }
+#endif
