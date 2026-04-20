@@ -18,11 +18,18 @@ public struct ReportOptionsView: View {
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
     var reportTypes: [ReportType]
+    var onClose: (() -> Void)?
 
-    public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType] = ReportType.allCases) {
+    public init(
+        showReportForm: Bool = false,
+        author: String? = nil,
+        reportTypes: [ReportType] = ReportType.allCases,
+        onClose: (() -> Void)? = nil
+    ) {
         self.showReportForm = showReportForm
         self.author = author
         self.reportTypes = reportTypes
+        self.onClose = onClose
     }
 
     public var body: some View {
@@ -43,6 +50,15 @@ public struct ReportOptionsView: View {
                     )
                 }
                 .clearHostingBackground()
+#elseif os(macOS)
+                ScrollView {
+                    ReportFormViewMacOS(
+                        showReportForm: $showReportForm,
+                        authorId: author,
+                        type: selectedType
+                    )
+                }
+                .navigationBarBackButtonHidden()
 #elseif os(visionOS)
                 ReportFormViewVisionOS(
                     showReportForm: $showReportForm,
@@ -62,7 +78,7 @@ public struct ReportOptionsView: View {
     private func PlatformView() -> some View {
 #if os(visionOS)
         VisionOSReportOptionsView()
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
         iOSReportOptionsView()
 #endif
     }
@@ -83,8 +99,24 @@ public struct ReportOptionsView: View {
             PoweredBySpybug()
         }
         .padding(.horizontal)
+        .overlay {
+#if os(macOS)
+            VStack {
+                HStack {
+                    Spacer()
+                    
+                    Button("Close") {
+                        closeMacSheet()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                Spacer()
+            }
+            .padding()
+#endif
+        }
     }
-
+    
 #if os(visionOS)
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
@@ -149,8 +181,8 @@ public struct ReportOptionsView: View {
     private func ReportOptionRow(type: ReportType) -> some View {
         Button {
             withAnimation {
-                showReportForm = true
                 selectedType = type
+                showReportForm = true
             }
         } label: {
             Text(type.title, bundle: .module)
@@ -158,13 +190,22 @@ public struct ReportOptionsView: View {
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
 
+#if os(macOS)
+    private func closeMacSheet() {
+        showReportForm = false
+        onClose?()
+        dismiss()
+    }
+#endif
+
 #if os(visionOS)
     @ViewBuilder
     private func ReportOptionRowVisionOS(type: ReportType) -> some View {
         Button {
             withAnimation{
+                selectedType = type
                 showReportForm = true
-                selectedType = type}
+            }
         } label: {
             Text(type.title, bundle: .module)
         } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public struct SpyBugButton<Label: View>: View {
     @State private var isShowingReportOptionsView = false
 #if os(visionOS)
@@ -17,7 +17,7 @@ public struct SpyBugButton<Label: View>: View {
     private var author: String?
     private var reportTypes: [ReportType]
     @ViewBuilder private var label: () -> Label
-
+    
     public init(
         author: String?,
         reportTypes: [ReportType] = ReportType.allCases,
@@ -35,36 +35,53 @@ public struct SpyBugButton<Label: View>: View {
         } label: {
             label()
         }
-#if os(iOS)
+#if os(iOS) || os(macOS)
         .sheet(isPresented: $isShowingReportOptionsView) {
-            NavigationStack {
-                ZStack {
-                    if #available(iOS 26.0, *) {
-                        //
-                    } else {
-                        Color(.background)
-                            .edgesIgnoringSafeArea(.all)
-                    }
-                    
-                    ReportOptionsView(
-                        author: author,
-                        reportTypes: reportTypes
-                    )
-                    .frame(height: 500)
-                }
-            }
-            .presentationDetents([.height(530)])
-            .conditionalPresentationCornerRadius(24)
+            reportOptionsContent()
+#if os(iOS)
+                .presentationDetents([.height(530)])
+                .conditionalPresentationCornerRadius(24)
+#else
+                .frame(minWidth: 400, minHeight: 530)
+#endif
         }
 #endif
     }
     
     private func openReportDialog() {
 #if os(visionOS)
-    openWindow(id: Constant.reportWindowId)
-#elseif os(iOS)
-    isShowingReportOptionsView.toggle()
+        openWindow(id: Constant.reportWindowId)
+#elseif os(iOS) || os(macOS)
+        isShowingReportOptionsView = true
 #endif
+    }
+    
+    @ViewBuilder
+    private func reportOptionsContent() -> some View {
+        NavigationStack {
+            ZStack {
+#if os(iOS)
+                if #available(iOS 26.0, *) {
+                    //
+                } else {
+                    Color(.background)
+                        .edgesIgnoringSafeArea(.all)
+                }
+#else
+                Color(.background)
+                    .edgesIgnoringSafeArea(.all)
+#endif
+                
+                ReportOptionsView(
+                    author: author,
+                    reportTypes: reportTypes,
+                    onClose: {
+                        isShowingReportOptionsView = false
+                    }
+                )
+                .frame(height: 500)
+            }
+        }
     }
 }
 
@@ -74,9 +91,9 @@ public struct SpyBugButton<Label: View>: View {
             Text("Click on me, I am custom 😉")
         }
         .buttonStyle(.borderedProminent)
-
+        
         SpyBugButton(author: "")
-
+        
         SpyBugButton(author: "") {
             Text("I can also look like this 😱")
         }

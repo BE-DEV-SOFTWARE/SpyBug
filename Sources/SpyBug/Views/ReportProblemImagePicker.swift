@@ -11,26 +11,30 @@ import UIKit
 import PhotosUI
 #elseif os(macOS)
 import AppKit
+#endif
 import UniformTypeIdentifiers
+
+#if os(macOS)
+typealias PlatformImage = NSImage
+#else
+typealias PlatformImage = UIImage
 #endif
 
 struct ReportProblemImagePicker: View {
+    @Binding var problemUIImages: [PlatformImage]
 #if os(iOS)
-    @Binding var problemUIImages: [UIImage]
     @State private var selectedCameraImage: UIImage?
     @State private var isShowingCameraPicker = false
-#elseif os(visionOS)
-    @Binding var problemUIImages: [UIImage]
-#elseif os(macOS)
-    @Binding var problemUIImages: [NSImage]
-    @State private var selectedCameraImage: NSImage?
 #endif
 
     @Binding var files: [URL]
     @State private var isShowingFileImporter = false
     @State private var isShowingActionSheet = false
     @State private var isShowingPhotosPicker = false
-
+#if os(macOS)
+    @State private var isPickingImagesOnMac = false
+#endif
+    
     private let maxAttachmentCount = 3
     private let maxFileSizeB = 2000 * 1024
     private let gridMin: CGFloat = 100
@@ -50,20 +54,8 @@ struct ReportProblemImagePicker: View {
                 columns: [GridItem(.adaptive(minimum: gridMin))],
                 spacing: spacing
             ) {
-                ForEach(Array(problemUIImages.enumerated()), id: \.offset) { index, uiImage in
-#if os(macOS)
-                    Image(nsImage: uiImage)
-#else
-                    Image(uiImage: uiImage)
-#endif
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 100)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay {
-                            DeleteButton(index, isImage: true)
-                        }
-                        .id("image-\(index)")
+                ForEach(problemUIImages.indices, id: \.self) { index in
+                    attachmentImageView(problemUIImages[index], index: index)
                 }
                 
                 ForEach(Array(files.enumerated()), id: \.offset) { index, url in
@@ -86,27 +78,22 @@ struct ReportProblemImagePicker: View {
         }
         .fileImporter(
             isPresented: $isShowingFileImporter,
-            allowedContentTypes: allowedFileTypes,
+            allowedContentTypes: fileImporterAllowedContentTypes,
             allowsMultipleSelection: true
         ) { result in
-            switch result {
-            case .success(let urls):
-                DispatchQueue.main.async {
-                    addPickedFiles(urls)
-                }
-            case .failure:
-                break
+            DispatchQueue.main.async {
+                handleFileImporterResult(result)
             }
         }
-        #if os(iOS)
+#if os(iOS)
         .sheet(isPresented: $isShowingCameraPicker) {
             CameraPicker(
                 uiImage: $selectedCameraImage,
                 isPresented: $isShowingCameraPicker
             )
         }
-        #endif
-        #if os(iOS) || os(visionOS)
+#endif
+#if os(iOS) || os(visionOS)
         .sheet(isPresented: $isShowingPhotosPicker) {
             PHPickerView(
                 selectedImages: $problemUIImages,
@@ -114,22 +101,7 @@ struct ReportProblemImagePicker: View {
                 maxSelectionCount: remainingAttachmentSlots
             )
         }
-        #elseif os(macOS)
-        .fileImporter(
-            isPresented: $isShowingPhotosPicker,
-            allowedContentTypes: [.image],
-            allowsMultipleSelection: true
-        ) { result in
-            switch result {
-            case .success(let urls):
-                DispatchQueue.main.async {
-                    addPickedImages(urls)
-                }
-            case .failure:
-                break
-            }
-        }
-        #endif
+#endif
         .confirmationDialog(
             Text("Add attachment", bundle: .module),
             isPresented: $isShowingActionSheet,
@@ -143,25 +115,33 @@ struct ReportProblemImagePicker: View {
             }
 #endif
             Button {
+#if os(macOS)
+                presentMacImporter(isPickingImages: true)
+#else
                 isShowingPhotosPicker = true
+#endif
             } label: {
                 Text("Photo library", bundle: .module)
             }
             Button {
+#if os(macOS)
+                presentMacImporter(isPickingImages: false)
+#else
                 isShowingFileImporter = true
+#endif
             } label: {
                 Text("Files", bundle: .module)
             }
             Button("Cancel", role: .cancel) {}
         }
-        #if os(iOS)
+#if os(iOS)
         .onChange(of: selectedCameraImage) { image in
             if let image = image {
                 problemUIImages.append(image)
                 selectedCameraImage = nil
             }
         }
-        #endif
+#endif
         .padding(.bottom, 12)
         .padding(.top, 6)
     }
@@ -182,7 +162,67 @@ struct ReportProblemImagePicker: View {
             .plainText
         ].compactMap { $0 }
     }
+
+    private var fileImporterAllowedContentTypes: [UTType] {
+#if os(macOS)
+        return isPickingImagesOnMac ? imageTypes : allowedFileTypes
+#else
+        return allowedFileTypes
+#endif
+    }
+
+    private func handleFileImporterResult(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+#if os(macOS)
+            if isPickingImagesOnMac {
+                addPickedImages(urls)
+            } else {
+                addPickedFiles(urls)
+            }
+#else
+            addPickedFiles(urls)
+#endif
+        case .failure:
+            break
+        }
+    }
+
+#if os(macOS)
+    private var imageTypes: [UTType] {
+        [.image]
+    }
+
+    private func presentMacImporter(isPickingImages: Bool) {
+        isShowingActionSheet = false
+        DispatchQueue.main.async {
+            self.isPickingImagesOnMac = isPickingImages
+            self.isShowingFileImporter = true
+        }
+    }
+#endif
     
+    private func platformImage(_ image: PlatformImage) -> Image {
+    #if os(macOS)
+        Image(nsImage: image)
+    #else
+        Image(uiImage: image)
+    #endif
+    }
+    
+    @ViewBuilder
+    private func attachmentImageView(_ image: PlatformImage, index: Int) -> some View {
+        platformImage(image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 100, height: 100)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay {
+                DeleteButton(index, isImage: true)
+            }
+            .id("image-\(index)")
+    }
+
     private func addPickedFiles(_ urls: [URL]) {
         for url in urls {
             guard canAddMoreAttachments else { break }
@@ -217,12 +257,27 @@ struct ReportProblemImagePicker: View {
 
 #if os(macOS)
     private func addPickedImages(_ urls: [URL]) {
-        for url in urls {
-            guard canAddMoreAttachments else { break }
-            if let image = NSImage(contentsOf: url) {
-                problemUIImages.append(image)
+        var newImages: [NSImage] = []
+
+        for url in urls.prefix(remainingAttachmentSlots) {
+            guard url.startAccessingSecurityScopedResource() else { continue }
+            defer { url.stopAccessingSecurityScopedResource() }
+
+            guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType,
+                  type.conforms(to: .image) else {
+                continue
+            }
+
+            do {
+                let data = try Data(contentsOf: url)
+                if let image = NSImage(data: data) {
+                    newImages.append(image)
+                }
+            } catch {
+                print(error.localizedDescription)
             }
         }
+        problemUIImages.append(contentsOf: newImages)
     }
 #endif
     
@@ -263,12 +318,12 @@ struct ReportProblemImagePicker: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 32, height: 32)
-                        .foregroundColor(.gray)
                     Text(url.lastPathComponent)
                         .lineLimit(1)
                         .font(.caption)
                         .padding(.horizontal, 8)
                 }
+                .foregroundColor(.gray)
             }
     }
 }

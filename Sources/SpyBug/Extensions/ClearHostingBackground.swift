@@ -9,7 +9,9 @@ import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
+#if os(macOS)
 import AppKit
+#endif
 
 struct ClearHostingBackground: ViewModifier {
     func body(content: Content) -> some View {
