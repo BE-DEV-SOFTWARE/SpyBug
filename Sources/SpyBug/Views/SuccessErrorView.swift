@@ -90,6 +90,7 @@ struct SuccessErrorView: View {
                         .fill(Color(.doveGray))
                 )
             }
+            .buttonStyle(.plain)
         }
     }
 }

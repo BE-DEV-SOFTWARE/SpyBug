@@ -17,6 +17,7 @@ public struct ReportOptionsView: View {
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
+    let year = String(Calendar.current.component(.year, from: Date()))
     var reportTypes: [ReportType]
     var onClose: (() -> Void)?
 
@@ -105,11 +106,23 @@ public struct ReportOptionsView: View {
                 HStack {
                     Spacer()
                     
-                    Button("Close") {
+                    Button {
                         closeMacSheet()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 12, height: 12)
+                            .foregroundStyle(.white)
+                            .padding(8)
+                            .background {
+                                Circle()
+                                    .fill(Color.white.opacity(0.1))
+                            }
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.plain)
                 }
+                .offset(y: -5)
                 Spacer()
             }
             .padding()
@@ -165,7 +178,7 @@ public struct ReportOptionsView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Text("All rights reserved 2025", bundle: .module)
+                Text("All rights reserved \(year)", bundle: .module)
                     .font(.system(size: 12))
                     .foregroundStyle(textColor)
             }
