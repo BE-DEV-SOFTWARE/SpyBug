@@ -10,8 +10,6 @@ import SwiftUI
 import AppKit
 
 struct ReportFormViewMacOS: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var bugUIImages = [NSImage]()
     @State private var files = [URL]()
     @State private var text = ""
@@ -36,7 +34,7 @@ struct ReportFormViewMacOS: View {
         VStack(spacing: 16) {
             if let showSuccessErrorView = showSuccessErrorView {
                 SuccessErrorView(state: showSuccessErrorView, onDismiss: {
-                    dismiss()
+                    onDismissWindow?()
                 })
             } else if isLoading {
                 SendingView()
