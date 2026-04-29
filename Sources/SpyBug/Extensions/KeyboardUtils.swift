@@ -5,7 +5,7 @@
 //  Created by Pavel Kurzo on 18/07/2024.
 //
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 import UIKit
 import Combine
 
