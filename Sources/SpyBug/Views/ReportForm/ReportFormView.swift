@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 
+#if os(iOS)
 struct ReportFormView: View {
     @State private var bugUIImages = [UIImage]()
     @State private var files = [URL]()
@@ -260,3 +261,4 @@ struct ReportFormView: View {
         }
     }
 }
+#endif

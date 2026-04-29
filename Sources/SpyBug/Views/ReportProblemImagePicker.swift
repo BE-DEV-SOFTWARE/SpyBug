@@ -6,18 +6,34 @@
 
 
 import SwiftUI
+#if os(iOS) || os(visionOS)
+import UIKit
 import PhotosUI
+#elseif os(macOS)
+import AppKit
+#endif
 import UniformTypeIdentifiers
 
+#if os(macOS)
+typealias PlatformImage = NSImage
+#else
+typealias PlatformImage = UIImage
+#endif
+
 struct ReportProblemImagePicker: View {
-    @Binding var problemUIImages: [UIImage]
+    @Binding var problemUIImages: [PlatformImage]
+#if os(iOS)
+    @State private var selectedCameraImage: UIImage?
+    @State private var isShowingCameraPicker = false
+#endif
+
     @Binding var files: [URL]
-    
     @State private var isShowingFileImporter = false
     @State private var isShowingActionSheet = false
     @State private var isShowingPhotosPicker = false
-    @State private var isShowingCameraPicker = false
-    @State private var selectedCameraImage: UIImage?
+#if os(macOS)
+    @State private var isPickingImagesOnMac = false
+#endif
     
     private let maxAttachmentCount = 3
     private let maxFileSizeB = 2000 * 1024
@@ -38,16 +54,8 @@ struct ReportProblemImagePicker: View {
                 columns: [GridItem(.adaptive(minimum: gridMin))],
                 spacing: spacing
             ) {
-                ForEach(Array(problemUIImages.enumerated()), id: \.offset) { index, uiImage in
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 100)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay {
-                            DeleteButton(index, isImage: true)
-                        }
-                        .id("image-\(index)")
+                ForEach(problemUIImages.indices, id: \.self) { index in
+                    attachmentImageView(problemUIImages[index], index: index)
                 }
                 
                 ForEach(Array(files.enumerated()), id: \.offset) { index, url in
@@ -70,24 +78,22 @@ struct ReportProblemImagePicker: View {
         }
         .fileImporter(
             isPresented: $isShowingFileImporter,
-            allowedContentTypes: allowedFileTypes,
+            allowedContentTypes: fileImporterAllowedContentTypes,
             allowsMultipleSelection: true
         ) { result in
-            switch result {
-            case .success(let urls):
-                DispatchQueue.main.async {
-                    addPickedFiles(urls)
-                }
-            case .failure:
-                break
+            DispatchQueue.main.async {
+                handleFileImporterResult(result)
             }
         }
+#if os(iOS)
         .sheet(isPresented: $isShowingCameraPicker) {
             CameraPicker(
                 uiImage: $selectedCameraImage,
                 isPresented: $isShowingCameraPicker
             )
         }
+#endif
+#if os(iOS) || os(visionOS)
         .sheet(isPresented: $isShowingPhotosPicker) {
             PHPickerView(
                 selectedImages: $problemUIImages,
@@ -95,29 +101,47 @@ struct ReportProblemImagePicker: View {
                 maxSelectionCount: remainingAttachmentSlots
             )
         }
-        .actionSheet(isPresented: $isShowingActionSheet) {
-            ActionSheet(
-                title: Text("Add attachment", bundle: .module),
-                buttons: [
-                    .default(Text("Camera", bundle: .module)) {
-                        isShowingCameraPicker = true
-                    },
-                    .default(Text("Photo library", bundle: .module)) {
-                        isShowingPhotosPicker = true
-                    },
-                    .default(Text("Files", bundle: .module)) {
-                        isShowingFileImporter = true
-                    },
-                    .cancel()
-                ]
-            )
+#endif
+        .confirmationDialog(
+            Text("Add attachment", bundle: .module),
+            isPresented: $isShowingActionSheet,
+            titleVisibility: .visible
+        ) {
+#if os(iOS)
+            Button {
+                isShowingCameraPicker = true
+            } label: {
+                Text("Camera", bundle: .module)
+            }
+#endif
+            Button {
+#if os(macOS)
+                presentMacImporter(isPickingImages: true)
+#else
+                isShowingPhotosPicker = true
+#endif
+            } label: {
+                Text("Photo library", bundle: .module)
+            }
+            Button {
+#if os(macOS)
+                presentMacImporter(isPickingImages: false)
+#else
+                isShowingFileImporter = true
+#endif
+            } label: {
+                Text("Files", bundle: .module)
+            }
+            Button("Cancel", role: .cancel) {}
         }
+#if os(iOS)
         .onChange(of: selectedCameraImage) { image in
             if let image = image {
                 problemUIImages.append(image)
                 selectedCameraImage = nil
             }
         }
+#endif
         .padding(.bottom, 12)
         .padding(.top, 6)
     }
@@ -138,7 +162,67 @@ struct ReportProblemImagePicker: View {
             .plainText
         ].compactMap { $0 }
     }
+
+    private var fileImporterAllowedContentTypes: [UTType] {
+#if os(macOS)
+        return isPickingImagesOnMac ? imageTypes : allowedFileTypes
+#else
+        return allowedFileTypes
+#endif
+    }
+
+    private func handleFileImporterResult(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+#if os(macOS)
+            if isPickingImagesOnMac {
+                addPickedImages(urls)
+            } else {
+                addPickedFiles(urls)
+            }
+#else
+            addPickedFiles(urls)
+#endif
+        case .failure:
+            break
+        }
+    }
+
+#if os(macOS)
+    private var imageTypes: [UTType] {
+        [.image]
+    }
+
+    private func presentMacImporter(isPickingImages: Bool) {
+        isShowingActionSheet = false
+        DispatchQueue.main.async {
+            self.isPickingImagesOnMac = isPickingImages
+            self.isShowingFileImporter = true
+        }
+    }
+#endif
     
+    private func platformImage(_ image: PlatformImage) -> Image {
+    #if os(macOS)
+        Image(nsImage: image)
+    #else
+        Image(uiImage: image)
+    #endif
+    }
+    
+    @ViewBuilder
+    private func attachmentImageView(_ image: PlatformImage, index: Int) -> some View {
+        platformImage(image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 100, height: 100)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay {
+                DeleteButton(index, isImage: true)
+            }
+            .id("image-\(index)")
+    }
+
     private func addPickedFiles(_ urls: [URL]) {
         for url in urls {
             guard canAddMoreAttachments else { break }
@@ -170,6 +254,32 @@ struct ReportProblemImagePicker: View {
             }
         }
     }
+
+#if os(macOS)
+    private func addPickedImages(_ urls: [URL]) {
+        var newImages: [NSImage] = []
+
+        for url in urls.prefix(remainingAttachmentSlots) {
+            guard url.startAccessingSecurityScopedResource() else { continue }
+            defer { url.stopAccessingSecurityScopedResource() }
+
+            guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType,
+                  type.conforms(to: .image) else {
+                continue
+            }
+
+            do {
+                let data = try Data(contentsOf: url)
+                if let image = NSImage(data: data) {
+                    newImages.append(image)
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        problemUIImages.append(contentsOf: newImages)
+    }
+#endif
     
     @ViewBuilder
     private func DeleteButton(_ index: Int, isImage: Bool) -> some View {
@@ -208,35 +318,32 @@ struct ReportProblemImagePicker: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 32, height: 32)
-                        .foregroundColor(.gray)
                     Text(url.lastPathComponent)
                         .lineLimit(1)
                         .font(.caption)
                         .padding(.horizontal, 8)
                 }
+                .foregroundColor(.gray)
             }
     }
 }
 
+#if os(iOS)
 struct CameraPicker: UIViewControllerRepresentable {
     @Binding var uiImage: UIImage?
     @Binding var isPresented: Bool
-    
+
     func makeCoordinator() -> CameraPickerCoordinator {
-        return CameraPickerCoordinator(uiImage: $uiImage, isPresented: $isPresented)
+        CameraPickerCoordinator(uiImage: $uiImage, isPresented: $isPresented)
     }
-    
+
     func makeUIViewController(context: Context) -> UIImagePickerController {
-        let pickerController = UIImagePickerController()
-        #if os(iOS)
-        pickerController.sourceType = .camera
-#else
-        pickerController.sourceType = .photoLibrary
-#endif
-        pickerController.delegate = context.coordinator
-        return pickerController
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
     }
-    
+
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 }
 
@@ -260,7 +367,9 @@ class CameraPickerCoordinator: NSObject, UINavigationControllerDelegate, UIImage
         self.isPresented = false
     }
 }
+#endif
 
+#if os(iOS) || os(visionOS)
 struct PHPickerView: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
     @Binding var isPresented: Bool
@@ -314,4 +423,5 @@ struct PHPickerView: UIViewControllerRepresentable {
         }
     }
 }
+#endif
 

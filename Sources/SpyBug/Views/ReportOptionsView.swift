@@ -17,12 +17,20 @@ public struct ReportOptionsView: View {
     var author: String?
     @State private var selectedType: ReportType?
     @State private var showReportForm = false
+    let year = String(Calendar.current.component(.year, from: Date()))
     var reportTypes: [ReportType]
+    var onClose: (() -> Void)?
 
-    public init(showReportForm: Bool = false, author: String? = nil, reportTypes: [ReportType] = ReportType.allCases) {
+    public init(
+        showReportForm: Bool = false,
+        author: String? = nil,
+        reportTypes: [ReportType] = ReportType.allCases,
+        onClose: (() -> Void)? = nil
+    ) {
         self.showReportForm = showReportForm
         self.author = author
         self.reportTypes = reportTypes
+        self.onClose = onClose
     }
 
     public var body: some View {
@@ -43,6 +51,15 @@ public struct ReportOptionsView: View {
                     )
                 }
                 .clearHostingBackground()
+#elseif os(macOS)
+                ScrollView {
+                    ReportFormViewMacOS(
+                        showReportForm: $showReportForm,
+                        authorId: author,
+                        type: selectedType
+                    )
+                }
+                .navigationBarBackButtonHidden()
 #elseif os(visionOS)
                 ReportFormViewVisionOS(
                     showReportForm: $showReportForm,
@@ -62,7 +79,7 @@ public struct ReportOptionsView: View {
     private func PlatformView() -> some View {
 #if os(visionOS)
         VisionOSReportOptionsView()
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
         iOSReportOptionsView()
 #endif
     }
@@ -83,8 +100,36 @@ public struct ReportOptionsView: View {
             PoweredBySpybug()
         }
         .padding(.horizontal)
+        .overlay {
+#if os(macOS)
+            VStack {
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        closeMacSheet()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 12, height: 12)
+                            .foregroundStyle(.white)
+                            .padding(8)
+                            .background {
+                                Circle()
+                                    .fill(Color.white.opacity(0.1))
+                            }
+                    }
+                    .buttonStyle(.plain)
+                }
+                .offset(y: -5)
+                Spacer()
+            }
+            .padding()
+#endif
+        }
     }
-
+    
 #if os(visionOS)
     private func VisionOSReportOptionsView() -> some View {
         VStack(spacing: 16) {
@@ -133,7 +178,7 @@ public struct ReportOptionsView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Text("All rights reserved 2025", bundle: .module)
+                Text("All rights reserved \(year)", bundle: .module)
                     .font(.system(size: 12))
                     .foregroundStyle(textColor)
             }
@@ -149,8 +194,8 @@ public struct ReportOptionsView: View {
     private func ReportOptionRow(type: ReportType) -> some View {
         Button {
             withAnimation {
-                showReportForm = true
                 selectedType = type
+                showReportForm = true
             }
         } label: {
             Text(type.title, bundle: .module)
@@ -158,16 +203,27 @@ public struct ReportOptionsView: View {
         .buttonStyle(ReportButtonStyle(icon: type.icon))
     }
 
+#if os(macOS)
+    private func closeMacSheet() {
+        showReportForm = false
+        onClose?()
+        dismiss()
+    }
+#endif
+
+#if os(visionOS)
     @ViewBuilder
     private func ReportOptionRowVisionOS(type: ReportType) -> some View {
         Button {
             withAnimation{
+                selectedType = type
                 showReportForm = true
-                selectedType = type}
+            }
         } label: {
             Text(type.title, bundle: .module)
         } .buttonStyle(VisionOSReportButtonStyle(icon: type.icon))
     }
+#endif
 }
 
 struct ReportOptionsView_Previews: PreviewProvider {

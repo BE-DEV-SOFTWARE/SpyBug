@@ -6,8 +6,23 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+extension UIDevice {
+    static let deviceDidShakeNotification = Notification.Name("deviceDidShakeNotification")
+}
 
-
+extension UIWindow {
+    open override var canBecomeFirstResponder: Bool {
+        true
+    }
+    
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
+        }
+    }
+}
 public extension View {
     func reportOnShake(author: String?, reportTypes: [ReportType] = ReportType.allCases, isShakeAllowed: Binding<Bool>? = nil) -> some View {
         self.modifier(ReportOnShakeViewModifier(author: author, reportTypes: reportTypes, isShakeAllowed: isShakeAllowed))
@@ -25,19 +40,6 @@ public extension View {
     }
 }
 
-// UIWindow subclass to handle device shake
-extension UIWindow {
-    open override var canBecomeFirstResponder: Bool {
-        true
-    }
-    
-    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
-        }
-    }
-}
-
 struct ReportOnShakeViewModifier: ViewModifier {
     let author: String?
     let reportTypes: [ReportType]
@@ -47,9 +49,9 @@ struct ReportOnShakeViewModifier: ViewModifier {
     @State private var observer: NSObjectProtocol?
     
     private var shakeAllowed: Bool {
-         let isGloballyDisabled = UserDefaults.standard.bool(forKey: "DisableReportOnShake")
-         return (isShakeAllowed?.wrappedValue ?? true) && !isGloballyDisabled
-     }
+        let isGloballyDisabled = UserDefaults.standard.bool(forKey: "DisableReportOnShake")
+        return (isShakeAllowed?.wrappedValue ?? true) && !isGloballyDisabled
+    }
     
     func body(content: Content) -> some View {
         content
@@ -95,10 +97,6 @@ struct ReportOnShakeViewModifier: ViewModifier {
     }
 }
 
-extension UIDevice {
-    static let deviceDidShakeNotification = Notification.Name("deviceDidShakeNotification")
-}
-
 extension View {
     @ViewBuilder
     func conditionalPresentationCornerRadius(_ radius: CGFloat) -> some View {
@@ -109,14 +107,16 @@ extension View {
         }
     }
 }
+#endif
 
-#if DEBUG
+#if os(iOS) && DEBUG
 struct ReportOnShakePreviewView: View {
     @State private var isShakeAllowed = true
     
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
+
             Button("Simulate Shake") {
                 NotificationCenter.default.post(
                     name: UIDevice.deviceDidShakeNotification,
@@ -125,6 +125,10 @@ struct ReportOnShakePreviewView: View {
             }
             .buttonStyle(.borderedProminent)
             
+            Text("Shake device to report")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -137,7 +141,7 @@ struct ReportOnShakePreviewView: View {
     }
 }
 
-#Preview("Report On Shake - Enabled") {
+#Preview("Report On Shake") {
     ReportOnShakePreviewView()
         .preferredColorScheme(.light)
 }
