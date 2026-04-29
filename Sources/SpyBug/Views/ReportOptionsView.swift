@@ -55,6 +55,9 @@ public struct ReportOptionsView: View {
                 ScrollView {
                     ReportFormViewMacOS(
                         showReportForm: $showReportForm,
+                        onDismissWindow: {
+                            onClose?()
+                        },
                         authorId: author,
                         type: selectedType
                     )
@@ -207,7 +210,6 @@ public struct ReportOptionsView: View {
     private func closeMacSheet() {
         showReportForm = false
         onClose?()
-        dismiss()
     }
 #endif
 
